@@ -17,7 +17,7 @@ CREATE TABLE locations (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create hosting_plans table (AMD Ryzen)
+-- Create hosting_plans table (Intel Platinum)
 CREATE TABLE hosting_plans (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
@@ -74,35 +74,41 @@ INSERT INTO locations (name, code, flag, active, sort_order) VALUES
 ('Singapore', 'Singapore', '🇸🇬', true, 2),
 ('Germany', 'Germany', '🇩🇪', true, 3);
 
--- Insert AMD Ryzen plans (UAE)
+-- Insert Intel Platinum plans (UAE)
 INSERT INTO hosting_plans (name, icon, ram, performance, location, price, currency, features, popular, sort_order, active) VALUES
-('Bronze Plan', 'Medal', '2GB RAM', '100%', 'UAE', 240, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Instant Setup'], false, 1, true),
-('Silver Plan', 'Star', '4GB RAM', '150%', 'UAE', 480, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Instant Setup'], false, 2, true),
-('Gold Plan', 'Crown', '8GB RAM', '250%', 'UAE', 960, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Instant Setup'], false, 3, true),
-('Platinum Plan', 'Award', '10GB RAM', '300%', 'UAE', 1200, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Priority Support'], true, 4, true),
-('Diamond Plan', 'Diamond', '12GB RAM', '350%', 'UAE', 1440, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Priority Support'], false, 5, true),
-('Emerald Plan', 'Gem', '16GB RAM', '500%', 'UAE', 1920, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Priority Support'], false, 6, true),
-('Diamond Plus Plan', 'Trophy', '32GB RAM', '1000%', 'UAE', 3840, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Custom Plans'], false, 7, true);
+('Bronze Plan', 'Medal', '2GB RAM', '100%', 'UAE', 240, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Instant Setup'], false, 1, true),
+('Silver Plan', 'Star', '4GB RAM', '150%', 'UAE', 480, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Instant Setup'], false, 2, true),
+('Gold Plan', 'Crown', '8GB RAM', '250%', 'UAE', 960, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Instant Setup'], false, 3, true),
+('Platinum Plan', 'Award', '10GB RAM', '300%', 'UAE', 1200, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], true, 4, true),
+('Diamond Plan', 'Diamond', '12GB RAM', '350%', 'UAE', 1440, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 5, true),
+('Emerald Plan', 'Gem', '16GB RAM', '500%', 'UAE', 1920, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 6, true),
+('Ruby Plan', 'Sparkles', '20GB RAM', '600%', 'UAE', 2400, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 7, true),
+('Sapphire Plan', 'Zap', '24GB RAM', '800%', 'UAE', 2880, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 8, true),
+('Diamond Plus Plan', 'Trophy', '32GB RAM', '1000%', 'UAE', 3840, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Custom Plans'], false, 9, true);
 
--- Insert AMD Ryzen plans (Singapore)
+-- Insert Intel Platinum plans (Singapore)
 INSERT INTO hosting_plans (name, icon, ram, performance, location, price, currency, features, popular, sort_order, active) VALUES
-('Bronze Plan', 'Medal', '2GB RAM', '100%', 'Singapore', 240, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Instant Setup'], false, 1, true),
-('Silver Plan', 'Star', '4GB RAM', '150%', 'Singapore', 480, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Instant Setup'], false, 2, true),
-('Gold Plan', 'Crown', '8GB RAM', '250%', 'Singapore', 960, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Instant Setup'], false, 3, true),
-('Platinum Plan', 'Award', '10GB RAM', '300%', 'Singapore', 1200, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Priority Support'], true, 4, true),
-('Diamond Plan', 'Diamond', '12GB RAM', '350%', 'Singapore', 1440, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Priority Support'], false, 5, true),
-('Emerald Plan', 'Gem', '16GB RAM', '500%', 'Singapore', 1920, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Priority Support'], false, 6, true),
-('Diamond Plus Plan', 'Trophy', '32GB RAM', '1000%', 'Singapore', 3840, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Custom Plans'], false, 7, true);
+('Bronze Plan', 'Medal', '2GB RAM', '100%', 'Singapore', 240, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Instant Setup'], false, 1, true),
+('Silver Plan', 'Star', '4GB RAM', '150%', 'Singapore', 480, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Instant Setup'], false, 2, true),
+('Gold Plan', 'Crown', '8GB RAM', '250%', 'Singapore', 960, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Instant Setup'], false, 3, true),
+('Platinum Plan', 'Award', '10GB RAM', '300%', 'Singapore', 1200, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], true, 4, true),
+('Diamond Plan', 'Diamond', '12GB RAM', '350%', 'Singapore', 1440, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 5, true),
+('Emerald Plan', 'Gem', '16GB RAM', '500%', 'Singapore', 1920, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 6, true),
+('Ruby Plan', 'Sparkles', '20GB RAM', '600%', 'Singapore', 2400, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 7, true),
+('Sapphire Plan', 'Zap', '24GB RAM', '800%', 'Singapore', 2880, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 8, true),
+('Diamond Plus Plan', 'Trophy', '32GB RAM', '1000%', 'Singapore', 3840, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Custom Plans'], false, 9, true);
 
--- Insert AMD Ryzen plans (Germany)
+-- Insert Intel Platinum plans (Germany)
 INSERT INTO hosting_plans (name, icon, ram, performance, location, price, currency, features, popular, sort_order, active) VALUES
-('Bronze Plan', 'Medal', '2GB RAM', '100%', 'Germany', 240, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Instant Setup'], false, 1, true),
-('Silver Plan', 'Star', '4GB RAM', '150%', 'Germany', 480, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Instant Setup'], false, 2, true),
-('Gold Plan', 'Crown', '8GB RAM', '250%', 'Germany', 960, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Instant Setup'], false, 3, true),
-('Platinum Plan', 'Award', '10GB RAM', '300%', 'Germany', 1200, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Priority Support'], true, 4, true),
-('Diamond Plan', 'Diamond', '12GB RAM', '350%', 'Germany', 1440, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Priority Support'], false, 5, true),
-('Emerald Plan', 'Gem', '16GB RAM', '500%', 'Germany', 1920, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Priority Support'], false, 6, true),
-('Diamond Plus Plan', 'Trophy', '32GB RAM', '1000%', 'Germany', 3840, 'PKR', ARRAY['24/7 Support', 'DDoS Protection', 'Custom Plans'], false, 7, true);
+('Bronze Plan', 'Medal', '2GB RAM', '100%', 'Germany', 240, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Instant Setup'], false, 1, true),
+('Silver Plan', 'Star', '4GB RAM', '150%', 'Germany', 480, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Instant Setup'], false, 2, true),
+('Gold Plan', 'Crown', '8GB RAM', '250%', 'Germany', 960, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Instant Setup'], false, 3, true),
+('Platinum Plan', 'Award', '10GB RAM', '300%', 'Germany', 1200, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], true, 4, true),
+('Diamond Plan', 'Diamond', '12GB RAM', '350%', 'Germany', 1440, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 5, true),
+('Emerald Plan', 'Gem', '16GB RAM', '500%', 'Germany', 1920, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 6, true),
+('Ruby Plan', 'Sparkles', '20GB RAM', '600%', 'Germany', 2400, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 7, true),
+('Sapphire Plan', 'Zap', '24GB RAM', '800%', 'Germany', 2880, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 8, true),
+('Diamond Plus Plan', 'Trophy', '32GB RAM', '1000%', 'Germany', 3840, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Custom Plans'], false, 9, true);
 
 -- Insert AMD EPYC plans (UAE only for now)
 INSERT INTO epyc_plans (name, icon, ram, performance, location, price, currency, features, popular, sort_order, active) VALUES
@@ -116,7 +122,7 @@ INSERT INTO epyc_plans (name, icon, ram, performance, location, price, currency,
 -- Verify
 SELECT 'Locations:' as info;
 SELECT * FROM locations ORDER BY sort_order;
-SELECT 'Ryzen Plans:' as info;
+SELECT 'Intel Platinum Plans:' as info;
 SELECT * FROM hosting_plans ORDER BY sort_order;
 SELECT 'EPYC Plans:' as info;
 SELECT * FROM epyc_plans ORDER BY sort_order;

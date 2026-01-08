@@ -1,15 +1,40 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowDown, Play, Star, Server, Shield, Zap } from 'lucide-react'
+import { ArrowDown, Play, Star, Server, Shield, Zap, Cpu, HardDrive } from 'lucide-react'
 
 export default function Hero() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
-      {/* Background Image */}
+    <section className="min-h-screen flex items-center justify-center px-4 pt-24 relative overflow-hidden">
+      {/* Background */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black" />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/90 to-slate-950" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent" />
+      </div>
+
+      {/* Floating Server Icons */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-32 left-[10%] opacity-20"
+        >
+          <Server className="h-16 w-16 text-cyan-500" />
+        </motion.div>
+        <motion.div
+          animate={{ y: [0, 15, 0], rotate: [0, -5, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute top-48 right-[15%] opacity-20"
+        >
+          <HardDrive className="h-12 w-12 text-blue-500" />
+        </motion.div>
+        <motion.div
+          animate={{ y: [0, -15, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+          className="absolute bottom-32 left-[20%] opacity-20"
+        >
+          <Cpu className="h-14 w-14 text-purple-500" />
+        </motion.div>
       </div>
 
       <div className="container mx-auto relative z-10">
@@ -29,7 +54,7 @@ export default function Hero() {
               className="inline-flex items-center space-x-2 bg-cyan-500/10 border border-cyan-500/30 rounded-full px-5 py-2 mb-8"
             >
               <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-sm font-medium text-cyan-300">Pakistan's First Minecraft Hosting</span>
+              <span className="text-sm font-medium text-cyan-300">Pakistan's #1 Minecraft Hosting</span>
             </motion.div>
 
             {/* Main Heading */}
@@ -53,7 +78,7 @@ export default function Hero() {
               transition={{ delay: 0.9 }}
               className="text-lg md:text-xl text-gray-400 mb-10 max-w-xl"
             >
-              AMD Ryzen powered servers with UAE location. Experience blazing-fast performance with 24/7 expert support.
+              Intel Platinum & AMD EPYC powered servers. Multiple locations worldwide. Experience blazing-fast performance with 24/7 expert support.
             </motion.p>
 
             {/* CTA Buttons */}
@@ -65,13 +90,12 @@ export default function Hero() {
             >
               <motion.a
                 href="#plans"
-                className="group relative bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold py-4 px-10 rounded-xl transition-all duration-300 inline-flex items-center space-x-2 overflow-hidden shadow-lg shadow-cyan-500/25"
+                className="group relative bg-blue-600 hover:bg-blue-500 text-white font-semibold py-4 px-10 rounded-xl transition-all duration-300 inline-flex items-center space-x-2 shadow-lg shadow-blue-500/25"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <span className="relative z-10">View Plans</span>
-                <ArrowDown className="h-5 w-5 relative z-10 group-hover:translate-y-1 transition-transform" />
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span>View Plans</span>
+                <ArrowDown className="h-5 w-5 group-hover:translate-y-1 transition-transform" />
               </motion.a>
               
               <motion.a
@@ -114,7 +138,7 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Right Side - Minecraft Character */}
+          {/* Right Side - Server Rack Illustration */}
           <motion.div
             initial={{ opacity: 0, x: 50, scale: 0.8 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -123,62 +147,71 @@ export default function Hero() {
           >
             <div className="relative">
               {/* Glow Effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/40 to-blue-500/40 blur-3xl rounded-full scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 blur-3xl rounded-full scale-110" />
               
-              {/* Minecraft Steve - Using SVG */}
+              {/* Server Rack SVG */}
               <motion.div
-                animate={{ y: [0, -15, 0] }}
+                animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="relative z-10"
               >
-                <div className="w-[250px] h-[350px] relative">
-                  {/* Steve Body SVG */}
-                  <svg viewBox="0 0 100 140" className="w-full h-full drop-shadow-2xl">
-                    {/* Head */}
-                    <rect x="30" y="0" width="40" height="40" fill="#c4a57b"/>
-                    <rect x="30" y="0" width="40" height="20" fill="#6b5344"/>
-                    <rect x="35" y="22" width="8" height="8" fill="#4a7fc4"/>
-                    <rect x="57" y="22" width="8" height="8" fill="#4a7fc4"/>
-                    <rect x="45" y="32" width="10" height="4" fill="#8b6b4a"/>
-                    {/* Body */}
-                    <rect x="30" y="42" width="40" height="50" fill="#00a8a8"/>
-                    <rect x="30" y="42" width="40" height="25" fill="#00a8a8"/>
-                    <rect x="30" y="67" width="40" height="25" fill="#00a8a8"/>
-                    {/* Arms */}
-                    <rect x="10" y="42" width="18" height="50" fill="#c4a57b"/>
-                    <rect x="72" y="42" width="18" height="50" fill="#c4a57b"/>
-                    {/* Legs */}
-                    <rect x="30" y="94" width="18" height="46" fill="#3b5998"/>
-                    <rect x="52" y="94" width="18" height="46" fill="#3b5998"/>
+                <div className="w-[300px] h-[400px] relative">
+                  <svg viewBox="0 0 200 280" className="w-full h-full drop-shadow-2xl">
+                    {/* Server Rack Frame */}
+                    <rect x="20" y="10" width="160" height="260" rx="8" fill="#1e293b" stroke="#334155" strokeWidth="2"/>
+                    
+                    {/* Server Units */}
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <g key={i}>
+                        <rect x="30" y={25 + i * 48} width="140" height="40" rx="4" fill="#0f172a" stroke="#334155" strokeWidth="1"/>
+                        {/* LED Lights */}
+                        <circle cx="45" cy={45 + i * 48} r="4" fill="#22c55e">
+                          <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite" begin={`${i * 0.3}s`}/>
+                        </circle>
+                        <circle cx="60" cy={45 + i * 48} r="4" fill="#3b82f6">
+                          <animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite" begin={`${i * 0.2}s`}/>
+                        </circle>
+                        {/* Vents */}
+                        <rect x="80" y={35 + i * 48} width="80" height="2" fill="#334155"/>
+                        <rect x="80" y={40 + i * 48} width="80" height="2" fill="#334155"/>
+                        <rect x="80" y={45 + i * 48} width="80" height="2" fill="#334155"/>
+                        <rect x="80" y={50 + i * 48} width="80" height="2" fill="#334155"/>
+                        <rect x="80" y={55 + i * 48} width="80" height="2" fill="#334155"/>
+                      </g>
+                    ))}
                   </svg>
                 </div>
               </motion.div>
 
-              {/* Floating Diamond */}
+              {/* Floating Elements */}
               <motion.div
-                animate={{ y: [0, -10, 0], rotate: [0, 10, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                className="absolute -top-5 -left-10"
+                animate={{ y: [0, -15, 0], x: [0, 5, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute -top-5 -right-10"
               >
-                <div className="w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-600 rotate-45 shadow-lg shadow-cyan-500/50" />
+                <div className="bg-gradient-to-br from-cyan-400 to-blue-600 p-3 rounded-xl shadow-lg shadow-cyan-500/50">
+                  <Cpu className="h-8 w-8 text-white" />
+                </div>
               </motion.div>
 
-              {/* Floating Gold Block */}
               <motion.div
-                animate={{ y: [0, -8, 0], rotate: [0, -5, 0] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute -bottom-5 -right-10"
+                animate={{ y: [0, 10, 0], x: [0, -5, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -bottom-5 -left-10"
               >
-                <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-amber-600 shadow-lg shadow-yellow-500/50" />
+                <div className="bg-gradient-to-br from-purple-400 to-pink-600 p-3 rounded-xl shadow-lg shadow-purple-500/50">
+                  <HardDrive className="h-8 w-8 text-white" />
+                </div>
               </motion.div>
 
-              {/* Floating Emerald */}
               <motion.div
-                animate={{ y: [0, -12, 0] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-                className="absolute top-1/2 -right-16"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                className="absolute top-1/3 -left-16"
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-600 rotate-45 shadow-lg shadow-green-500/50" />
+                <div className="bg-gradient-to-br from-green-400 to-emerald-600 p-2 rounded-lg shadow-lg shadow-green-500/50">
+                  <Shield className="h-6 w-6 text-white" />
+                </div>
               </motion.div>
             </div>
           </motion.div>
