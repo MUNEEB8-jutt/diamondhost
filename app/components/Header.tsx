@@ -1,8 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Sparkles } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const DiamondLogo = () => (
   <svg viewBox="0 0 40 40" className="w-10 h-10">
@@ -25,8 +25,48 @@ const DiamondLogo = () => (
   </svg>
 )
 
+// Typewriter phrases
+const phrases = [
+  "Best Minecraft Hosting",
+  "Premium Performance",
+  "24/7 Expert Support",
+  "DDoS Protected",
+  "Intel Platinum Powered",
+  "AMD EPYC Servers",
+]
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [phraseIndex, setPhraseIndex] = useState(0)
+  const [displayText, setDisplayText] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  useEffect(() => {
+    const currentPhrase = phrases[phraseIndex]
+    const typeSpeed = isDeleting ? 30 : 80
+    const pauseTime = 2000
+
+    if (!isDeleting && displayText === currentPhrase) {
+      setTimeout(() => setIsDeleting(true), pauseTime)
+      return
+    }
+
+    if (isDeleting && displayText === '') {
+      setIsDeleting(false)
+      setPhraseIndex((prev) => (prev + 1) % phrases.length)
+      return
+    }
+
+    const timeout = setTimeout(() => {
+      setDisplayText(prev => 
+        isDeleting 
+          ? currentPhrase.substring(0, prev.length - 1)
+          : currentPhrase.substring(0, prev.length + 1)
+      )
+    }, typeSpeed)
+
+    return () => clearTimeout(timeout)
+  }, [displayText, isDeleting, phraseIndex])
 
   return (
     <motion.header 
@@ -38,7 +78,7 @@ export default function Header() {
       <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-2xl shadow-black/20">
         <div className="px-6 py-3">
           <div className="flex items-center justify-between">
-            {/* Logo */}
+            {/* Logo with Typewriter */}
             <motion.a 
               href="#"
               className="flex items-center space-x-3"
@@ -47,7 +87,16 @@ export default function Header() {
               <DiamondLogo />
               <div className="flex flex-col">
                 <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Diamond Host</span>
-                <span className="text-[10px] text-gray-500 -mt-1">Minecraft Hosting</span>
+                <div className="flex items-center h-4">
+                  <span className="text-[10px] text-cyan-400 font-medium">
+                    {displayText}
+                  </span>
+                  <motion.span 
+                    className="w-0.5 h-3 bg-cyan-400 ml-0.5"
+                    animate={{ opacity: [1, 0] }}
+                    transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
+                  />
+                </div>
               </div>
             </motion.a>
 
@@ -93,28 +142,30 @@ export default function Header() {
           </div>
 
           {/* Mobile Navigation */}
-          {isMenuOpen && (
-            <motion.nav 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden mt-4 pt-4 border-t border-slate-700/50"
-            >
-              <div className="flex flex-col space-y-2">
-                <a href="#plans" className="text-gray-300 hover:text-cyan-400 hover:bg-slate-800/50 px-4 py-3 rounded-lg transition-all">Plans</a>
-                <a href="#features" className="text-gray-300 hover:text-cyan-400 hover:bg-slate-800/50 px-4 py-3 rounded-lg transition-all">Features</a>
-                <a href="#support" className="text-gray-300 hover:text-cyan-400 hover:bg-slate-800/50 px-4 py-3 rounded-lg transition-all">Support</a>
-                <a 
-                  href="https://discord.gg/tKDRWYNcuE"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-blue-600 text-white font-medium py-3 px-5 rounded-xl text-center mt-2"
-                >
-                  Join Discord
-                </a>
-              </div>
-            </motion.nav>
-          )}
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.nav 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="md:hidden mt-4 pt-4 border-t border-slate-700/50"
+              >
+                <div className="flex flex-col space-y-2">
+                  <a href="#plans" className="text-gray-300 hover:text-cyan-400 hover:bg-slate-800/50 px-4 py-3 rounded-lg transition-all">Plans</a>
+                  <a href="#features" className="text-gray-300 hover:text-cyan-400 hover:bg-slate-800/50 px-4 py-3 rounded-lg transition-all">Features</a>
+                  <a href="#support" className="text-gray-300 hover:text-cyan-400 hover:bg-slate-800/50 px-4 py-3 rounded-lg transition-all">Support</a>
+                  <a 
+                    href="https://discord.gg/tKDRWYNcuE"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-blue-600 text-white font-medium py-3 px-5 rounded-xl text-center mt-2"
+                  >
+                    Join Discord
+                  </a>
+                </div>
+              </motion.nav>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </motion.header>

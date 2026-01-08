@@ -2,8 +2,51 @@
 
 import { motion } from 'framer-motion'
 import { ArrowDown, Play, Star, Server, Shield, Zap, Cpu, HardDrive } from 'lucide-react'
+import { useState, useEffect } from 'react'
+
+// Typewriter phrases for Hero
+const heroTexts = [
+  "Best Hosting in Pakistan",
+  "Intel Platinum Powered",
+  "AMD EPYC Servers",
+  "24/7 Expert Support",
+  "DDoS Protected",
+  "99.9% Uptime",
+  "Premium Performance",
+]
 
 export default function Hero() {
+  const [textIndex, setTextIndex] = useState(0)
+  const [displayText, setDisplayText] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  useEffect(() => {
+    const currentText = heroTexts[textIndex]
+    const typeSpeed = isDeleting ? 40 : 100
+    const pauseTime = 2500
+
+    if (!isDeleting && displayText === currentText) {
+      setTimeout(() => setIsDeleting(true), pauseTime)
+      return
+    }
+
+    if (isDeleting && displayText === '') {
+      setIsDeleting(false)
+      setTextIndex((prev) => (prev + 1) % heroTexts.length)
+      return
+    }
+
+    const timeout = setTimeout(() => {
+      setDisplayText(prev => 
+        isDeleting 
+          ? currentText.substring(0, prev.length - 1)
+          : currentText.substring(0, prev.length + 1)
+      )
+    }, typeSpeed)
+
+    return () => clearTimeout(timeout)
+  }, [displayText, isDeleting, textIndex])
+
   return (
     <section className="min-h-screen flex items-center justify-center px-4 pt-24 relative overflow-hidden">
       {/* Background */}
@@ -54,22 +97,36 @@ export default function Hero() {
               className="inline-flex items-center space-x-2 bg-cyan-500/10 border border-cyan-500/30 rounded-full px-5 py-2 mb-8"
             >
               <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-sm font-medium text-cyan-300">Pakistan's #1 Minecraft Hosting</span>
+              <span className="text-sm font-medium text-cyan-300">Pakistan #1 Minecraft Hosting</span>
             </motion.div>
 
-            {/* Main Heading */}
+            {/* Main Heading with Typewriter */}
             <motion.h1 
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
               className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
             >
-              <span className="text-white">Premium</span>
-              <br />
-              <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Minecraft Hosting
-              </span>
+              <span className="text-white">Diamond</span>
+              <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent"> Host</span>
             </motion.h1>
+            
+            {/* Typewriter Line */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9 }}
+              className="flex items-center justify-center lg:justify-start mb-8"
+            >
+              <span className="text-2xl md:text-3xl font-semibold text-cyan-400">
+                {displayText}
+              </span>
+              <motion.span 
+                className="inline-block w-0.5 h-8 bg-cyan-400 ml-1"
+                animate={{ opacity: [1, 0] }}
+                transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
+              />
+            </motion.div>
 
             {/* Subtitle */}
             <motion.p 

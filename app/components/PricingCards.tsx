@@ -1,14 +1,14 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Loader2, Cpu, Zap, ChevronLeft, ChevronRight, Server } from 'lucide-react'
+import { Check, Loader2, Cpu, Zap } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getPlans, getLocations, getPlansByLocation, getEpycPlansByLocation, HostingPlan, Location, EpycPlan } from '@/lib/supabase'
 
-// Fallback data
+// Fallback data - UAE in center (index 1)
 const fallbackLocations: Location[] = [
-  { id: '1', name: 'UAE', code: 'UAE', flag: 'AE', active: true, sort_order: 1, created_at: '' },
-  { id: '2', name: 'Singapore', code: 'Singapore', flag: 'SG', active: true, sort_order: 2, created_at: '' },
+  { id: '2', name: 'Singapore', code: 'Singapore', flag: 'SG', active: true, sort_order: 1, created_at: '' },
+  { id: '1', name: 'UAE', code: 'UAE', flag: 'AE', active: true, sort_order: 2, created_at: '' },
   { id: '3', name: 'Germany', code: 'Germany', flag: 'DE', active: true, sort_order: 3, created_at: '' },
 ]
 
@@ -75,7 +75,7 @@ export default function PricingCards() {
   const [locations, setLocations] = useState<Location[]>([])
   const [plans, setPlans] = useState<HostingPlan[]>([])
   const [epycPlans, setEpycPlans] = useState<EpycPlan[]>([])
-  const [selectedLocationIndex, setSelectedLocationIndex] = useState(0)
+  const [selectedLocationIndex, setSelectedLocationIndex] = useState(1) // UAE is center (index 1)
   const [loading, setLoading] = useState(true)
   const [plansLoading, setPlansLoading] = useState(false)
 
@@ -84,11 +84,23 @@ export default function PricingCards() {
   useEffect(() => {
     async function fetchInitialData() {
       const [locsData, plansData] = await Promise.all([getLocations(), getPlans()])
-      const locs = locsData.length > 0 ? locsData : fallbackLocations
+      let locs = locsData.length > 0 ? locsData : fallbackLocations
+      
+      // Reorder to put UAE in center
+      const uaeIndex = locs.findIndex(l => l.code === 'UAE' || l.code === 'AE')
+      if (uaeIndex !== -1 && uaeIndex !== 1 && locs.length >= 3) {
+        const uae = locs[uaeIndex]
+        locs = locs.filter((_, i) => i !== uaeIndex)
+        locs.splice(1, 0, uae)
+      }
+      
       setLocations(locs)
       setPlans(plansData.length > 0 ? plansData : fallbackPlans)
-      const epycData = await getEpycPlansByLocation(locs[0]?.code || 'UAE')
-      setEpycPlans(epycData.length > 0 ? epycData : fallbackEpycPlans.filter(p => p.location === (locs[0]?.code || 'UAE')))
+      
+      // Start with UAE (index 1)
+      const startLocation = locs[1]?.code || 'UAE'
+      const epycData = await getEpycPlansByLocation(startLocation)
+      setEpycPlans(epycData.length > 0 ? epycData : fallbackEpycPlans.filter(p => p.location === startLocation))
       setLoading(false)
     }
     fetchInitialData()
@@ -153,15 +165,17 @@ export default function PricingCards() {
           viewport={{ once: true }}
           className="flex justify-center mb-16"
         >
-          <div className="flex items-center gap-6">
-            {/* Left Arrow */}
+          <div className="flex items-center gap-8">
+            {/* Left Arrow - Curved style without circle */}
             <motion.button
               onClick={() => handleLocationChange('prev')}
-              className="w-12 h-12 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-gray-400 hover:text-white hover:bg-slate-700 hover:border-cyan-500/50 transition-all duration-300"
-              whileHover={{ scale: 1.1, x: -3 }}
-              whileTap={{ scale: 0.95 }}
+              className="p-2 text-gray-400 hover:text-cyan-400 transition-all duration-300"
+              whileHover={{ scale: 1.2, x: -5 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <ChevronLeft className="h-6 w-6" />
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 18c-4-2-6-6-6-6s2-4 6-6" />
+              </svg>
             </motion.button>
 
             {/* Flag Display */}
@@ -172,6 +186,20 @@ export default function PricingCards() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
             >
+              {/* Popular Badge for UAE */}
+              {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
+                <motion.div 
+                  className="absolute -top-3 -right-2 z-20"
+                  initial={{ scale: 0, rotate: -10 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 400, delay: 0.2 }}
+                >
+                  <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg shadow-yellow-500/30">
+                    ⭐ Popular
+                  </span>
+                </motion.div>
+              )}
+              
               <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-blue-500/10 rounded-2xl" />
               <motion.div
                 initial={{ rotateY: 90 }}
@@ -193,14 +221,16 @@ export default function PricingCards() {
               </div>
             </motion.div>
 
-            {/* Right Arrow */}
+            {/* Right Arrow - Curved style without circle */}
             <motion.button
               onClick={() => handleLocationChange('next')}
-              className="w-12 h-12 rounded-full bg-slate-800/80 border border-slate-700 flex items-center justify-center text-gray-400 hover:text-white hover:bg-slate-700 hover:border-cyan-500/50 transition-all duration-300"
-              whileHover={{ scale: 1.1, x: 3 }}
-              whileTap={{ scale: 0.95 }}
+              className="p-2 text-gray-400 hover:text-cyan-400 transition-all duration-300"
+              whileHover={{ scale: 1.2, x: 5 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <ChevronRight className="h-6 w-6" />
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 6c4 2 6 6 6 6s-2 4-6 6" />
+              </svg>
             </motion.button>
           </div>
         </motion.div>
@@ -242,11 +272,19 @@ export default function PricingCards() {
                 >
                   {plan.popular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                      <span className="bg-cyan-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">Most Popular</span>
+                      <span className="bg-cyan-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">Best Value</span>
                     </div>
                   )}
+                  
+                  {/* Smoke/Glow Effect - Hidden by default, visible on hover */}
+                  <div className="absolute -inset-4 opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none z-0">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/40 via-blue-500/40 to-cyan-500/40 blur-3xl rounded-3xl animate-pulse" />
+                    <div className="absolute inset-2 bg-gradient-to-t from-cyan-400/30 to-transparent blur-2xl rounded-3xl" />
+                    <div className="absolute -inset-2 bg-gradient-to-b from-blue-500/20 via-transparent to-cyan-500/20 blur-3xl rounded-3xl" />
+                  </div>
+                  
                   <motion.div 
-                    className={`relative bg-slate-900/95 rounded-2xl p-6 border-2 border-slate-700/60 transition-all duration-500 flex flex-col overflow-hidden ${plan.popular ? 'border-cyan-500/50' : ''}`}
+                    className={`relative bg-slate-900/95 rounded-2xl p-6 border-2 border-slate-700/60 transition-all duration-500 flex flex-col overflow-hidden z-10 ${plan.popular ? 'border-cyan-500/50' : ''}`}
                     whileHover={{ 
                       y: -10, 
                       scale: 1.02,
@@ -258,14 +296,14 @@ export default function PricingCards() {
                     {/* Glow effect on hover */}
                     <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/10 group-hover:to-blue-500/10 transition-all duration-500 rounded-2xl" />
                     
-                    {/* Icon - AMD style */}
+                    {/* Icon - AMD style but blue */}
                     <div className="flex justify-center mb-3 relative z-10">
                       <motion.div 
                         className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-blue-500/30"
                         whileHover={{ scale: 1.15, rotate: 5 }}
                         transition={{ type: 'spring', stiffness: 300 }}
                       >
-                        <Server className="h-8 w-8 text-white" />
+                        <Cpu className="h-8 w-8 text-white" />
                       </motion.div>
                     </div>
 
@@ -370,8 +408,16 @@ export default function PricingCards() {
                       <span className="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">Best Value</span>
                     </div>
                   )}
+                  
+                  {/* Smoke/Glow Effect - Hidden by default, visible on hover */}
+                  <div className="absolute -inset-4 opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none z-0">
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/40 via-orange-500/40 to-red-500/40 blur-3xl rounded-3xl animate-pulse" />
+                    <div className="absolute inset-2 bg-gradient-to-t from-red-400/30 to-transparent blur-2xl rounded-3xl" />
+                    <div className="absolute -inset-2 bg-gradient-to-b from-orange-500/20 via-transparent to-red-500/20 blur-3xl rounded-3xl" />
+                  </div>
+                  
                   <motion.div
-                    className={`relative bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl p-6 border-2 ${plan.popular ? 'border-red-500/50' : 'border-red-900/30'} transition-all duration-500 flex flex-col overflow-hidden`}
+                    className={`relative bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl p-6 border-2 ${plan.popular ? 'border-red-500/50' : 'border-red-900/30'} transition-all duration-500 flex flex-col overflow-hidden z-10`}
                     whileHover={{ 
                       y: -10, 
                       scale: 1.02,
