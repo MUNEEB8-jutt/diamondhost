@@ -82,9 +82,9 @@ INSERT INTO hosting_plans (name, icon, ram, performance, location, price, curren
 ('Platinum Plan', 'Award', '10GB RAM', '300%', 'UAE', 1200, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], true, 4, true),
 ('Diamond Plan', 'Diamond', '12GB RAM', '350%', 'UAE', 1440, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 5, true),
 ('Emerald Plan', 'Gem', '16GB RAM', '500%', 'UAE', 1920, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 6, true),
-('Ruby Plan', 'Sparkles', '20GB RAM', '600%', 'UAE', 2400, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 7, true),
-('Sapphire Plan', 'Zap', '24GB RAM', '800%', 'UAE', 2880, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 8, true),
-('Diamond Plus Plan', 'Trophy', '32GB RAM', '1000%', 'UAE', 3840, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Custom Plans'], false, 9, true);
+('Nether Plan', 'Nether', '22GB RAM', '700%', 'UAE', 2640, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 7, true),
+('Ender Plan', 'Ender', '32GB RAM', '900%', 'UAE', 3840, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 8, true),
+('Diamond Plus Plan', 'Trophy', '48GB RAM', '1200%', 'UAE', 5760, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Custom Plans'], false, 9, true);
 
 -- Insert Intel Platinum plans (Singapore)
 INSERT INTO hosting_plans (name, icon, ram, performance, location, price, currency, features, popular, sort_order, active) VALUES
@@ -94,9 +94,9 @@ INSERT INTO hosting_plans (name, icon, ram, performance, location, price, curren
 ('Platinum Plan', 'Award', '10GB RAM', '300%', 'Singapore', 1200, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], true, 4, true),
 ('Diamond Plan', 'Diamond', '12GB RAM', '350%', 'Singapore', 1440, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 5, true),
 ('Emerald Plan', 'Gem', '16GB RAM', '500%', 'Singapore', 1920, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 6, true),
-('Ruby Plan', 'Sparkles', '20GB RAM', '600%', 'Singapore', 2400, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 7, true),
-('Sapphire Plan', 'Zap', '24GB RAM', '800%', 'Singapore', 2880, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 8, true),
-('Diamond Plus Plan', 'Trophy', '32GB RAM', '1000%', 'Singapore', 3840, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Custom Plans'], false, 9, true);
+('Nether Plan', 'Nether', '22GB RAM', '700%', 'Singapore', 2640, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 7, true),
+('Ender Plan', 'Ender', '32GB RAM', '900%', 'Singapore', 3840, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 8, true),
+('Diamond Plus Plan', 'Trophy', '48GB RAM', '1200%', 'Singapore', 5760, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Custom Plans'], false, 9, true);
 
 -- Insert Intel Platinum plans (Germany)
 INSERT INTO hosting_plans (name, icon, ram, performance, location, price, currency, features, popular, sort_order, active) VALUES
@@ -106,9 +106,9 @@ INSERT INTO hosting_plans (name, icon, ram, performance, location, price, curren
 ('Platinum Plan', 'Award', '10GB RAM', '300%', 'Germany', 1200, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], true, 4, true),
 ('Diamond Plan', 'Diamond', '12GB RAM', '350%', 'Germany', 1440, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 5, true),
 ('Emerald Plan', 'Gem', '16GB RAM', '500%', 'Germany', 1920, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 6, true),
-('Ruby Plan', 'Sparkles', '20GB RAM', '600%', 'Germany', 2400, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 7, true),
-('Sapphire Plan', 'Zap', '24GB RAM', '800%', 'Germany', 2880, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 8, true),
-('Diamond Plus Plan', 'Trophy', '32GB RAM', '1000%', 'Germany', 3840, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Custom Plans'], false, 9, true);
+('Nether Plan', 'Nether', '22GB RAM', '700%', 'Germany', 2640, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 7, true),
+('Ender Plan', 'Ender', '32GB RAM', '900%', 'Germany', 3840, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Priority Support'], false, 8, true),
+('Diamond Plus Plan', 'Trophy', '48GB RAM', '1200%', 'Germany', 5760, 'PKR', ARRAY['24/7 Support', 'Intel Platinum', 'Custom Plans'], false, 9, true);
 
 -- Insert AMD EPYC plans (UAE only for now)
 INSERT INTO epyc_plans (name, icon, ram, performance, location, price, currency, features, popular, sort_order, active) VALUES
