@@ -75,7 +75,7 @@ export default function Hero() {
               </motion.a>
               
               <motion.a
-                href="https://discord.gg/pk8cmFNm6P"
+                href="https://discord.gg/tKDRWYNcuE"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="border border-slate-600 hover:border-cyan-500/50 bg-slate-900/50 backdrop-blur-sm text-white font-semibold py-4 px-10 rounded-xl transition-all duration-300 inline-flex items-center space-x-2"

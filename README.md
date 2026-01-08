@@ -123,7 +123,7 @@ INSERT INTO hosting_plans (name, ram, performance, location, price, popular) VAL
 
 ## Support
 
-For support and inquiries, join our Discord: [https://discord.gg/pk8cmFNm6P](https://discord.gg/pk8cmFNm6P)
+For support and inquiries, join our Discord: [https://discord.gg/tKDRWYNcuE](https://discord.gg/tKDRWYNcuE)
 
 ## License
 

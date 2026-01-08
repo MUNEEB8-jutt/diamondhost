@@ -43,7 +43,7 @@ export default function Header() {
             <a href="#features" className="text-gray-300 hover:text-cyan-400 transition-colors text-sm font-medium">Features</a>
             <a href="#support" className="text-gray-300 hover:text-cyan-400 transition-colors text-sm font-medium">Support</a>
             <motion.a 
-              href="https://discord.gg/pk8cmFNm6P"
+              href="https://discord.gg/tKDRWYNcuE"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-medium py-2 px-5 rounded-lg transition-all duration-300 shadow-lg shadow-cyan-500/25"
@@ -75,7 +75,7 @@ export default function Header() {
               <a href="#features" className="text-gray-300 hover:text-cyan-400 transition-colors">Features</a>
               <a href="#support" className="text-gray-300 hover:text-cyan-400 transition-colors">Support</a>
               <a 
-                href="https://discord.gg/pk8cmFNm6P"
+                href="https://discord.gg/tKDRWYNcuE"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-medium py-2 px-5 rounded-lg text-center"

@@ -6,10 +6,10 @@ import { Server, Zap, Shield, Globe, Cpu, Clock } from 'lucide-react'
 const features = [
   {
     icon: Cpu,
-    title: 'AMD Ryzen Powered',
+    title: 'AMD Ryzen & EPYC',
     subtitle: 'High Performance',
-    description: 'All servers powered by AMD Ryzen processors for maximum performance.',
-    color: 'from-blue-500 to-cyan-500',
+    description: 'All servers powered by AMD Ryzen & EPYC processors for maximum performance.',
+    color: 'from-red-500 to-orange-500',
   },
   {
     icon: Shield,
@@ -27,9 +27,9 @@ const features = [
   },
   {
     icon: Globe,
-    title: 'UAE Location',
-    subtitle: 'Low Latency',
-    description: 'Servers in UAE for best gaming experience in Pakistan.',
+    title: 'Multiple Locations',
+    subtitle: 'UAE • Singapore • Germany',
+    description: 'Choose from 3 global locations for best gaming experience.',
     color: 'from-purple-500 to-pink-500',
   },
 ]

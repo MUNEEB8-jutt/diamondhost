@@ -26,13 +26,13 @@ const fallbackLocations: Location[] = [
 
 // Intel Plans (Ryzen)
 const fallbackPlans: HostingPlan[] = [
-  { id: '1', name: 'Bronze', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'UAE', price: 240, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'AMD Ryzen', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
-  { id: '2', name: 'Silver', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'UAE', price: 480, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'AMD Ryzen', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
-  { id: '3', name: 'Gold', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'UAE', price: 960, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'AMD Ryzen', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
-  { id: '4', name: 'Platinum', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'UAE', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'AMD Ryzen', 'Priority Support'], popular: true, sort_order: 4, active: true, created_at: '' },
-  { id: '5', name: 'Diamond', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'UAE', price: 1440, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'AMD Ryzen', 'Priority Support'], popular: false, sort_order: 5, active: true, created_at: '' },
-  { id: '6', name: 'Emerald', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'UAE', price: 1920, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'AMD Ryzen', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
-  { id: '7', name: 'Diamond Plus', icon: 'Trophy', ram: '32GB RAM', performance: '1000%', location: 'UAE', price: 3840, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'AMD Ryzen', 'Custom Plans'], popular: false, sort_order: 7, active: true, created_at: '' },
+  { id: '1', name: 'Bronze Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'UAE', price: 240, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'DDoS Protection', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+  { id: '2', name: 'Silver Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'UAE', price: 480, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'DDoS Protection', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+  { id: '3', name: 'Gold Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'UAE', price: 960, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'DDoS Protection', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+  { id: '4', name: 'Platinum Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'UAE', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'DDoS Protection', 'Priority Support'], popular: true, sort_order: 4, active: true, created_at: '' },
+  { id: '5', name: 'Diamond Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'UAE', price: 1440, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'DDoS Protection', 'Priority Support'], popular: false, sort_order: 5, active: true, created_at: '' },
+  { id: '6', name: 'Emerald Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'UAE', price: 1920, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'DDoS Protection', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+  { id: '7', name: 'Diamond Plus Plan', icon: 'Trophy', ram: '32GB RAM', performance: '1000%', location: 'UAE', price: 3840, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'DDoS Protection', 'Custom Plans'], popular: false, sort_order: 7, active: true, created_at: '' },
 ]
 
 // AMD EPYC Plans (fallback)
@@ -178,9 +178,8 @@ export default function PricingCards() {
             </motion.div>
           ) : (
             <motion.div key={selectedLocation} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.4 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto px-4">
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto px-4">
               {filteredPlans.map((plan, idx) => {
-                const currentLoc = locations.find(l => l.code === selectedLocation) || fallbackLocations[0]
                 return (
                 <motion.div key={plan.id} initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: idx * 0.1 }} className="group relative">
                   {plan.popular && (
@@ -214,11 +213,7 @@ export default function PricingCards() {
                           <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
                           <span className="text-gray-300 text-sm">{plan.performance}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
-                          <span className="text-gray-300 text-sm">{currentLoc.flag} {currentLoc.name}</span>
-                        </div>
-                        {plan.features?.slice(0, 2).map((feature, i) => (
+                        {plan.features?.slice(0, 3).map((feature, i) => (
                           <div key={i} className="flex items-center gap-2">
                             <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
                             <span className="text-gray-300 text-sm">{feature}</span>
@@ -227,7 +222,7 @@ export default function PricingCards() {
                       </div>
                     </div>
                     <div>
-                      <motion.a href="https://discord.gg/pk8cmFNm6P" target="_blank" rel="noopener noreferrer"
+                      <motion.a href="https://discord.gg/tKDRWYNcuE" target="_blank" rel="noopener noreferrer"
                         className={`w-full py-3 rounded-xl font-semibold text-white text-center block transition-all duration-300 ${buttonStyles[plan.icon] || 'bg-cyan-500'}`}
                         whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                         Buy Now
@@ -337,7 +332,7 @@ export default function PricingCards() {
                       </div>
                       <div>
                         <motion.a 
-                          href="https://discord.gg/pk8cmFNm6P" 
+                          href="https://discord.gg/tKDRWYNcuE" 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="w-full py-3 rounded-xl font-semibold text-white text-center block transition-all duration-300 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400"
@@ -360,7 +355,7 @@ export default function PricingCards() {
         {/* CTA */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }} className="text-center mt-16">
           <p className="text-gray-400 mb-4">Need a custom solution?</p>
-          <motion.a href="https://discord.gg/pk8cmFNm6P" target="_blank" rel="noopener noreferrer"
+          <motion.a href="https://discord.gg/tKDRWYNcuE" target="_blank" rel="noopener noreferrer"
             className="border border-cyan-500/30 hover:border-cyan-400/50 hover:bg-cyan-500/10 text-cyan-400 font-semibold py-3 px-8 rounded-xl transition-all duration-300 inline-block"
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             Contact Us

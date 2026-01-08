@@ -58,7 +58,7 @@ export default function Footer() {
                 <a href="#features" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">Features</a>
               </motion.li>
               <motion.li whileHover={{ x: 5 }} transition={{ duration: 0.2 }}>
-                <a href="https://discord.gg/pk8cmFNm6P" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">Community</a>
+                <a href="https://discord.gg/tKDRWYNcuE" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-cyan-400 transition-colors text-sm">Community</a>
               </motion.li>
             </ul>
           </motion.div>
@@ -73,7 +73,7 @@ export default function Footer() {
             <h3 className="text-sm font-semibold mb-4 text-white uppercase tracking-wider">Get Support</h3>
             <div className="space-y-4">
               <motion.a
-                href="https://discord.gg/pk8cmFNm6P"
+                href="https://discord.gg/tKDRWYNcuE"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center space-x-3 text-gray-400 hover:text-cyan-400 transition-colors group"
