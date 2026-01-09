@@ -144,24 +144,11 @@ export default function PricingCards() {
   return (
     <section id="plans" className="py-24 px-4 relative z-10">
       <div className="container mx-auto">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="text-center mb-12">
-          <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-1 text-blue-400 text-sm mb-4">
-            <Cpu className="h-4 w-4" />
-            <span>Budget Performance</span>
-          </motion.div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-            <span className="text-blue-400">Intel</span> Platinum Plans
-          </h2>
-          <p className="text-gray-400 uppercase tracking-[0.3em] text-xs">Quality Wise, No Compromise</p>
-        </motion.div>
-
-        {/* Cinematic Location Selector */}
+        {/* Cinematic Location Selector - Above Everything */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }} 
           whileInView={{ opacity: 1, y: 0 }} 
-          transition={{ duration: 0.5, delay: 0.2 }} 
+          transition={{ duration: 0.5 }} 
           viewport={{ once: true }}
           className="flex justify-center mb-16"
         >
@@ -245,6 +232,19 @@ export default function PricingCards() {
             />
           ))}
         </div>
+
+        {/* Intel Platinum Header */}
+        <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="text-center mb-12">
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+            className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-1 text-blue-400 text-sm mb-4">
+            <Cpu className="h-4 w-4" />
+            <span>Budget Performance</span>
+          </motion.div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+            <span className="text-blue-400">Intel</span> Platinum Plans
+          </h2>
+          <p className="text-gray-400 uppercase tracking-[0.3em] text-xs">Quality Wise, No Compromise</p>
+        </motion.div>
 
         {/* Intel Platinum Plans Grid */}
         <AnimatePresence mode="wait">
