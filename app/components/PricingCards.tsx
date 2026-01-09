@@ -36,8 +36,8 @@ const fallbackEpycPlans: EpycPlan[] = [
 ]
 
 // Flag Component - Large cinematic style
-const FlagIcon = ({ code, size = 'normal' }: { code: string; size?: 'normal' | 'large' }) => {
-  const sizeClass = size === 'large' ? 'w-16 h-12' : 'w-10 h-7'
+const FlagIcon = ({ code, size = 'normal' }: { code: string; size?: 'normal' | 'large' | 'xlarge' }) => {
+  const sizeClass = size === 'xlarge' ? 'w-24 h-16' : size === 'large' ? 'w-16 h-12' : 'w-10 h-7'
   
   if (code === 'UAE' || code === 'AE') {
     return (
@@ -78,6 +78,7 @@ export default function PricingCards() {
   const [selectedLocationIndex, setSelectedLocationIndex] = useState(1) // UAE is center (index 1)
   const [loading, setLoading] = useState(true)
   const [plansLoading, setPlansLoading] = useState(false)
+  const [selectedProcessor, setSelectedProcessor] = useState<'intel' | 'amd'>('intel')
 
   const selectedLocation = locations[selectedLocationIndex]?.code || 'UAE'
 
@@ -152,87 +153,161 @@ export default function PricingCards() {
           viewport={{ once: true }}
           className="flex justify-center mb-16"
         >
-          <div className="flex items-center gap-8">
-            {/* Left Arrow - Curved style without circle */}
+          <div className="relative flex items-center gap-6">
+            {/* Glow Background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-blue-500/10 to-purple-500/20 blur-3xl rounded-full scale-150 opacity-50" />
+            
+            {/* Left Arrow - Sleek style */}
             <motion.button
               onClick={() => handleLocationChange('prev')}
-              className="p-2 text-gray-400 hover:text-cyan-400 transition-all duration-300"
+              className="relative z-10 p-4 text-slate-500 hover:text-cyan-400 transition-all duration-300 group"
               whileHover={{ scale: 1.2, x: -5 }}
               whileTap={{ scale: 0.9 }}
             >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 18c-4-2-6-6-6-6s2-4 6-6" />
+              <div className="absolute inset-0 bg-cyan-500/0 group-hover:bg-cyan-500/10 rounded-full blur-xl transition-all duration-300" />
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
+                <polyline points="15 18 9 12 15 6" />
               </svg>
             </motion.button>
 
-            {/* Flag Display */}
+            {/* Flag Display Card */}
             <motion.div 
-              className="relative flex items-center gap-4 bg-slate-900/90 backdrop-blur-xl px-8 py-4 rounded-2xl border border-slate-700/50 shadow-2xl"
+              className="relative flex items-center gap-5 bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-2xl px-10 py-5 rounded-2xl border border-slate-600/30 shadow-2xl"
               key={selectedLocationIndex}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
+              initial={{ opacity: 0, scale: 0.9, rotateY: -20 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+              transition={{ duration: 0.4, type: 'spring', stiffness: 200 }}
             >
-              {/* Popular Badge for UAE */}
+              {/* Animated Border Glow */}
+              <div className="absolute inset-0 rounded-2xl">
+                <div className="absolute inset-[-2px] bg-gradient-to-r from-cyan-500/50 via-blue-500/50 to-purple-500/50 rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
+              </div>
+              
+              {/* Inner Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 rounded-2xl" />
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent" />
+              
+              {/* Popular Badge for UAE - Top right corner */}
               {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
                 <motion.div 
-                  className="absolute -top-3 -right-2 z-20"
-                  initial={{ scale: 0, rotate: -10 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 400, delay: 0.2 }}
+                  className="absolute -top-2 -right-2 z-30"
+                  initial={{ scale: 0, y: 10 }}
+                  animate={{ scale: 1, y: 0 }}
+                  transition={{ type: 'spring', stiffness: 400, delay: 0.3 }}
                 >
-                  <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg shadow-yellow-500/30">
-                    ⭐ Popular
+                  <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg shadow-orange-500/40 whitespace-nowrap">
+                    Popular
                   </span>
                 </motion.div>
               )}
               
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-blue-500/10 rounded-2xl" />
+              {/* Flag with 3D effect */}
               <motion.div
-                initial={{ rotateY: 90 }}
-                animate={{ rotateY: 0 }}
-                transition={{ duration: 0.4 }}
+                initial={{ rotateY: 90, opacity: 0 }}
+                animate={{ rotateY: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="relative"
               >
-                <FlagIcon code={currentLoc.code} size="large" />
+                <div className="absolute inset-0 bg-white/10 blur-xl rounded-lg scale-110" />
+                <FlagIcon code={currentLoc.code} size="xlarge" />
               </motion.div>
-              <div className="relative">
+              
+              {/* Location Info */}
+              <div className="relative z-10">
                 <motion.p 
-                  className="text-2xl font-bold text-white"
-                  initial={{ opacity: 0, x: 20 }}
+                  className="text-2xl font-bold text-white tracking-wide"
+                  initial={{ opacity: 0, x: 15 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
+                  transition={{ delay: 0.15 }}
                 >
                   {currentLoc.name}
                 </motion.p>
-                <p className="text-xs text-cyan-400">Server Location</p>
+                <motion.p 
+                  className="text-xs text-cyan-400/80 font-medium tracking-widest uppercase"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.25 }}
+                >
+                  Server Location
+                </motion.p>
               </div>
             </motion.div>
 
-            {/* Right Arrow - Curved style without circle */}
+            {/* Right Arrow - Sleek style */}
             <motion.button
               onClick={() => handleLocationChange('next')}
-              className="p-2 text-gray-400 hover:text-cyan-400 transition-all duration-300"
+              className="relative z-10 p-4 text-slate-500 hover:text-cyan-400 transition-all duration-300 group"
               whileHover={{ scale: 1.2, x: 5 }}
               whileTap={{ scale: 0.9 }}
             >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 6c4 2 6 6 6 6s-2 4-6 6" />
+              <div className="absolute inset-0 bg-cyan-500/0 group-hover:bg-cyan-500/10 rounded-full blur-xl transition-all duration-300" />
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
+                <polyline points="9 18 15 12 9 6" />
               </svg>
             </motion.button>
           </div>
         </motion.div>
 
         {/* Location Dots */}
-        <div className="flex justify-center gap-2 mb-12">
+        <div className="flex justify-center gap-3 mb-8">
           {locations.map((loc, idx) => (
             <motion.div
               key={loc.id}
-              className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === selectedLocationIndex ? 'bg-cyan-400 w-6' : 'bg-slate-600'}`}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === selectedLocationIndex ? 'bg-cyan-400 w-8' : 'bg-slate-600'}`}
               whileHover={{ scale: 1.2 }}
             />
           ))}
         </div>
 
+        {/* Intel / AMD Toggle */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          transition={{ duration: 0.5, delay: 0.1 }} 
+          viewport={{ once: true }}
+          className="flex justify-center mb-16"
+        >
+          <div className="inline-flex bg-slate-900/90 backdrop-blur-xl p-2 rounded-2xl border border-slate-700/50 shadow-xl">
+            <motion.button
+              onClick={() => setSelectedProcessor('intel')}
+              className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                selectedProcessor === 'intel' 
+                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Cpu className="h-5 w-5" />
+              <span>Intel Platinum</span>
+            </motion.button>
+            <motion.button
+              onClick={() => setSelectedProcessor('amd')}
+              className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                selectedProcessor === 'amd' 
+                  ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/30' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Zap className="h-5 w-5" />
+              <span>AMD EPYC</span>
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Intel Platinum Section */}
+        <AnimatePresence mode="wait">
+        {selectedProcessor === 'intel' && (
+        <motion.div
+          key="intel-section"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -30 }}
+          transition={{ duration: 0.4 }}
+        >
         {/* Intel Platinum Header */}
         <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="text-center mb-12">
           <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
@@ -265,9 +340,9 @@ export default function PricingCards() {
               {filteredPlans.map((plan, idx) => (
                 <motion.div 
                   key={plan.id} 
-                  initial={{ opacity: 0, y: 50 }} 
+                  initial={{ opacity: 0, y: 30 }} 
                   animate={{ opacity: 1, y: 0 }} 
-                  transition={{ duration: 0.5, delay: idx * 0.05 }} 
+                  transition={{ duration: 0.3, delay: idx * 0.03 }} 
                   className="group relative"
                 >
                   {plan.popular && (
@@ -276,25 +351,23 @@ export default function PricingCards() {
                     </div>
                   )}
                   
-                  {/* Smoke/Glow Effect - Hidden by default, visible on hover */}
-                  <div className="absolute -inset-4 opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none z-0">
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/40 via-blue-500/40 to-cyan-500/40 blur-3xl rounded-3xl animate-pulse" />
-                    <div className="absolute inset-2 bg-gradient-to-t from-cyan-400/30 to-transparent blur-2xl rounded-3xl" />
-                    <div className="absolute -inset-2 bg-gradient-to-b from-blue-500/20 via-transparent to-cyan-500/20 blur-3xl rounded-3xl" />
+                  {/* Stable Glow Effect - No animation, just smooth transition */}
+                  <div className="absolute -inset-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-0">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-blue-500/30 to-cyan-500/30 blur-2xl rounded-3xl" />
                   </div>
                   
                   <motion.div 
-                    className={`relative bg-slate-900/95 rounded-2xl p-6 border-2 border-slate-700/60 transition-all duration-500 flex flex-col overflow-hidden z-10 ${plan.popular ? 'border-cyan-500/50' : ''}`}
+                    className={`relative bg-slate-900/95 rounded-2xl p-6 border-2 border-slate-700/60 transition-all duration-200 flex flex-col overflow-hidden z-10 ${plan.popular ? 'border-cyan-500/50' : ''}`}
                     whileHover={{ 
-                      y: -10, 
+                      y: -8, 
                       scale: 1.02,
-                      boxShadow: '0 25px 50px -12px rgba(6, 182, 212, 0.35)',
+                      boxShadow: '0 20px 40px -12px rgba(6, 182, 212, 0.4)',
                       borderColor: 'rgba(6, 182, 212, 0.8)',
-                      transition: { duration: 0.3 } 
+                      transition: { duration: 0.15 } 
                     }}
                   >
                     {/* Glow effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/10 group-hover:to-blue-500/10 transition-all duration-500 rounded-2xl" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/10 group-hover:to-blue-500/10 transition-all duration-200 rounded-2xl" />
                     
                     {/* Icon - AMD style but blue */}
                     <div className="flex justify-center mb-3 relative z-10">
@@ -358,15 +431,17 @@ export default function PricingCards() {
             </motion.div>
           )}
         </AnimatePresence>
+        </motion.div>
+        )}
 
         {/* AMD EPYC Section */}
-        {epycPlans.length > 0 && (
+        {selectedProcessor === 'amd' && epycPlans.length > 0 && (
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mt-24"
+          key="amd-section"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -30 }}
+          transition={{ duration: 0.4 }}
         >
           {/* AMD EPYC Header */}
           <div className="text-center mb-12">
@@ -398,9 +473,9 @@ export default function PricingCards() {
               {epycPlans.map((plan, idx) => (
                 <motion.div
                   key={plan.id}
-                  initial={{ opacity: 0, y: 50 }}
+                  initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: idx * 0.05 }}
+                  transition={{ duration: 0.3, delay: idx * 0.03 }}
                   className="group relative"
                 >
                   {plan.popular && (
@@ -409,25 +484,23 @@ export default function PricingCards() {
                     </div>
                   )}
                   
-                  {/* Smoke/Glow Effect - Hidden by default, visible on hover */}
-                  <div className="absolute -inset-4 opacity-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none z-0">
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/40 via-orange-500/40 to-red-500/40 blur-3xl rounded-3xl animate-pulse" />
-                    <div className="absolute inset-2 bg-gradient-to-t from-red-400/30 to-transparent blur-2xl rounded-3xl" />
-                    <div className="absolute -inset-2 bg-gradient-to-b from-orange-500/20 via-transparent to-red-500/20 blur-3xl rounded-3xl" />
+                  {/* Stable Glow Effect - No animation */}
+                  <div className="absolute -inset-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-0">
+                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/30 via-orange-500/30 to-red-500/30 blur-2xl rounded-3xl" />
                   </div>
                   
                   <motion.div
-                    className={`relative bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl p-6 border-2 ${plan.popular ? 'border-red-500/50' : 'border-red-900/30'} transition-all duration-500 flex flex-col overflow-hidden z-10`}
+                    className={`relative bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl p-6 border-2 ${plan.popular ? 'border-red-500/50' : 'border-red-900/30'} transition-all duration-200 flex flex-col overflow-hidden z-10`}
                     whileHover={{ 
-                      y: -10, 
+                      y: -8, 
                       scale: 1.02,
-                      boxShadow: '0 25px 50px -12px rgba(239, 68, 68, 0.35)',
+                      boxShadow: '0 20px 40px -12px rgba(239, 68, 68, 0.4)',
                       borderColor: 'rgba(239, 68, 68, 0.8)',
-                      transition: { duration: 0.3 } 
+                      transition: { duration: 0.15 } 
                     }}
                   >
                     {/* Glow effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 to-orange-500/0 group-hover:from-red-500/10 group-hover:to-orange-500/10 transition-all duration-500 rounded-2xl" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 to-orange-500/0 group-hover:from-red-500/10 group-hover:to-orange-500/10 transition-all duration-200 rounded-2xl" />
 
                     {/* Icon */}
                     <div className="flex justify-center mb-3 relative z-10">
@@ -492,6 +565,7 @@ export default function PricingCards() {
           </AnimatePresence>
         </motion.div>
         )}
+        </AnimatePresence>
 
         {/* CTA */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }} className="text-center mt-16">
