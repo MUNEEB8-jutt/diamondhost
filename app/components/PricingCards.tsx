@@ -149,8 +149,77 @@ export default function PricingCards() {
   const currentLoc = locations[selectedLocationIndex] || fallbackLocations[0]
 
   return (
-    <section id="plans" className="py-24 px-4 relative z-10">
-      <div className="container mx-auto">
+    <section id="plans" className="py-24 px-4 relative overflow-hidden">
+      {/* Plans Section Animated Background */}
+      <div className="absolute inset-0 z-0">
+        {/* Base gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#070b14] via-[#0c1929] to-[#070b14]" />
+        
+        {/* Animated moving grid */}
+        <div 
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(59, 130, 246, 0.3) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(59, 130, 246, 0.3) 1px, transparent 1px)
+            `,
+            backgroundSize: '60px 60px',
+            animation: 'gridMove 20s linear infinite'
+          }}
+        />
+        
+        {/* Floating particles effect */}
+        <div className="absolute inset-0">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-blue-400/30 rounded-full"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animation: `float ${5 + Math.random() * 10}s ease-in-out infinite`,
+                animationDelay: `${Math.random() * 5}s`
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Animated gradient orbs */}
+        <div 
+          className="absolute top-20 left-1/4 w-[500px] h-[500px] bg-blue-600/15 rounded-full blur-[150px]"
+          style={{ animation: 'pulse 4s ease-in-out infinite' }}
+        />
+        <div 
+          className="absolute bottom-20 right-1/4 w-[400px] h-[400px] bg-cyan-600/15 rounded-full blur-[120px]"
+          style={{ animation: 'pulse 4s ease-in-out infinite', animationDelay: '2s' }}
+        />
+        <div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-blue-500/10 rounded-full blur-[200px]"
+          style={{ animation: 'pulse 6s ease-in-out infinite', animationDelay: '1s' }}
+        />
+        
+        {/* Animated scan line */}
+        <div 
+          className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"
+          style={{ animation: 'scanLine 8s linear infinite' }}
+        />
+        
+        {/* Top and bottom fade */}
+        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#070b14] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#070b14] to-transparent" />
+        
+        {/* Accent lines with glow */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+        
+        {/* Corner accents */}
+        <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-transparent" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-cyan-500/10 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-blue-500/10 to-transparent" />
+        <div className="absolute bottom-0 right-0 w-32 h-32 bg-gradient-to-tl from-cyan-500/10 to-transparent" />
+      </div>
+
+      <div className="container mx-auto relative z-10">
         {/* Cinematic Location Selector - Above Everything */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }} 

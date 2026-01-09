@@ -1,172 +1,137 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Menu, X, Sparkles } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 const DiamondLogo = () => (
-  <svg viewBox="0 0 40 40" className="w-10 h-10">
+  <svg viewBox="0 0 40 40" className="w-9 h-9">
     <defs>
       <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#00d4ff"/>
-        <stop offset="100%" stopColor="#0099cc"/>
+        <stop offset="0%" stopColor="#3b82f6"/>
+        <stop offset="100%" stopColor="#06b6d4"/>
       </linearGradient>
-      <filter id="glow">
-        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-        <feMerge>
-          <feMergeNode in="coloredBlur"/>
-          <feMergeNode in="SourceGraphic"/>
-        </feMerge>
-      </filter>
     </defs>
-    <polygon points="20,2 38,14 38,30 20,38 2,30 2,14" fill="url(#logoGrad)" stroke="#00d4ff" strokeWidth="1" filter="url(#glow)"/>
-    <polygon points="20,2 38,14 20,20 2,14" fill="#66e0ff" opacity="0.9"/>
-    <polygon points="20,20 38,14 38,30 20,38" fill="#0099cc" opacity="0.7"/>
+    <polygon points="20,2 38,14 38,30 20,38 2,30 2,14" fill="url(#logoGrad)" stroke="#3b82f6" strokeWidth="1"/>
+    <polygon points="20,2 38,14 20,20 2,14" fill="#60a5fa" opacity="0.9"/>
+    <polygon points="20,20 38,14 38,30 20,38" fill="#2563eb" opacity="0.7"/>
   </svg>
 )
 
-// Typewriter phrases
-const phrases = [
-  "Best Minecraft Hosting",
-  "Premium Performance",
-  "24/7 Expert Support",
-  "DDoS Protected",
-  "Intel Platinum Powered",
-  "AMD EPYC Servers",
-]
-
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [phraseIndex, setPhraseIndex] = useState(0)
-  const [displayText, setDisplayText] = useState('')
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [activeItem, setActiveItem] = useState('Home')
 
-  useEffect(() => {
-    const currentPhrase = phrases[phraseIndex]
-    const typeSpeed = isDeleting ? 30 : 80
-    const pauseTime = 2000
-
-    if (!isDeleting && displayText === currentPhrase) {
-      setTimeout(() => setIsDeleting(true), pauseTime)
-      return
-    }
-
-    if (isDeleting && displayText === '') {
-      setIsDeleting(false)
-      setPhraseIndex((prev) => (prev + 1) % phrases.length)
-      return
-    }
-
-    const timeout = setTimeout(() => {
-      setDisplayText(prev => 
-        isDeleting 
-          ? currentPhrase.substring(0, prev.length - 1)
-          : currentPhrase.substring(0, prev.length + 1)
-      )
-    }, typeSpeed)
-
-    return () => clearTimeout(timeout)
-  }, [displayText, isDeleting, phraseIndex])
+  const navItems = [
+    { href: '#', label: 'Home' },
+    { href: '#plans', label: 'Plans' },
+    { href: '#support', label: 'Support' },
+  ]
 
   return (
     <motion.header 
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
-      className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl"
+      className="fixed top-0 left-0 right-0 z-50 bg-[#070b14]/80 backdrop-blur-xl border-b border-blue-500/10"
     >
-      <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-700/50 shadow-2xl shadow-black/20">
-        <div className="px-6 py-3">
-          <div className="flex items-center justify-between">
-            {/* Logo with Typewriter */}
-            <motion.a 
-              href="#"
-              className="flex items-center space-x-3"
-              whileHover={{ scale: 1.02 }}
-            >
-              <DiamondLogo />
-              <div className="flex flex-col">
-                <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Diamond Host</span>
-                <div className="flex items-center h-4">
-                  <span className="text-[10px] text-cyan-400 font-medium">
-                    {displayText}
-                  </span>
-                  <motion.span 
-                    className="w-0.5 h-3 bg-cyan-400 ml-0.5"
-                    animate={{ opacity: [1, 0] }}
-                    transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
-                  />
-                </div>
-              </div>
-            </motion.a>
+      <div className="container mx-auto px-6">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo - Left Side */}
+          <motion.a 
+            href="#"
+            className="flex items-center gap-2"
+            whileHover={{ scale: 1.02 }}
+          >
+            <DiamondLogo />
+            <span className="font-orbitron text-lg font-bold tracking-wide">
+              <span className="text-blue-400">DIAMOND</span>
+              <span className="text-white">HOST</span>
+            </span>
+          </motion.a>
 
-            {/* Desktop Navigation - Centered */}
-            <nav className="hidden md:flex items-center space-x-1 bg-slate-800/50 rounded-xl p-1">
-              {[
-                { href: '#plans', label: 'Plans' },
-                { href: '#features', label: 'Features' },
-                { href: '#support', label: 'Support' },
-              ].map((item) => (
-                <motion.a
-                  key={item.href}
+          {/* Desktop Navigation - Center */}
+          <nav className="hidden md:flex items-center gap-2 absolute left-1/2 -translate-x-1/2">
+            {navItems.map((item) => (
+              <motion.a
+                key={item.label}
+                href={item.href}
+                onClick={() => setActiveItem(item.label)}
+                className={`relative px-6 py-2.5 text-base font-medium transition-all duration-300 ${
+                  activeItem === item.label 
+                    ? 'text-white' 
+                    : 'text-gray-500 hover:text-gray-300'
+                }`}
+                whileHover={{ y: -1 }}
+              >
+                {item.label}
+                {activeItem === item.label && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-cyan-500"
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </motion.a>
+            ))}
+          </nav>
+
+          {/* Discord Button - Right Side */}
+          <motion.a
+            href="https://discord.gg/tKDRWYNcuE"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden md:flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm py-2.5 px-5 rounded-lg transition-all duration-300 shadow-lg shadow-blue-500/20"
+            whileHover={{ scale: 1.03, y: -1 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Sparkles className="h-4 w-4" />
+            Join Discord
+          </motion.a>
+
+          {/* Mobile Menu Button */}
+          <button 
+            className="md:hidden text-gray-300 p-2"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
+
+        {/* Mobile Navigation */}
+        {isMenuOpen && (
+          <motion.nav 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="md:hidden py-4 border-t border-blue-500/10"
+          >
+            <div className="flex flex-col gap-1">
+              {navItems.map((item) => (
+                <a
+                  key={item.label}
                   href={item.href}
-                  className="text-gray-300 hover:text-white hover:bg-slate-700/50 px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setActiveItem(item.label)}
+                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                    activeItem === item.label 
+                      ? 'text-white bg-blue-600/20' 
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
                 >
                   {item.label}
-                </motion.a>
+                </a>
               ))}
-            </nav>
-
-            {/* Discord Button */}
-            <motion.a 
-              href="https://discord.gg/tKDRWYNcuE"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden md:flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-medium py-2.5 px-5 rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/25"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Sparkles className="h-4 w-4" />
-              <span>Join Discord</span>
-            </motion.a>
-
-            {/* Mobile Menu Button */}
-            <button 
-              className="md:hidden text-gray-300 p-2 hover:bg-slate-800 rounded-lg transition-colors"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
-
-          {/* Mobile Navigation */}
-          <AnimatePresence>
-            {isMenuOpen && (
-              <motion.nav 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="md:hidden mt-4 pt-4 border-t border-slate-700/50"
+              <a 
+                href="https://discord.gg/tKDRWYNcuE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold text-sm py-3 px-4 rounded-lg mt-2"
               >
-                <div className="flex flex-col space-y-2">
-                  <a href="#plans" className="text-gray-300 hover:text-cyan-400 hover:bg-slate-800/50 px-4 py-3 rounded-lg transition-all">Plans</a>
-                  <a href="#features" className="text-gray-300 hover:text-cyan-400 hover:bg-slate-800/50 px-4 py-3 rounded-lg transition-all">Features</a>
-                  <a href="#support" className="text-gray-300 hover:text-cyan-400 hover:bg-slate-800/50 px-4 py-3 rounded-lg transition-all">Support</a>
-                  <a 
-                    href="https://discord.gg/tKDRWYNcuE"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-blue-600 text-white font-medium py-3 px-5 rounded-xl text-center mt-2"
-                  >
-                    Join Discord
-                  </a>
-                </div>
-              </motion.nav>
-            )}
-          </AnimatePresence>
-        </div>
+                <Sparkles className="h-4 w-4" />
+                Join Discord
+              </a>
+            </div>
+          </motion.nav>
+        )}
       </div>
     </motion.header>
   )

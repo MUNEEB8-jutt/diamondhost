@@ -7,6 +7,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        orbitron: ['var(--font-orbitron)', 'sans-serif'],
+        sans: ['var(--font-inter)', 'sans-serif'],
+      },
       colors: {
         primary: {
           50: '#eff6ff',

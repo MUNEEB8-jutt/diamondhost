@@ -131,6 +131,41 @@
   background-size: 50px 50px;
 }
 
+/* Plans Section Animations */
+@keyframes gridMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(60px); }
+}
+
+@keyframes scanLine {
+  0% { top: -2px; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0) translateX(0); 
+    opacity: 0.3;
+  }
+  50% { 
+    transform: translateY(-20px) translateX(10px); 
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.25;
+    transform: scale(1.05);
+  }
+}
+
 /* Gradient Orbs */
 .orb {
   position: absolute;

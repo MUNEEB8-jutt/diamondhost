@@ -5,6 +5,8 @@ import Header from './components/Header'
 import Hero from './components/Hero'
 import PricingCards from './components/PricingCards'
 import Features from './components/Features'
+import Reviews from './components/Reviews'
+import PaymentMethods from './components/PaymentMethods'
 import Footer from './components/Footer'
 import Background from './components/Background'
 import LoadingScreen from './components/LoadingScreen'
@@ -31,6 +33,8 @@ export default function Home() {
           <Hero />
           <PricingCards />
           <Features />
+          <Reviews />
+          <PaymentMethods />
           <Footer />
         </div>
       </main>
