@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Loader2, Cpu, Zap } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getPlans, getLocations, getPlansByLocation, getEpycPlansByLocation, HostingPlan, Location, EpycPlan } from '@/lib/supabase'
+import { useCurrency } from '@/lib/CurrencyContext'
 
 // Fallback data - UAE in center (index 1)
 const fallbackLocations: Location[] = [
@@ -79,6 +80,7 @@ export default function PricingCards() {
   const [loading, setLoading] = useState(true)
   const [plansLoading, setPlansLoading] = useState(false)
   const [selectedProcessor, setSelectedProcessor] = useState<'intel' | 'amd'>('intel')
+  const { convertPrice, symbol } = useCurrency()
 
   const selectedLocation = locations[selectedLocationIndex]?.code || 'UAE'
 
@@ -463,8 +465,7 @@ export default function PricingCards() {
 
                     {/* Price */}
                     <div className="text-center mb-4 relative z-10">
-                      <span className="text-4xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">{plan.price}</span>
-                      <span className="text-sm text-cyan-400 ml-1">{plan.currency}</span>
+                      <span className="text-4xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">{symbol}{convertPrice(plan.price / 278)}</span>
                       <p className="text-gray-500 text-xs mt-1">per month</p>
                     </div>
 
@@ -596,8 +597,7 @@ export default function PricingCards() {
 
                     {/* Price */}
                     <div className="text-center mb-4 relative z-10">
-                      <span className="text-4xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{plan.price}</span>
-                      <span className="text-sm text-red-400 ml-1">{plan.currency}</span>
+                      <span className="text-4xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{symbol}{convertPrice(plan.price / 278)}</span>
                       <p className="text-gray-500 text-xs mt-1">per month</p>
                     </div>
 

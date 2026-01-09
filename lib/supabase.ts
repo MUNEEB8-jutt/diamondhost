@@ -291,3 +291,249 @@ export async function deleteEpycPlan(id: string): Promise<boolean> {
   }
   return true
 }
+
+
+// Support Ticket Types
+export interface SupportUser {
+  id: string
+  email: string
+  name: string
+  created_at: string
+}
+
+export interface SupportTicket {
+  id: string
+  ticket_id: string
+  user_id: string
+  customer_name: string
+  customer_email: string
+  subject: string
+  status: 'open' | 'in_progress' | 'resolved' | 'closed'
+  priority: 'low' | 'normal' | 'high' | 'urgent'
+  created_at: string
+  updated_at: string
+}
+
+export interface TicketMessage {
+  id: string
+  ticket_id: string
+  sender_type: 'customer' | 'admin'
+  sender_name: string
+  message: string | null
+  image_url: string | null
+  created_at: string
+}
+
+// Simple hash function for password (use bcrypt in production)
+async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password + 'diamondhost_salt')
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+}
+
+// User Registration
+export async function registerUser(email: string, password: string, name: string): Promise<{ user: SupportUser | null, error: string | null }> {
+  const passwordHash = await hashPassword(password)
+  
+  const { data, error } = await supabase
+    .from('support_users')
+    .insert([{ email: email.toLowerCase(), password_hash: passwordHash, name }])
+    .select('id, email, name, created_at')
+    .single()
+  
+  if (error) {
+    if (error.code === '23505') {
+      return { user: null, error: 'Email already registered' }
+    }
+    return { user: null, error: error.message }
+  }
+  return { user: data, error: null }
+}
+
+// User Login
+export async function loginUser(email: string, password: string): Promise<{ user: SupportUser | null, error: string | null }> {
+  const passwordHash = await hashPassword(password)
+  
+  const { data, error } = await supabase
+    .from('support_users')
+    .select('id, email, name, created_at')
+    .eq('email', email.toLowerCase())
+    .eq('password_hash', passwordHash)
+    .single()
+  
+  if (error || !data) {
+    return { user: null, error: 'Invalid email or password' }
+  }
+  return { user: data, error: null }
+}
+
+// Get user by ID
+export async function getUserById(userId: string): Promise<SupportUser | null> {
+  const { data, error } = await supabase
+    .from('support_users')
+    .select('id, email, name, created_at')
+    .eq('id', userId)
+    .single()
+  
+  if (error) return null
+  return data
+}
+
+// Generate unique ticket ID
+function generateTicketId(): string {
+  return 'DH-' + Math.floor(10000 + Math.random() * 90000).toString()
+}
+
+// Create new ticket (with user)
+export async function createTicket(userId: string, customerName: string, customerEmail: string, subject: string, initialMessage: string): Promise<{ ticket: SupportTicket | null, error: string | null }> {
+  const ticketId = generateTicketId()
+  
+  const { data: ticket, error: ticketError } = await supabase
+    .from('support_tickets')
+    .insert([{
+      ticket_id: ticketId,
+      user_id: userId,
+      customer_name: customerName,
+      customer_email: customerEmail,
+      subject: subject,
+      status: 'open',
+      priority: 'normal'
+    }])
+    .select()
+    .single()
+  
+  if (ticketError) {
+    return { ticket: null, error: ticketError.message }
+  }
+
+  await supabase
+    .from('ticket_messages')
+    .insert([{
+      ticket_id: ticketId,
+      sender_type: 'customer',
+      sender_name: customerName,
+      message: initialMessage
+    }])
+
+  return { ticket, error: null }
+}
+
+// Get tickets by user
+export async function getUserTickets(userId: string): Promise<SupportTicket[]> {
+  const { data, error } = await supabase
+    .from('support_tickets')
+    .select('*')
+    .eq('user_id', userId)
+    .order('updated_at', { ascending: false })
+  
+  if (error) return []
+  return data || []
+}
+
+// Get ticket by ID
+export async function getTicketById(ticketId: string): Promise<SupportTicket | null> {
+  const { data, error } = await supabase
+    .from('support_tickets')
+    .select('*')
+    .eq('ticket_id', ticketId)
+    .single()
+  
+  if (error) return null
+  return data
+}
+
+// Get all tickets (for admin)
+export async function getAllTickets(): Promise<SupportTicket[]> {
+  const { data, error } = await supabase
+    .from('support_tickets')
+    .select('*')
+    .order('created_at', { ascending: false })
+  
+  if (error) return []
+  return data || []
+}
+
+// Get messages for a ticket
+export async function getTicketMessages(ticketId: string): Promise<TicketMessage[]> {
+  const { data, error } = await supabase
+    .from('ticket_messages')
+    .select('*')
+    .eq('ticket_id', ticketId)
+    .order('created_at', { ascending: true })
+  
+  if (error) return []
+  return data || []
+}
+
+// Send message to ticket (with optional image)
+export async function sendTicketMessage(ticketId: string, senderType: 'customer' | 'admin', senderName: string, message: string | null, imageUrl: string | null = null): Promise<TicketMessage | null> {
+  const { data, error } = await supabase
+    .from('ticket_messages')
+    .insert([{
+      ticket_id: ticketId,
+      sender_type: senderType,
+      sender_name: senderName,
+      message: message,
+      image_url: imageUrl
+    }])
+    .select()
+    .single()
+  
+  if (error) return null
+
+  await supabase
+    .from('support_tickets')
+    .update({ updated_at: new Date().toISOString() })
+    .eq('ticket_id', ticketId)
+
+  return data
+}
+
+// Upload image to Supabase Storage
+export async function uploadTicketImage(file: File, ticketId: string): Promise<string | null> {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${ticketId}/${Date.now()}.${fileExt}`
+  
+  const { error } = await supabase.storage
+    .from('ticket-images')
+    .upload(fileName, file)
+  
+  if (error) {
+    console.error('Upload error:', error)
+    return null
+  }
+  
+  const { data } = supabase.storage
+    .from('ticket-images')
+    .getPublicUrl(fileName)
+  
+  return data.publicUrl
+}
+
+// Update ticket status
+export async function updateTicketStatus(ticketId: string, status: SupportTicket['status']): Promise<boolean> {
+  const { error } = await supabase
+    .from('support_tickets')
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq('ticket_id', ticketId)
+  
+  if (error) return false
+  return true
+}
+
+// Subscribe to new messages (realtime)
+export function subscribeToTicketMessages(ticketId: string, callback: (message: TicketMessage) => void) {
+  return supabase
+    .channel(`ticket-${ticketId}`)
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'ticket_messages',
+      filter: `ticket_id=eq.${ticketId}`
+    }, (payload) => {
+      callback(payload.new as TicketMessage)
+    })
+    .subscribe()
+}

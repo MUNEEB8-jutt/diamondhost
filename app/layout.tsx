@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Orbitron, Inter } from 'next/font/google'
 import './globals.css'
+import { CurrencyProvider } from '@/lib/CurrencyContext'
 
 const orbitron = Orbitron({ 
   subsets: ['latin'],
@@ -32,7 +33,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${orbitron.variable} ${inter.variable} font-sans`}>{children}</body>
+      <body className={`${orbitron.variable} ${inter.variable} font-sans`}>
+        <CurrencyProvider>
+          {children}
+        </CurrencyProvider>
+      </body>
     </html>
   )
 }

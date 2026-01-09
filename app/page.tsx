@@ -15,7 +15,6 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate loading time for smooth entrance
     const timer = setTimeout(() => {
       setIsLoading(false)
     }, 2000)
