@@ -117,6 +117,12 @@ export default function PricingCards() {
     setSelectedLocationIndex(newIndex)
     setPlansLoading(true)
     
+    // Reset to Intel if switching away from UAE while AMD is selected
+    const newLocationCode = locations[newIndex]?.code || 'UAE'
+    if (newLocationCode !== 'UAE' && newLocationCode !== 'AE' && selectedProcessor === 'amd') {
+      setSelectedProcessor('intel')
+    }
+    
     const locationCode = locations[newIndex]?.code || 'UAE'
     const [ryzenData, epycData] = await Promise.all([
       getPlansByLocation(locationCode),
@@ -260,7 +266,7 @@ export default function PricingCards() {
           ))}
         </div>
 
-        {/* Intel / AMD Toggle */}
+        {/* Intel / AMD Toggle - Only show AMD for UAE */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           whileInView={{ opacity: 1, y: 0 }} 
@@ -282,6 +288,8 @@ export default function PricingCards() {
               <Cpu className="h-5 w-5" />
               <span>Intel Platinum</span>
             </motion.button>
+            {/* AMD button only for UAE */}
+            {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
             <motion.button
               onClick={() => setSelectedProcessor('amd')}
               className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
@@ -295,6 +303,7 @@ export default function PricingCards() {
               <Zap className="h-5 w-5" />
               <span>AMD EPYC</span>
             </motion.button>
+            )}
           </div>
         </motion.div>
 
