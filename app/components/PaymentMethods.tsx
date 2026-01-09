@@ -6,32 +6,44 @@ import { CreditCard, Wallet } from 'lucide-react'
 const paymentMethods = [
   {
     name: 'JazzCash',
-    icon: '📱',
+    icon: '📲',
     color: 'from-red-500 to-red-600',
     description: 'Mobile Wallet',
   },
   {
     name: 'Easypaisa',
-    icon: '💚',
-    color: 'from-green-500 to-green-600',
+    icon: '💳',
+    color: 'from-green-500 to-emerald-600',
     description: 'Mobile Wallet',
   },
   {
+    name: 'SadaPay',
+    icon: '💜',
+    color: 'from-purple-500 to-violet-600',
+    description: 'Digital Bank',
+  },
+  {
     name: 'Bank Transfer',
-    icon: '🏦',
+    icon: '🏛️',
     color: 'from-blue-500 to-blue-600',
     description: 'All Pakistani Banks',
   },
   {
+    name: 'PayPal',
+    icon: '🅿️',
+    color: 'from-blue-600 to-indigo-600',
+    description: 'International',
+  },
+  {
     name: 'Crypto',
-    icon: '₿',
-    color: 'from-orange-500 to-yellow-500',
+    icon: '🪙',
+    color: 'from-orange-500 to-amber-500',
     description: 'BTC, ETH, USDT',
   },
   {
     name: 'UPI',
     icon: '🇮🇳',
-    color: 'from-purple-500 to-indigo-600',
+    color: 'from-indigo-500 to-purple-600',
     description: 'Indian Payments',
   },
 ]

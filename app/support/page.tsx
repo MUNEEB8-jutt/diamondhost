@@ -430,15 +430,28 @@ export default function SupportPage() {
                 <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-blue-500/20 p-12 text-center">
                   <Ticket className="h-16 w-16 text-gray-600 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-white mb-2">No Tickets Yet</h3>
-                  <p className="text-gray-400 mb-6">Create your first support ticket to get help</p>
-                  <motion.button
-                    onClick={() => setView('create')}
-                    className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold px-6 py-3 rounded-xl inline-flex items-center gap-2"
-                    whileHover={{ scale: 1.02 }}
-                  >
-                    <Plus className="h-5 w-5" />
-                    Create Ticket
-                  </motion.button>
+                  <p className="text-gray-400 mb-4">Create your first support ticket to get help</p>
+                  <p className="text-cyan-400 text-sm mb-6">💬 Join Discord for faster conversation</p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <motion.button
+                      onClick={() => setView('create')}
+                      className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold px-6 py-3 rounded-xl inline-flex items-center justify-center gap-2"
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      <Plus className="h-5 w-5" />
+                      Create Ticket
+                    </motion.button>
+                    <motion.a
+                      href="https://discord.gg/tKDRWYNcuE"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold px-6 py-3 rounded-xl inline-flex items-center justify-center gap-2"
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      <MessageCircle className="h-5 w-5" />
+                      Join Discord
+                    </motion.a>
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-3">

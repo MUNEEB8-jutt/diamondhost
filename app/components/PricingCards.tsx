@@ -433,7 +433,7 @@ export default function PricingCards() {
                       whileHover={{ scale: 1.02 }} 
                       whileTap={{ scale: 0.98 }}
                     >
-                      Buy Now
+                      Order Now
                     </motion.a>
                   </motion.div>
                 </motion.div>
@@ -565,7 +565,7 @@ export default function PricingCards() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      Buy Now
+                      Order Now
                     </motion.a>
                   </motion.div>
                 </motion.div>

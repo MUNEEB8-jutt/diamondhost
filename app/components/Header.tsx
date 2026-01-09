@@ -93,18 +93,18 @@ export default function Header() {
       } border-b border-blue-500/10`}
     >
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex items-center justify-between h-16 md:h-18">
-          <Link href="/" className="flex items-center gap-2 group">
+        <div className="flex items-center justify-between h-20 md:h-22">
+          <Link href="/" className="flex items-center gap-3 group">
             <motion.div whileHover={{ scale: 1.05, rotate: 5 }} transition={{ type: 'spring', stiffness: 300 }}>
               <DiamondLogo />
             </motion.div>
-            <span className="font-orbitron text-base md:text-lg font-bold tracking-wide">
+            <span className="font-orbitron text-lg md:text-xl font-bold tracking-wide">
               <span className="text-blue-400">DIAMOND</span>
               <span className="text-white">HOST</span>
             </span>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1 bg-slate-900/50 backdrop-blur-sm rounded-full px-2 py-1.5 border border-slate-700/50">
+          <nav className="hidden lg:flex items-center gap-1.5 bg-slate-900/50 backdrop-blur-sm rounded-full px-3 py-2 border border-slate-700/50">
             {navItems.map((item) => {
               const isActive = pathname === item.href
               const isLoading = loadingPath === item.href
@@ -113,7 +113,7 @@ export default function Header() {
                 <motion.button
                   key={item.label}
                   onClick={() => handleNavClick(item.href)}
-                  className={`relative flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  className={`relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
                     isActive ? 'text-white' : 'text-gray-400 hover:text-white'
                   }`}
                   whileHover={{ scale: 1.02 }}
@@ -137,15 +137,15 @@ export default function Header() {
             })}
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-4">
             <div className="relative">
               <motion.button
                 onClick={() => setCurrencyOpen(!currencyOpen)}
-                className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/50 text-white text-sm py-2 px-3 rounded-lg transition-all duration-300"
+                className="flex items-center gap-2 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/50 text-white text-sm py-2.5 px-4 rounded-xl transition-all duration-300"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span>{currentCurrency?.flag}</span>
+                <span className="text-lg">{currentCurrency?.flag}</span>
                 <span className="font-medium">{currency}</span>
                 <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${currencyOpen ? 'rotate-180' : ''}`} />
               </motion.button>
@@ -160,12 +160,12 @@ export default function Header() {
                     <motion.button
                       key={curr.code}
                       onClick={() => { setCurrency(curr.code); setCurrencyOpen(false) }}
-                      className={`flex items-center gap-2 w-full px-4 py-2.5 text-sm transition-all ${
+                      className={`flex items-center gap-2 w-full px-4 py-3 text-sm transition-all ${
                         currency === curr.code ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-slate-700'
                       }`}
                       whileHover={{ x: 3 }}
                     >
-                      <span>{curr.flag}</span>
+                      <span className="text-lg">{curr.flag}</span>
                       <span className="font-medium">{curr.code}</span>
                       <span className="text-gray-400 text-xs">({curr.symbol})</span>
                     </motion.button>
@@ -178,22 +178,22 @@ export default function Header() {
               href="https://discord.gg/tKDRWYNcuE"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold text-sm py-2.5 px-5 rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/20"
+              className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold text-sm py-3 px-6 rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/20"
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
-              <Sparkles className="h-4 w-4" />
+              <Sparkles className="h-5 w-5" />
               <span className="hidden xl:inline">Join Discord</span>
               <span className="xl:hidden">Discord</span>
             </motion.a>
           </div>
 
           <motion.button 
-            className="lg:hidden text-gray-300 p-2 rounded-lg hover:bg-slate-800/50" 
+            className="lg:hidden text-gray-300 p-2.5 rounded-xl hover:bg-slate-800/50" 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             whileTap={{ scale: 0.95 }}
           >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMenuOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
           </motion.button>
         </div>
 
