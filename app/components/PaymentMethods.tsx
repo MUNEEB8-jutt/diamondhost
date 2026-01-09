@@ -26,7 +26,7 @@ const paymentMethods = [
     name: 'Bank Transfer',
     icon: '🏛️',
     color: 'from-blue-500 to-blue-600',
-    description: 'All Pakistani Banks',
+    description: 'All Banks',
   },
   {
     name: 'PayPal',
