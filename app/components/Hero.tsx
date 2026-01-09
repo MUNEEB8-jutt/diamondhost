@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRight, Server, Zap, Headphones } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Hero() {
   return (
@@ -67,47 +68,48 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="flex justify-center items-center mb-20"
         >
-          <motion.a
-            href="#plans"
-            className="group relative bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_100%] text-white font-bold py-4 px-12 rounded-full transition-all duration-500 inline-flex items-center gap-3 shadow-2xl shadow-blue-500/40 overflow-hidden"
-            whileHover={{ 
-              scale: 1.08, 
-              y: -5,
-              boxShadow: '0 30px 60px -15px rgba(59, 130, 246, 0.5)'
-            }}
-            whileTap={{ scale: 0.95 }}
-            animate={{
-              backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-            }}
-            transition={{
-              backgroundPosition: {
-                duration: 3,
-                repeat: Infinity,
-                ease: 'linear'
-              }
-            }}
-          >
-            {/* Animated ring */}
-            <span className="absolute inset-0 rounded-full border-2 border-white/20 group-hover:border-white/40 group-hover:scale-110 transition-all duration-500" />
-            
-            {/* Shine sweep effect */}
-            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-            
-            {/* Pulse rings on hover */}
-            <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100">
-              <span className="absolute inset-0 rounded-full border border-cyan-400/50 animate-ping" />
-            </span>
-            
-            {/* Button content */}
-            <span className="relative font-orbitron tracking-widest text-lg">GET STARTED</span>
-            <motion.span
-              className="relative"
-              animate={{ x: [0, 5, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
+          <Link href="/plans">
+            <motion.div
+              className="group relative bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_100%] text-white font-bold py-4 px-12 rounded-full transition-all duration-500 inline-flex items-center gap-3 shadow-2xl shadow-blue-500/40 overflow-hidden cursor-pointer"
+              whileHover={{ 
+                scale: 1.08, 
+                y: -5,
+                boxShadow: '0 30px 60px -15px rgba(59, 130, 246, 0.5)'
+              }}
+              whileTap={{ scale: 0.95 }}
+              animate={{
+                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+              }}
+              transition={{
+                backgroundPosition: {
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: 'linear'
+                }
+              }}
             >
-              <ArrowRight className="h-5 w-5" />
-            </motion.span>
-          </motion.a>
+              {/* Animated ring */}
+              <span className="absolute inset-0 rounded-full border-2 border-white/20 group-hover:border-white/40 group-hover:scale-110 transition-all duration-500" />
+              
+              {/* Shine sweep effect */}
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+              
+              {/* Pulse rings on hover */}
+              <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100">
+                <span className="absolute inset-0 rounded-full border border-cyan-400/50 animate-ping" />
+              </span>
+              
+              {/* Button content */}
+              <span className="relative font-orbitron tracking-widest text-lg">GET STARTED</span>
+              <motion.span
+                className="relative"
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <ArrowRight className="h-5 w-5" />
+              </motion.span>
+            </motion.div>
+          </Link>
         </motion.div>
 
         {/* Stats Section */}
