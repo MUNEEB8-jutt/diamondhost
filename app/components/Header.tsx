@@ -48,7 +48,7 @@ const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/plans', label: 'Plans', icon: Package },
   { href: '/features', label: 'Features', icon: Zap },
-  { href: '/reviews', label: 'Reviews', icon: Star },
+  { href: '/about', label: 'About Us', icon: Star },
   { href: '/support', label: 'Support', icon: MessageCircle },
 ]
 

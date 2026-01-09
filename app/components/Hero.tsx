@@ -1,53 +1,76 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ArrowRight, Server, Zap, Headphones } from 'lucide-react'
+import { ArrowRight, Server, Zap, Headphones, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Hero() {
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 pb-8 relative">
+    <section className="min-h-screen flex flex-col items-center justify-center px-4 pt-20 pb-8 relative overflow-hidden">
+      {/* Extra glow effects */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[150px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/4 w-[300px] h-[300px] bg-cyan-500/15 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/2 right-1/4 w-[300px] h-[300px] bg-blue-500/15 rounded-full blur-[100px] pointer-events-none" />
+
       <div className="container mx-auto text-center relative z-10">
         {/* Badge */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 rounded-full px-4 py-1.5 mb-8"
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-full px-5 py-2 mb-6 backdrop-blur-sm"
         >
-          <span className="text-yellow-400">⚡</span>
-          <span className="text-sm text-gray-300">Premium Game Server Hosting</span>
+          <motion.span 
+            animate={{ rotate: [0, 15, -15, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="text-yellow-400 text-lg"
+          >
+            ⚡
+          </motion.span>
+          <span className="text-sm text-gray-200 font-medium">Premium Game Server Hosting</span>
+          <Sparkles className="h-4 w-4 text-cyan-400" />
         </motion.div>
 
-        {/* Main Heading - Orbitron font with glow */}
+        {/* Main Heading */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-6 font-orbitron"
+          className="mb-6 font-orbitron relative"
         >
-          <span 
-            className="block text-5xl md:text-6xl lg:text-7xl font-black tracking-wider mb-2"
+          {/* NEXT-LEVEL - White */}
+          <motion.span 
+            className="block text-5xl md:text-7xl lg:text-8xl font-black tracking-wider text-white relative"
             style={{
-              background: 'linear-gradient(180deg, #93c5fd 0%, #3b82f6 50%, #1d4ed8 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textShadow: '0 0 60px rgba(59, 130, 246, 0.6)',
+              textShadow: '0 0 40px rgba(255, 255, 255, 0.3), 0 0 80px rgba(255, 255, 255, 0.1)',
             }}
           >
             NEXT-LEVEL
-          </span>
-          <span 
-            className="block text-5xl md:text-6xl lg:text-7xl font-black tracking-wider"
-            style={{
-              background: 'linear-gradient(180deg, #a5f3fc 0%, #22d3ee 50%, #0891b2 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textShadow: '0 0 60px rgba(6, 182, 212, 0.6)',
-            }}
-          >
-            GAME HOSTING
-          </span>
+          </motion.span>
+          
+          {/* GAMING EXPERIENCE - Blue with glow */}
+          <div className="relative mt-2">
+            {/* Glow behind */}
+            <motion.div
+              className="absolute inset-0 blur-2xl opacity-70"
+              animate={{ opacity: [0.5, 0.8, 0.5] }}
+              transition={{ duration: 3, repeat: Infinity }}
+            >
+              <span className="block text-4xl md:text-6xl lg:text-7xl font-black text-cyan-500">GAMING EXPERIENCE</span>
+            </motion.div>
+            
+            <motion.span 
+              className="block text-4xl md:text-6xl lg:text-7xl font-black tracking-wider relative"
+              style={{
+                background: 'linear-gradient(180deg, #67e8f9 0%, #06b6d4 40%, #0891b2 70%, #3b82f6 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                filter: 'drop-shadow(0 0 40px rgba(6, 182, 212, 0.8)) drop-shadow(0 0 80px rgba(59, 130, 246, 0.5))',
+              }}
+            >
+              GAMING EXPERIENCE
+            </motion.span>
+          </div>
         </motion.h1>
 
         {/* Subtitle */}
@@ -55,59 +78,100 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-gray-400 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           Experience unparalleled performance with our enterprise-grade servers. 
           Low latency, DDoS protection, and 24/7 expert support for your gaming adventures.
         </motion.p>
 
-        {/* CTA Button - Single with cool animation */}
+        {/* CTA Button - Enhanced */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex justify-center items-center mb-20"
+          className="flex justify-center items-center mb-16"
         >
           <Link href="/plans">
             <motion.div
-              className="group relative bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_100%] text-white font-bold py-4 px-12 rounded-full transition-all duration-500 inline-flex items-center gap-3 shadow-2xl shadow-blue-500/40 overflow-hidden cursor-pointer"
-              whileHover={{ 
-                scale: 1.08, 
-                y: -5,
-                boxShadow: '0 30px 60px -15px rgba(59, 130, 246, 0.5)'
-              }}
+              className="group relative cursor-pointer"
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              animate={{
-                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-              }}
-              transition={{
-                backgroundPosition: {
+            >
+              {/* Outer glow ring */}
+              <motion.div
+                className="absolute -inset-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 rounded-full opacity-75 blur-lg group-hover:opacity-100 transition-opacity"
+                animate={{
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut'
+                }}
+              />
+              
+              {/* Animated border */}
+              <motion.div
+                className="absolute -inset-1 bg-gradient-to-r from-blue-500 via-cyan-400 to-blue-500 rounded-full"
+                animate={{
+                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                }}
+                style={{ backgroundSize: '200% 200%' }}
+                transition={{
                   duration: 3,
                   repeat: Infinity,
                   ease: 'linear'
-                }
-              }}
-            >
-              {/* Animated ring */}
-              <span className="absolute inset-0 rounded-full border-2 border-white/20 group-hover:border-white/40 group-hover:scale-110 transition-all duration-500" />
+                }}
+              />
               
-              {/* Shine sweep effect */}
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-              
-              {/* Pulse rings on hover */}
-              <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100">
-                <span className="absolute inset-0 rounded-full border border-cyan-400/50 animate-ping" />
-              </span>
-              
-              {/* Button content */}
-              <span className="relative font-orbitron tracking-widest text-lg">GET STARTED</span>
-              <motion.span
-                className="relative"
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                <ArrowRight className="h-5 w-5" />
-              </motion.span>
+              {/* Button */}
+              <div className="relative bg-slate-950 rounded-full px-10 md:px-14 py-4 md:py-5 flex items-center gap-4 overflow-hidden">
+                {/* Shine effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12"
+                  animate={{
+                    x: ['-200%', '200%'],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    repeatDelay: 1
+                  }}
+                />
+                
+                {/* Inner glow */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-cyan-500/20 to-blue-600/20 group-hover:from-blue-600/30 group-hover:via-cyan-500/30 group-hover:to-blue-600/30 transition-all rounded-full" />
+                
+                {/* Sparkle icon */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+                >
+                  <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-cyan-400 relative z-10" />
+                </motion.div>
+                
+                {/* Text */}
+                <span 
+                  className="font-orbitron font-bold text-lg md:text-xl tracking-widest relative z-10"
+                  style={{
+                    background: 'linear-gradient(90deg, #ffffff 0%, #67e8f9 50%, #ffffff 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  GET STARTED
+                </span>
+                
+                {/* Arrow */}
+                <motion.div
+                  animate={{ x: [0, 8, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="relative z-10"
+                >
+                  <ArrowRight className="h-5 w-5 md:h-6 md:w-6 text-cyan-400" />
+                </motion.div>
+              </div>
             </motion.div>
           </Link>
         </motion.div>
@@ -129,20 +193,23 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-              className="relative group text-center"
+              whileHover={{ y: -5, scale: 1.05 }}
+              className="relative group text-center bg-slate-900/50 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-slate-700/50 hover:border-blue-500/30 transition-all"
             >
-              <stat.icon className="h-5 w-5 text-blue-400 mx-auto mb-3" />
+              <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-blue-600/20 to-cyan-600/20 border border-blue-500/30 flex items-center justify-center group-hover:from-blue-600 group-hover:to-cyan-600 transition-all">
+                <stat.icon className="h-5 w-5 md:h-6 md:w-6 text-blue-400 group-hover:text-white transition-colors" />
+              </div>
               <p 
-                className="font-orbitron text-3xl md:text-4xl font-black mb-1"
+                className="font-orbitron text-2xl md:text-4xl font-black mb-1"
                 style={{
-                  background: 'linear-gradient(180deg, #67e8f9 0%, #3b82f6 100%)',
+                  background: 'linear-gradient(180deg, #ffffff 0%, #67e8f9 50%, #3b82f6 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
               >
                 {stat.value}
               </p>
-              <p className="text-gray-500 text-xs md:text-sm">{stat.label}</p>
+              <p className="text-gray-400 text-xs md:text-sm">{stat.label}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -158,11 +225,11 @@ export default function Hero() {
         <motion.div
           animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="w-5 h-8 border-2 border-blue-500/30 rounded-full flex justify-center pt-1.5"
+          className="w-6 h-10 border-2 border-blue-500/40 rounded-full flex justify-center pt-2"
         >
           <motion.div 
-            className="w-1 h-1 bg-blue-400 rounded-full"
-            animate={{ opacity: [1, 0.3, 1] }}
+            className="w-1.5 h-1.5 bg-cyan-400 rounded-full"
+            animate={{ opacity: [1, 0.3, 1], y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
         </motion.div>
