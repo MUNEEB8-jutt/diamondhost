@@ -26,7 +26,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://diamondhost.pk'),
+  metadataBase: new URL('https://www.diamondhost.site'),
   title: {
     default: 'Diamond Host - Best Minecraft Server Hosting in Pakistan | Low Latency Gaming Servers',
     template: '%s | Diamond Host'
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     'instant minecraft server',
     'minecraft server cheap pakistan'
   ],
-  authors: [{ name: 'Diamond Host', url: 'https://diamondhost.pk' }],
+  authors: [{ name: 'Diamond Host', url: 'https://www.diamondhost.site' }],
   creator: 'Diamond Host',
   publisher: 'Diamond Host',
   formatDetection: {
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://diamondhost.pk',
+    url: 'https://www.diamondhost.site',
     siteName: 'Diamond Host',
     title: 'Diamond Host - Best Minecraft Server Hosting in Pakistan',
     description: 'Premium Minecraft server hosting with Intel Platinum & AMD EPYC processors. 99.9% uptime, DDoS protection, instant setup & 24/7 support. Servers in UAE, Singapore & Germany.',
@@ -110,7 +110,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://diamondhost.pk',
+    canonical: 'https://www.diamondhost.site',
   },
   category: 'technology',
   classification: 'Game Server Hosting',
@@ -124,8 +124,8 @@ const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Diamond Host',
-  url: 'https://diamondhost.pk',
-  logo: 'https://diamondhost.pk/linklogo.png',
+  url: 'https://www.diamondhost.site',
+  logo: 'https://www.diamondhost.site/linklogo.png',
   description: 'Premium Minecraft server hosting with Intel Platinum & AMD EPYC processors. Servers in UAE, Singapore & Germany.',
   foundingDate: '2024',
   contactPoint: {

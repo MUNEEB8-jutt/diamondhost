@@ -1,11 +1,11 @@
 # Diamond Host - Robots.txt
-# https://diamondhost.pk
+# https://www.diamondhost.site
 
 User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://diamondhost.pk/sitemap.xml
+Sitemap: https://www.diamondhost.site/sitemap.xml
 
 # Disallow admin pages
 Disallow: /admin
