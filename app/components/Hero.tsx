@@ -13,24 +13,6 @@ export default function Hero() {
       <div className="absolute top-1/2 right-1/4 w-[300px] h-[300px] bg-blue-500/15 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="container mx-auto text-center relative z-10">
-        {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-full px-5 py-2 mb-6 backdrop-blur-sm"
-        >
-          <motion.span 
-            animate={{ rotate: [0, 15, -15, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="text-yellow-400 text-lg"
-          >
-            ⚡
-          </motion.span>
-          <span className="text-sm text-gray-200 font-medium">Premium Game Server Hosting</span>
-          <Sparkles className="h-4 w-4 text-cyan-400" />
-        </motion.div>
-
         {/* Main Heading - Gaming Style (Bold, Wide-spaced, No italic) */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}

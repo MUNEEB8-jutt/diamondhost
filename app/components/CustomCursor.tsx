@@ -6,10 +6,18 @@ export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
   const [isHovering, setIsHovering] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
+    // Check if mobile/touch device
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia('(max-width: 768px)').matches || 'ontouchstart' in window)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+
     const cursor = cursorRef.current
-    if (!cursor) return
+    if (!cursor || isMobile) return
 
     // Direct DOM manipulation for zero delay
     const handleMouseMove = (e: MouseEvent) => {
@@ -38,17 +46,21 @@ export default function CustomCursor() {
     observer.observe(document.body, { childList: true, subtree: true })
 
     return () => {
+      window.removeEventListener('resize', checkMobile)
       window.removeEventListener('mousemove', handleMouseMove)
       document.removeEventListener('mouseenter', handleMouseEnter)
       document.removeEventListener('mouseleave', handleMouseLeave)
       observer.disconnect()
     }
-  }, [isVisible])
+  }, [isVisible, isMobile])
+
+  // Don't render on mobile
+  if (isMobile) return null
 
   return (
     <div
       ref={cursorRef}
-      className={`fixed pointer-events-none z-[9999] ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+      className={`fixed pointer-events-none z-[9999] hidden md:block ${isVisible ? 'opacity-100' : 'opacity-0'}`}
       style={{ willChange: 'left, top' }}
     >
       {/* Cyan Arrow Cursor */}

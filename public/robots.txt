@@ -1,0 +1,31 @@
+# Diamond Host - Robots.txt
+# https://diamondhost.pk
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://diamondhost.pk/sitemap.xml
+
+# Disallow admin pages
+Disallow: /admin
+Disallow: /api/
+
+# Allow all crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
