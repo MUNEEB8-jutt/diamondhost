@@ -1,22 +1,17 @@
+-- UNIFIED LOGIN SYSTEM - Support Tickets
+-- This uses the main 'users' table from supabase-orders.sql
+-- Run supabase-orders.sql FIRST to create the users table
+
 -- STEP 1: Drop existing tables (if any)
 DROP TABLE IF EXISTS ticket_messages CASCADE;
 DROP TABLE IF EXISTS support_tickets CASCADE;
-DROP TABLE IF EXISTS support_users CASCADE;
+-- Note: support_users table is no longer needed, we use 'users' table
 
--- STEP 2: Create Users Table
-CREATE TABLE support_users (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  name VARCHAR(100) NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- STEP 3: Create Support Tickets Table
+-- STEP 2: Create Support Tickets Table (references main users table)
 CREATE TABLE support_tickets (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   ticket_id VARCHAR(20) UNIQUE NOT NULL,
-  user_id UUID REFERENCES support_users(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   customer_name VARCHAR(100) NOT NULL,
   customer_email VARCHAR(255) NOT NULL,
   subject VARCHAR(200) NOT NULL,
@@ -26,7 +21,7 @@ CREATE TABLE support_tickets (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- STEP 4: Create Ticket Messages Table
+-- STEP 3: Create Ticket Messages Table
 CREATE TABLE ticket_messages (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   ticket_id VARCHAR(20) NOT NULL,
@@ -37,25 +32,22 @@ CREATE TABLE ticket_messages (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- STEP 5: Create Indexes
-CREATE INDEX idx_users_email ON support_users(email);
+-- STEP 4: Create Indexes
 CREATE INDEX idx_tickets_user ON support_tickets(user_id);
 CREATE INDEX idx_tickets_status ON support_tickets(status);
 CREATE INDEX idx_tickets_created ON support_tickets(created_at DESC);
 CREATE INDEX idx_messages_ticket ON ticket_messages(ticket_id);
 CREATE INDEX idx_messages_created ON ticket_messages(created_at);
 
--- STEP 6: Enable Row Level Security
-ALTER TABLE support_users ENABLE ROW LEVEL SECURITY;
+-- STEP 5: Enable Row Level Security
 ALTER TABLE support_tickets ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ticket_messages ENABLE ROW LEVEL SECURITY;
 
--- STEP 7: Create Policies (Allow all for now - adjust for production)
-CREATE POLICY "Allow all on support_users" ON support_users FOR ALL USING (true) WITH CHECK (true);
+-- STEP 6: Create Policies (Allow all for now - adjust for production)
 CREATE POLICY "Allow all on support_tickets" ON support_tickets FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow all on ticket_messages" ON ticket_messages FOR ALL USING (true) WITH CHECK (true);
 
--- STEP 8: Enable Realtime (run this separately if it fails)
+-- STEP 7: Enable Realtime (run this separately if it fails)
 -- ALTER PUBLICATION supabase_realtime ADD TABLE ticket_messages;
 
 -- =====================================================
@@ -65,3 +57,13 @@ CREATE POLICY "Allow all on ticket_messages" ON ticket_messages FOR ALL USING (t
 -- 2. Create new bucket named: ticket-images
 -- 3. Make it PUBLIC
 -- 4. Add policy: Allow all operations for anonymous users
+
+-- =====================================================
+-- IMPORTANT: UNIFIED LOGIN SYSTEM
+-- =====================================================
+-- Now both Support and Orders use the same 'users' table
+-- User registers once and can:
+-- 1. Place orders
+-- 2. Create support tickets
+-- 3. View their game servers
+-- All with the same login credentials!

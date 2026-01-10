@@ -5,13 +5,18 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Diamond, Lock, LogOut, Plus, Edit2, Trash2, Save, X, 
   Eye, EyeOff, Loader2, Check, AlertCircle, Package,
-  Globe, MessageSquare, Send, Clock, User, Image as ImageIcon
+  Globe, MessageSquare, Send, Clock, User, Image as ImageIcon,
+  ShoppingCart, CheckCircle, XCircle, CreditCard, Server, RefreshCw, Ban, Play, Users, Calendar
 } from 'lucide-react'
 import { 
   getAllPlans, createPlan, updatePlan, deletePlan, HostingPlan,
   getAllLocations, createLocation, updateLocation, deleteLocation, Location,
   getAllTickets, getTicketMessages, sendTicketMessage, updateTicketStatus, uploadTicketImage,
-  SupportTicket, TicketMessage
+  SupportTicket, TicketMessage,
+  getAllOrders, approveOrder, rejectOrder, Order,
+  getAllPaymentMethods, updatePaymentMethod, PaymentMethod, uploadQRCode,
+  getAllServers, suspendServer, markServerForRenewal, reactivateServer, deleteServer, createServerFromOrder, UserServer,
+  getAllUsers, banUser, unbanUser, getServersByUserId, getOrdersByUserId, AdminUser
 } from '@/lib/supabase'
 
 const ADMIN_SECRET = process.env.NEXT_PUBLIC_ADMIN_SECRET || 'diamondhost2024'
@@ -49,7 +54,7 @@ export default function AdminPage() {
   const [secretCode, setSecretCode] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
-  const [activeTab, setActiveTab] = useState<'plans' | 'locations' | 'tickets'>('plans')
+  const [activeTab, setActiveTab] = useState<'plans' | 'locations' | 'tickets' | 'orders' | 'payments' | 'servers' | 'users'>('plans')
   
   // Plans state
   const [plans, setPlans] = useState<HostingPlan[]>([])
@@ -74,6 +79,36 @@ export default function AdminPage() {
   const [adminImagePreview, setAdminImagePreview] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const adminFileInputRef = useRef<HTMLInputElement>(null)
+  
+  // Orders state
+  const [orders, setOrders] = useState<Order[]>([])
+  const [orderFilter, setOrderFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all')
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [approvalForm, setApprovalForm] = useState({ panel_link: '', panel_password: '', panel_gmail: '' })
+  const [rejectReason, setRejectReason] = useState('')
+  const [processingOrder, setProcessingOrder] = useState(false)
+  
+  // Payment methods state
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
+  const [editingPayment, setEditingPayment] = useState<PaymentMethod | null>(null)
+  const [paymentForm, setPaymentForm] = useState({ account_number: '', account_title: '', qr_code_url: '' })
+  const qrFileInputRef = useRef<HTMLInputElement>(null)
+  
+  // Servers state
+  const [servers, setServers] = useState<UserServer[]>([])
+  const [serverFilter, setServerFilter] = useState<'all' | 'active' | 'suspended' | 'renewal_required'>('all')
+  const [selectedServer, setSelectedServer] = useState<UserServer | null>(null)
+  const [suspendReason, setSuspendReason] = useState('')
+  const [processingServer, setProcessingServer] = useState(false)
+  
+  // Users state
+  const [users, setUsers] = useState<AdminUser[]>([])
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null)
+  const [userServers, setUserServers] = useState<UserServer[]>([])
+  const [userOrders, setUserOrders] = useState<Order[]>([])
+  const [banReason, setBanReason] = useState('')
+  const [processingUser, setProcessingUser] = useState(false)
+  const [loadingUserData, setLoadingUserData] = useState(false)
   
   const [saving, setSaving] = useState(false)
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
@@ -127,12 +162,16 @@ export default function AdminPage() {
 
   const fetchData = async () => {
     setLoading(true)
-    const [plansData, locationsData, ticketsData] = await Promise.all([
-      getAllPlans(), getAllLocations(), getAllTickets()
+    const [plansData, locationsData, ticketsData, ordersData, paymentsData, serversData, usersData] = await Promise.all([
+      getAllPlans(), getAllLocations(), getAllTickets(), getAllOrders(), getAllPaymentMethods(), getAllServers(), getAllUsers()
     ])
     setPlans(plansData)
     setLocations(locationsData.length > 0 ? locationsData : fallbackLocations)
     setTickets(ticketsData)
+    setOrders(ordersData)
+    setPaymentMethods(paymentsData)
+    setServers(serversData)
+    setUsers(usersData)
     setLoading(false)
   }
 
@@ -296,9 +335,112 @@ export default function AdminPage() {
 
   const filteredPlans = selectedLocation === 'all' ? plans : plans.filter(p => p.location === selectedLocation)
   const filteredTickets = ticketFilter === 'all' ? tickets : tickets.filter(t => t.status === ticketFilter)
+  const filteredOrders = orderFilter === 'all' ? orders : orders.filter(o => o.status === orderFilter)
+  const filteredServers = serverFilter === 'all' ? servers : servers.filter(s => s.status === serverFilter)
 
   const formatTime = (dateStr: string) => new Date(dateStr).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
   const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+  
+  // Calculate days since date
+  const getDaysSince = (dateStr: string) => {
+    const created = new Date(dateStr)
+    const now = new Date()
+    const diffTime = Math.abs(now.getTime() - created.getTime())
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+  }
+  
+  // Handle user selection
+  const handleSelectUser = async (user: AdminUser) => {
+    setSelectedUser(user)
+    setLoadingUserData(true)
+    const [serversData, ordersData] = await Promise.all([
+      getServersByUserId(user.id),
+      getOrdersByUserId(user.id)
+    ])
+    setUserServers(serversData)
+    setUserOrders(ordersData)
+    setLoadingUserData(false)
+  }
+
+  // Order handlers
+  const handleApproveOrder = async () => {
+    if (!selectedOrder || !approvalForm.panel_link || !approvalForm.panel_password || !approvalForm.panel_gmail) {
+      setNotification({ type: 'error', message: 'Please fill all fields' })
+      return
+    }
+    setProcessingOrder(true)
+    const success = await approveOrder(selectedOrder.order_id, approvalForm.panel_link, approvalForm.panel_password, approvalForm.panel_gmail)
+    if (success) {
+      // Also create server entry
+      const updatedOrder = { ...selectedOrder, panel_link: approvalForm.panel_link, panel_password: approvalForm.panel_password, panel_gmail: approvalForm.panel_gmail }
+      await createServerFromOrder(updatedOrder)
+      setNotification({ type: 'success', message: 'Order approved & server created!' })
+      fetchData()
+      setSelectedOrder(null)
+      setApprovalForm({ panel_link: '', panel_password: '', panel_gmail: '' })
+    } else {
+      setNotification({ type: 'error', message: 'Failed to approve order' })
+    }
+    setProcessingOrder(false)
+  }
+
+  const handleRejectOrder = async () => {
+    if (!selectedOrder) return
+    setProcessingOrder(true)
+    const success = await rejectOrder(selectedOrder.order_id, rejectReason)
+    if (success) {
+      setNotification({ type: 'success', message: 'Order rejected' })
+      fetchData()
+      setSelectedOrder(null)
+      setRejectReason('')
+    } else {
+      setNotification({ type: 'error', message: 'Failed to reject order' })
+    }
+    setProcessingOrder(false)
+  }
+
+  // Payment method handlers
+  const handleEditPayment = (method: PaymentMethod) => {
+    setEditingPayment(method)
+    setPaymentForm({ account_number: method.account_number, account_title: method.account_title, qr_code_url: method.qr_code_url || '' })
+  }
+
+  const handleSavePayment = async () => {
+    if (!editingPayment) return
+    setSaving(true)
+    const updated = await updatePaymentMethod(editingPayment.id, paymentForm)
+    if (updated) {
+      setNotification({ type: 'success', message: 'Payment method updated!' })
+      fetchData()
+      setEditingPayment(null)
+    } else {
+      setNotification({ type: 'error', message: 'Failed to update' })
+    }
+    setSaving(false)
+  }
+
+  const handleQRUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file && editingPayment) {
+      setNotification({ type: 'success', message: 'Uploading QR code...' })
+      const url = await uploadQRCode(file, editingPayment.id)
+      if (url) {
+        // Update form state
+        setPaymentForm({ ...paymentForm, qr_code_url: url })
+        // Also save to database immediately
+        const updated = await updatePaymentMethod(editingPayment.id, { qr_code_url: url })
+        if (updated) {
+          setNotification({ type: 'success', message: 'QR code uploaded & saved!' })
+          fetchData()
+        } else {
+          setNotification({ type: 'error', message: 'QR uploaded but failed to save' })
+        }
+      } else {
+        setNotification({ type: 'error', message: 'Failed to upload QR code' })
+      }
+    }
+  }
 
 
   // Login Screen
@@ -373,7 +515,7 @@ export default function AdminPage() {
 
       <div className="container mx-auto px-4 py-8">
         {/* Tabs */}
-        <div className="flex gap-2 mb-8">
+        <div className="flex flex-wrap gap-2 mb-8">
           <button onClick={() => setActiveTab('plans')}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'plans' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
             <Package className="h-5 w-5" /> Plans
@@ -381,6 +523,29 @@ export default function AdminPage() {
           <button onClick={() => setActiveTab('locations')}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'locations' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
             <Globe className="h-5 w-5" /> Locations
+          </button>
+          <button onClick={() => { setActiveTab('orders'); fetchData() }}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'orders' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
+            <ShoppingCart className="h-5 w-5" /> Orders
+            {orders.filter(o => o.status === 'pending').length > 0 && (
+              <span className="bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">{orders.filter(o => o.status === 'pending').length}</span>
+            )}
+          </button>
+          <button onClick={() => { setActiveTab('payments'); fetchData() }}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'payments' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
+            <CreditCard className="h-5 w-5" /> Payments
+          </button>
+          <button onClick={() => { setActiveTab('servers'); fetchData() }}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'servers' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
+            <Server className="h-5 w-5" /> Servers
+            {servers.filter(s => s.status !== 'active').length > 0 && (
+              <span className="bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full">{servers.filter(s => s.status !== 'active').length}</span>
+            )}
+          </button>
+          <button onClick={() => { setActiveTab('users'); fetchData() }}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'users' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
+            <Users className="h-5 w-5" /> Users
+            <span className="bg-slate-600 text-white text-xs px-2 py-0.5 rounded-full">{users.length}</span>
           </button>
           <button onClick={() => { setActiveTab('tickets'); fetchData() }}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'tickets' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
@@ -781,6 +946,739 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+
+        {/* Orders Tab */}
+        {activeTab === 'orders' && (
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Orders List */}
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
+                {(['all', 'pending', 'approved', 'rejected'] as const).map(status => (
+                  <button key={status} onClick={() => setOrderFilter(status)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${orderFilter === status ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
+                    {status === 'all' ? 'All Orders' : status.charAt(0).toUpperCase() + status.slice(1)}
+                    <span className="ml-2">({status === 'all' ? orders.length : orders.filter(o => o.status === status).length})</span>
+                  </button>
+                ))}
+              </div>
+
+              {loading ? (
+                <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 text-cyan-400 animate-spin" /></div>
+              ) : filteredOrders.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <ShoppingCart className="h-16 w-16 mx-auto mb-4 opacity-30" />
+                  <p>No orders found</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredOrders.map((order) => (
+                    <motion.div key={order.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                      className={`bg-slate-900 rounded-xl p-5 border transition-all cursor-pointer ${
+                        selectedOrder?.id === order.id ? 'border-cyan-500' : 'border-slate-800 hover:border-slate-700'
+                      }`}
+                      onClick={() => setSelectedOrder(order)}>
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-cyan-400 font-mono text-sm">{order.order_id}</span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                              order.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+                              order.status === 'approved' ? 'bg-green-500/20 text-green-400' :
+                              'bg-red-500/20 text-red-400'
+                            }`}>{order.status}</span>
+                          </div>
+                          <h3 className="text-white font-bold">{order.plan_name}</h3>
+                          <p className="text-gray-500 text-sm">{order.plan_ram} • {order.location} • {order.processor}</p>
+                          <p className="text-gray-500 text-sm mt-1">
+                            <User className="h-3 w-3 inline mr-1" />
+                            {order.user_name} ({order.user_email})
+                          </p>
+                          
+                          {/* Transaction ID */}
+                          {order.transaction_id && (
+                            <div className="mt-2 flex items-center gap-2">
+                              <CreditCard className="h-3 w-3 text-purple-400" />
+                              <span className="text-purple-400 text-sm font-mono">TXN: {order.transaction_id}</span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="text-right">
+                          <p className="text-cyan-400 font-bold text-xl">${order.plan_price.toFixed(2)}</p>
+                          <p className="text-gray-500 text-xs">{order.payment_method}</p>
+                          <p className="text-gray-500 text-xs">{formatDate(order.created_at)}</p>
+                        </div>
+                      </div>
+                      
+                      {/* Payment Proof Screenshot */}
+                      {order.screenshot_url && (
+                        <div className="mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                          <p className="text-gray-400 text-xs mb-2 flex items-center gap-1">
+                            <ImageIcon className="h-3 w-3" /> Payment Proof
+                          </p>
+                          <a href={order.screenshot_url} target="_blank" rel="noopener noreferrer">
+                            <img 
+                              src={order.screenshot_url} 
+                              alt="Payment Screenshot" 
+                              className="max-h-32 rounded-lg hover:opacity-80 transition-opacity cursor-pointer"
+                            />
+                          </a>
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Order Actions Panel */}
+            <AnimatePresence>
+              {selectedOrder && selectedOrder.status === 'pending' && (
+                <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="lg:w-[400px]">
+                  <div className="bg-slate-900 rounded-xl p-6 border border-cyan-500/30 sticky top-24">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-bold text-white">Process Order</h3>
+                      <button onClick={() => setSelectedOrder(null)} className="p-2 hover:bg-slate-800 rounded-lg"><X className="h-5 w-5" /></button>
+                    </div>
+
+                    <div className="bg-slate-800/50 rounded-lg p-4 mb-6">
+                      <p className="text-cyan-400 font-mono text-sm mb-1">{selectedOrder.order_id}</p>
+                      <p className="text-white font-bold">{selectedOrder.plan_name}</p>
+                      <p className="text-gray-400 text-sm">{selectedOrder.user_name}</p>
+                      <p className="text-gray-500 text-xs">{selectedOrder.user_email}</p>
+                      
+                      {/* Payment Method Info */}
+                      <div className="mt-3 pt-3 border-t border-slate-700">
+                        <p className="text-gray-400 text-xs mb-1">Payment Method</p>
+                        <p className="text-white font-semibold">{selectedOrder.payment_method}</p>
+                        {/* Show QR Code for the payment method */}
+                        {(() => {
+                          const method = paymentMethods.find(m => m.name === selectedOrder.payment_method)
+                          return method?.qr_code_url ? (
+                            <div className="mt-2">
+                              <img 
+                                src={method.qr_code_url} 
+                                alt={`${method.name} QR Code`}
+                                className="w-24 h-24 rounded-lg bg-white p-1"
+                              />
+                            </div>
+                          ) : null
+                        })()}
+                      </div>
+                      
+                      {/* Transaction ID in Panel */}
+                      {selectedOrder.transaction_id && (
+                        <div className="mt-3 pt-3 border-t border-slate-700">
+                          <p className="text-gray-400 text-xs mb-1">Transaction ID</p>
+                          <p className="text-purple-400 font-mono text-sm">{selectedOrder.transaction_id}</p>
+                        </div>
+                      )}
+                      
+                      {/* Payment Proof in Panel */}
+                      {selectedOrder.screenshot_url && (
+                        <div className="mt-3 pt-3 border-t border-slate-700">
+                          <p className="text-gray-400 text-xs mb-2 flex items-center gap-1">
+                            <ImageIcon className="h-3 w-3" /> Payment Proof
+                          </p>
+                          <a href={selectedOrder.screenshot_url} target="_blank" rel="noopener noreferrer">
+                            <img 
+                              src={selectedOrder.screenshot_url} 
+                              alt="Payment Screenshot" 
+                              className="w-full max-h-48 object-contain rounded-lg hover:opacity-80 transition-opacity cursor-pointer bg-slate-900"
+                            />
+                          </a>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Approve Section */}
+                    <div className="mb-6">
+                      <h4 className="text-green-400 font-semibold mb-3 flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4" /> Approve Order
+                      </h4>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm text-gray-400 mb-1">Panel Link *</label>
+                          <input type="text" value={approvalForm.panel_link} onChange={(e) => setApprovalForm({ ...approvalForm, panel_link: e.target.value })}
+                            placeholder="https://panel.example.com" className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
+                        </div>
+                        <div>
+                          <label className="block text-sm text-gray-400 mb-1">Panel Password *</label>
+                          <input type="text" value={approvalForm.panel_password} onChange={(e) => setApprovalForm({ ...approvalForm, panel_password: e.target.value })}
+                            placeholder="Enter password" className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
+                        </div>
+                        <div>
+                          <label className="block text-sm text-gray-400 mb-1">Panel Gmail *</label>
+                          <input type="email" value={approvalForm.panel_gmail} onChange={(e) => setApprovalForm({ ...approvalForm, panel_gmail: e.target.value })}
+                            placeholder="user@gmail.com" className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-green-500" />
+                        </div>
+                        <button onClick={handleApproveOrder} disabled={processingOrder}
+                          className="w-full bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                          {processingOrder ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle className="h-5 w-5" />}
+                          Approve Order
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Reject Section */}
+                    <div className="border-t border-slate-700 pt-6">
+                      <h4 className="text-red-400 font-semibold mb-3 flex items-center gap-2">
+                        <XCircle className="h-4 w-4" /> Reject Order
+                      </h4>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="block text-sm text-gray-400 mb-1">Reason (Optional)</label>
+                          <textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)}
+                            placeholder="Enter rejection reason..." rows={2}
+                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500 resize-none" />
+                        </div>
+                        <button onClick={handleRejectOrder} disabled={processingOrder}
+                          className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                          {processingOrder ? <Loader2 className="h-5 w-5 animate-spin" /> : <XCircle className="h-5 w-5" />}
+                          Reject Order
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
+
+        {/* Payments Tab */}
+        {activeTab === 'payments' && (
+          <div className="flex flex-col lg:flex-row gap-8">
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-white mb-6">Payment Methods</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {paymentMethods.map((method) => (
+                  <motion.div key={method.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    className={`bg-slate-900 rounded-xl p-5 border transition-all ${
+                      editingPayment?.id === method.id ? 'border-cyan-500' : 'border-slate-800'
+                    }`}>
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl">{method.icon}</span>
+                        <div>
+                          <h3 className="text-white font-bold">{method.name}</h3>
+                          <p className="text-gray-500 text-sm">{method.account_title}</p>
+                        </div>
+                      </div>
+                      <button onClick={() => handleEditPayment(method)} className="p-2 hover:bg-slate-800 rounded-lg">
+                        <Edit2 className="h-4 w-4 text-cyan-400" />
+                      </button>
+                    </div>
+                    <div className="bg-slate-800/50 rounded-lg p-3">
+                      <p className="text-gray-400 text-xs mb-1">Account Number</p>
+                      <p className="text-white font-mono text-sm">{method.account_number}</p>
+                    </div>
+                    {method.qr_code_url && (
+                      <div className="mt-3">
+                        <img src={method.qr_code_url} alt="QR Code" className="w-24 h-24 rounded-lg bg-white p-1" />
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Edit Payment Form */}
+            <AnimatePresence>
+              {editingPayment && (
+                <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="lg:w-[350px]">
+                  <div className="bg-slate-900 rounded-xl p-6 border border-cyan-500/30 sticky top-24">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-bold text-white">Edit {editingPayment.name}</h3>
+                      <button onClick={() => setEditingPayment(null)} className="p-2 hover:bg-slate-800 rounded-lg"><X className="h-5 w-5" /></button>
+                    </div>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm text-gray-400 mb-1">Account Number</label>
+                        <input type="text" value={paymentForm.account_number} onChange={(e) => setPaymentForm({ ...paymentForm, account_number: e.target.value })}
+                          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-cyan-500" />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-400 mb-1">Account Title</label>
+                        <input type="text" value={paymentForm.account_title} onChange={(e) => setPaymentForm({ ...paymentForm, account_title: e.target.value })}
+                          className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-cyan-500" />
+                      </div>
+                      <div>
+                        <label className="block text-sm text-gray-400 mb-1">QR Code</label>
+                        {paymentForm.qr_code_url && (
+                          <img src={paymentForm.qr_code_url} alt="QR" className="w-32 h-32 rounded-lg bg-white p-1 mb-2" />
+                        )}
+                        <input type="file" ref={qrFileInputRef} onChange={handleQRUpload} accept="image/*" className="hidden" />
+                        <button onClick={() => qrFileInputRef.current?.click()}
+                          className="w-full bg-slate-800 hover:bg-slate-700 text-gray-400 py-2 rounded-lg text-sm">
+                          Upload QR Code
+                        </button>
+                      </div>
+                    </div>
+                    <button onClick={handleSavePayment} disabled={saving}
+                      className="w-full bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-white font-semibold py-3 rounded-xl mt-6 flex items-center justify-center gap-2">
+                      {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                      Save Changes
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
+
+        {/* Servers Tab */}
+        {activeTab === 'servers' && (
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Servers List */}
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
+                {(['all', 'active', 'suspended', 'renewal_required'] as const).map(status => (
+                  <button key={status} onClick={() => setServerFilter(status)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${serverFilter === status ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
+                    {status === 'all' ? 'All Servers' : status === 'renewal_required' ? 'Renewal Required' : status.charAt(0).toUpperCase() + status.slice(1)}
+                    <span className="ml-2">({status === 'all' ? servers.length : servers.filter(s => s.status === status).length})</span>
+                  </button>
+                ))}
+              </div>
+
+              {loading ? (
+                <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 text-cyan-400 animate-spin" /></div>
+              ) : filteredServers.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <Server className="h-16 w-16 mx-auto mb-4 opacity-30" />
+                  <p>No servers found</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredServers.map((server) => (
+                    <motion.div key={server.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                      className={`bg-slate-900 rounded-xl p-5 border transition-all cursor-pointer ${
+                        selectedServer?.id === server.id ? 'border-cyan-500' : 'border-slate-800 hover:border-slate-700'
+                      }`}
+                      onClick={() => setSelectedServer(server)}>
+                      <div className="flex flex-wrap items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-cyan-400 font-mono text-sm">{server.server_id}</span>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                              server.status === 'active' ? 'bg-green-500/20 text-green-400' :
+                              server.status === 'suspended' ? 'bg-red-500/20 text-red-400' :
+                              'bg-amber-500/20 text-amber-400'
+                            }`}>{server.status === 'renewal_required' ? 'Renewal Required' : server.status}</span>
+                          </div>
+                          <h3 className="text-white font-bold">{server.plan_name}</h3>
+                          <p className="text-gray-500 text-sm">{server.plan_ram} • {server.location} • {server.processor}</p>
+                          <p className="text-gray-500 text-sm mt-1">
+                            <User className="h-3 w-3 inline mr-1" />
+                            {server.user_name} ({server.user_email})
+                          </p>
+                          {server.suspension_reason && (
+                            <p className="text-red-400 text-sm mt-2 flex items-center gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              {server.suspension_reason}
+                            </p>
+                          )}
+                        </div>
+                        
+                        <div className="text-right">
+                          <div className="flex items-center gap-1 justify-end text-cyan-400 text-sm mb-1">
+                            <Calendar className="h-3 w-3" />
+                            <span className="font-semibold">{getDaysSince(server.created_at)} days</span>
+                          </div>
+                          <p className="text-gray-400 text-xs">Order: {server.order_id}</p>
+                          <p className="text-gray-500 text-xs">Created: {formatDate(server.created_at)}</p>
+                          {server.expires_at && (
+                            <p className={`text-xs mt-1 ${new Date(server.expires_at) < new Date() ? 'text-red-400' : 'text-green-400'}`}>
+                              Expires: {formatDate(server.expires_at)}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Server Actions Panel */}
+            <AnimatePresence>
+              {selectedServer && (
+                <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="lg:w-[400px]">
+                  <div className="bg-slate-900 rounded-xl p-6 border border-cyan-500/30 sticky top-24">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-bold text-white">Manage Server</h3>
+                      <button onClick={() => setSelectedServer(null)} className="p-2 hover:bg-slate-800 rounded-lg"><X className="h-5 w-5" /></button>
+                    </div>
+
+                    {/* Server Info */}
+                    <div className="bg-slate-800/50 rounded-lg p-4 mb-6">
+                      <p className="text-cyan-400 font-mono text-sm mb-1">{selectedServer.server_id}</p>
+                      <p className="text-white font-bold">{selectedServer.plan_name}</p>
+                      <p className="text-gray-400 text-sm">{selectedServer.user_name}</p>
+                      <p className="text-gray-500 text-xs">{selectedServer.user_email}</p>
+                      
+                      <div className="mt-3 pt-3 border-t border-slate-700">
+                        <p className="text-gray-400 text-xs mb-1">Panel Link</p>
+                        <a href={selectedServer.panel_link} target="_blank" rel="noopener noreferrer" className="text-cyan-400 text-sm hover:underline truncate block">{selectedServer.panel_link}</a>
+                      </div>
+                      
+                      <div className="mt-3 pt-3 border-t border-slate-700 flex items-center justify-between">
+                        <span className="text-gray-400 text-xs">Status</span>
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                          selectedServer.status === 'active' ? 'bg-green-500/20 text-green-400' :
+                          selectedServer.status === 'suspended' ? 'bg-red-500/20 text-red-400' :
+                          'bg-amber-500/20 text-amber-400'
+                        }`}>{selectedServer.status === 'renewal_required' ? 'Renewal Required' : selectedServer.status}</span>
+                      </div>
+                    </div>
+
+                    {/* Actions based on status */}
+                    {selectedServer.status === 'active' && (
+                      <>
+                        {/* Suspend Options */}
+                        <div className="mb-6">
+                          <h4 className="text-amber-400 font-semibold mb-3 flex items-center gap-2">
+                            <Ban className="h-4 w-4" /> Suspend Server
+                          </h4>
+                          
+                          {/* Quick Actions */}
+                          <div className="space-y-2 mb-4">
+                            <button 
+                              onClick={async () => {
+                                setProcessingServer(true)
+                                await markServerForRenewal(selectedServer.server_id)
+                                setNotification({ type: 'success', message: 'Server marked for renewal' })
+                                fetchData()
+                                setSelectedServer(null)
+                                setProcessingServer(false)
+                              }}
+                              disabled={processingServer}
+                              className="w-full bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                              <RefreshCw className="h-4 w-4" />
+                              Mark for Renewal (1 Month Passed)
+                            </button>
+                            
+                            <button 
+                              onClick={async () => {
+                                setProcessingServer(true)
+                                await suspendServer(selectedServer.server_id, 'Server suspended by admin')
+                                setNotification({ type: 'success', message: 'Server suspended' })
+                                fetchData()
+                                setSelectedServer(null)
+                                setProcessingServer(false)
+                              }}
+                              disabled={processingServer}
+                              className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                              <Ban className="h-4 w-4" />
+                              Suspend Server
+                            </button>
+                          </div>
+                          
+                          {/* Custom Reason */}
+                          <div className="space-y-2">
+                            <input 
+                              type="text" 
+                              value={suspendReason} 
+                              onChange={(e) => setSuspendReason(e.target.value)}
+                              placeholder="Custom suspension reason..."
+                              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-amber-500 text-sm"
+                            />
+                            <button 
+                              onClick={async () => {
+                                if (!suspendReason.trim()) {
+                                  setNotification({ type: 'error', message: 'Please enter a reason' })
+                                  return
+                                }
+                                setProcessingServer(true)
+                                await suspendServer(selectedServer.server_id, suspendReason)
+                                setNotification({ type: 'success', message: 'Server suspended with custom reason' })
+                                fetchData()
+                                setSelectedServer(null)
+                                setSuspendReason('')
+                                setProcessingServer(false)
+                              }}
+                              disabled={processingServer || !suspendReason.trim()}
+                              className="w-full bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-white font-semibold py-2 rounded-xl text-sm">
+                              Suspend with Custom Reason
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* Reactivate for suspended/renewal servers */}
+                    {(selectedServer.status === 'suspended' || selectedServer.status === 'renewal_required') && (
+                      <div className="mb-6">
+                        <h4 className="text-green-400 font-semibold mb-3 flex items-center gap-2">
+                          <Play className="h-4 w-4" /> Reactivate Server
+                        </h4>
+                        <button 
+                          onClick={async () => {
+                            setProcessingServer(true)
+                            await reactivateServer(selectedServer.server_id)
+                            setNotification({ type: 'success', message: 'Server reactivated!' })
+                            fetchData()
+                            setSelectedServer(null)
+                            setProcessingServer(false)
+                          }}
+                          disabled={processingServer}
+                          className="w-full bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                          {processingServer ? <Loader2 className="h-5 w-5 animate-spin" /> : <Play className="h-5 w-5" />}
+                          Reactivate Server (+1 Month)
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Delete Server */}
+                    <div className="border-t border-slate-700 pt-6">
+                      <h4 className="text-red-400 font-semibold mb-3 flex items-center gap-2">
+                        <Trash2 className="h-4 w-4" /> Delete Server
+                      </h4>
+                      <button 
+                        onClick={async () => {
+                          if (confirm('Are you sure you want to delete this server? This action cannot be undone.')) {
+                            setProcessingServer(true)
+                            await deleteServer(selectedServer.server_id)
+                            setNotification({ type: 'success', message: 'Server deleted' })
+                            fetchData()
+                            setSelectedServer(null)
+                            setProcessingServer(false)
+                          }
+                        }}
+                        disabled={processingServer}
+                        className="w-full bg-red-900/50 hover:bg-red-900 border border-red-500/30 disabled:opacity-50 text-red-400 font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                        <Trash2 className="h-5 w-5" />
+                        Delete Server Permanently
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
+
+        {/* Users Tab */}
+        {activeTab === 'users' && (
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Users List */}
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Users <span className="text-gray-500 text-lg">({users.length})</span></h2>
+              </div>
+
+              {loading ? (
+                <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 text-cyan-400 animate-spin" /></div>
+              ) : users.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <Users className="h-16 w-16 mx-auto mb-4 opacity-30" />
+                  <p>No users found</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {users.map((user) => (
+                    <motion.div key={user.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                      className={`bg-slate-900 rounded-xl p-4 border transition-all cursor-pointer ${
+                        selectedUser?.id === user.id ? 'border-cyan-500' : 'border-slate-800 hover:border-slate-700'
+                      } ${user.is_banned ? 'opacity-60' : ''}`}
+                      onClick={() => handleSelectUser(user)}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                            {user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3 className="text-white font-semibold">{user.name}</h3>
+                              {user.is_banned && (
+                                <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">Banned</span>
+                              )}
+                            </div>
+                            <p className="text-gray-500 text-sm">{user.email}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="flex items-center gap-1 text-cyan-400 text-sm">
+                            <Calendar className="h-3 w-3" />
+                            <span>{getDaysSince(user.created_at)} days ago</span>
+                          </div>
+                          <p className="text-gray-500 text-xs">{formatDate(user.created_at)}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* User Details Panel */}
+            <AnimatePresence>
+              {selectedUser && (
+                <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="lg:w-[450px]">
+                  <div className="bg-slate-900 rounded-xl p-6 border border-cyan-500/30 sticky top-24 max-h-[80vh] overflow-y-auto">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-bold text-white">User Details</h3>
+                      <button onClick={() => { setSelectedUser(null); setUserServers([]); setUserOrders([]) }} className="p-2 hover:bg-slate-800 rounded-lg"><X className="h-5 w-5" /></button>
+                    </div>
+
+                    {/* User Info */}
+                    <div className="bg-slate-800/50 rounded-lg p-4 mb-6">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-2xl">
+                          {selectedUser.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <h4 className="text-white font-bold text-lg">{selectedUser.name}</h4>
+                          <p className="text-gray-400 text-sm">{selectedUser.email}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Calendar className="h-3 w-3 text-gray-500" />
+                            <span className="text-gray-500 text-xs">Joined {getDaysSince(selectedUser.created_at)} days ago</span>
+                          </div>
+                        </div>
+                      </div>
+                      {selectedUser.is_banned && (
+                        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm">
+                          <p className="font-semibold flex items-center gap-1"><Ban className="h-4 w-4" /> User is Banned</p>
+                          {selectedUser.ban_reason && <p className="text-red-300/80 mt-1">Reason: {selectedUser.ban_reason}</p>}
+                        </div>
+                      )}
+                    </div>
+
+                    {loadingUserData ? (
+                      <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 text-cyan-400 animate-spin" /></div>
+                    ) : (
+                      <>
+                        {/* User's Servers */}
+                        <div className="mb-6">
+                          <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                            <Server className="h-4 w-4 text-cyan-400" />
+                            Servers ({userServers.length})
+                          </h4>
+                          {userServers.length === 0 ? (
+                            <p className="text-gray-500 text-sm">No servers</p>
+                          ) : (
+                            <div className="space-y-2">
+                              {userServers.map(server => (
+                                <div key={server.id} className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <p className="text-white font-medium text-sm">{server.plan_name}</p>
+                                      <p className="text-gray-500 text-xs">{server.server_id}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                        server.status === 'active' ? 'bg-green-500/20 text-green-400' :
+                                        server.status === 'suspended' ? 'bg-red-500/20 text-red-400' :
+                                        'bg-amber-500/20 text-amber-400'
+                                      }`}>{server.status}</span>
+                                      <p className="text-gray-500 text-xs mt-1">{getDaysSince(server.created_at)} days</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* User's Orders */}
+                        <div className="mb-6">
+                          <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                            <ShoppingCart className="h-4 w-4 text-cyan-400" />
+                            Orders ({userOrders.length})
+                          </h4>
+                          {userOrders.length === 0 ? (
+                            <p className="text-gray-500 text-sm">No orders</p>
+                          ) : (
+                            <div className="space-y-2">
+                              {userOrders.map(order => (
+                                <div key={order.id} className="bg-slate-800/50 rounded-lg p-3 border border-slate-700/50">
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <p className="text-white font-medium text-sm">{order.plan_name}</p>
+                                      <p className="text-gray-500 text-xs">{order.order_id}</p>
+                                    </div>
+                                    <div className="text-right">
+                                      <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                        order.status === 'approved' ? 'bg-green-500/20 text-green-400' :
+                                        order.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+                                        'bg-red-500/20 text-red-400'
+                                      }`}>{order.status}</span>
+                                      <p className="text-cyan-400 text-xs mt-1">PKR {order.plan_price}</p>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    {/* Ban/Unban Actions */}
+                    <div className="border-t border-slate-700 pt-6">
+                      {selectedUser.is_banned ? (
+                        <div>
+                          <h4 className="text-green-400 font-semibold mb-3 flex items-center gap-2">
+                            <Play className="h-4 w-4" /> Unban User
+                          </h4>
+                          <button 
+                            onClick={async () => {
+                              setProcessingUser(true)
+                              await unbanUser(selectedUser.id)
+                              setNotification({ type: 'success', message: 'User unbanned!' })
+                              fetchData()
+                              setSelectedUser(null)
+                              setProcessingUser(false)
+                            }}
+                            disabled={processingUser}
+                            className="w-full bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                            {processingUser ? <Loader2 className="h-5 w-5 animate-spin" /> : <Play className="h-5 w-5" />}
+                            Unban User
+                          </button>
+                        </div>
+                      ) : (
+                        <div>
+                          <h4 className="text-red-400 font-semibold mb-3 flex items-center gap-2">
+                            <Ban className="h-4 w-4" /> Ban User
+                          </h4>
+                          <div className="space-y-3">
+                            <input 
+                              type="text" 
+                              value={banReason} 
+                              onChange={(e) => setBanReason(e.target.value)}
+                              placeholder="Ban reason (optional)..."
+                              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-red-500 text-sm"
+                            />
+                            <button 
+                              onClick={async () => {
+                                setProcessingUser(true)
+                                await banUser(selectedUser.id, banReason || 'Banned by admin')
+                                setNotification({ type: 'success', message: 'User banned!' })
+                                fetchData()
+                                setSelectedUser(null)
+                                setBanReason('')
+                                setProcessingUser(false)
+                              }}
+                              disabled={processingUser}
+                              className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                              {processingUser ? <Loader2 className="h-5 w-5 animate-spin" /> : <Ban className="h-5 w-5" />}
+                              Ban User
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </div>

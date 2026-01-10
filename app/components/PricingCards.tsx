@@ -5,6 +5,8 @@ import { Check, Loader2, Cpu, Zap } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getPlans, getLocations, getPlansByLocation, getEpycPlansByLocation, HostingPlan, Location, EpycPlan } from '@/lib/supabase'
 import { useCurrency } from '@/lib/CurrencyContext'
+import { useAuth } from '@/lib/AuthContext'
+import { useRouter } from 'next/navigation'
 
 // Fallback data - UAE in center (index 1)
 const fallbackLocations: Location[] = [
@@ -81,8 +83,19 @@ export default function PricingCards() {
   const [plansLoading, setPlansLoading] = useState(false)
   const [selectedProcessor, setSelectedProcessor] = useState<'intel' | 'amd'>('intel')
   const { convertPrice, symbol } = useCurrency()
+  const { user, setShowAuthModal } = useAuth()
+  const router = useRouter()
 
   const selectedLocation = locations[selectedLocationIndex]?.code || 'UAE'
+  
+  // Handle Order Click - Redirect to order page
+  const handleOrderClick = (plan: { id: string; name: string; price: number; ram: string }) => {
+    if (!user) {
+      setShowAuthModal(true)
+      return
+    }
+    router.push(`/order/${plan.id}`)
+  }
 
   useEffect(() => {
     async function fetchInitialData() {
@@ -425,16 +438,14 @@ export default function PricingCards() {
                     </div>
 
                     {/* Button */}
-                    <motion.a 
-                      href="https://discord.gg/tKDRWYNcuE" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
+                    <motion.button 
+                      onClick={() => handleOrderClick(plan)}
                       className="w-full py-3 rounded-xl font-semibold text-white text-sm text-center block transition-all duration-300 bg-blue-600 hover:bg-blue-500 relative z-10"
                       whileHover={{ scale: 1.02 }} 
                       whileTap={{ scale: 0.98 }}
                     >
                       Order Now
-                    </motion.a>
+                    </motion.button>
                   </motion.div>
                 </motion.div>
               ))}
@@ -557,16 +568,14 @@ export default function PricingCards() {
                     </div>
 
                     {/* Button */}
-                    <motion.a
-                      href="https://discord.gg/tKDRWYNcuE"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <motion.button
+                      onClick={() => handleOrderClick(plan)}
                       className="w-full py-3 rounded-xl font-semibold text-white text-sm text-center block transition-all duration-300 bg-blue-600 hover:bg-blue-500 relative z-10"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
                       Order Now
-                    </motion.a>
+                    </motion.button>
                   </motion.div>
                 </motion.div>
               ))}

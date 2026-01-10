@@ -333,54 +333,6 @@ async function hashPassword(password: string): Promise<string> {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
-// User Registration
-export async function registerUser(email: string, password: string, name: string): Promise<{ user: SupportUser | null, error: string | null }> {
-  const passwordHash = await hashPassword(password)
-  
-  const { data, error } = await supabase
-    .from('support_users')
-    .insert([{ email: email.toLowerCase(), password_hash: passwordHash, name }])
-    .select('id, email, name, created_at')
-    .single()
-  
-  if (error) {
-    if (error.code === '23505') {
-      return { user: null, error: 'Email already registered' }
-    }
-    return { user: null, error: error.message }
-  }
-  return { user: data, error: null }
-}
-
-// User Login
-export async function loginUser(email: string, password: string): Promise<{ user: SupportUser | null, error: string | null }> {
-  const passwordHash = await hashPassword(password)
-  
-  const { data, error } = await supabase
-    .from('support_users')
-    .select('id, email, name, created_at')
-    .eq('email', email.toLowerCase())
-    .eq('password_hash', passwordHash)
-    .single()
-  
-  if (error || !data) {
-    return { user: null, error: 'Invalid email or password' }
-  }
-  return { user: data, error: null }
-}
-
-// Get user by ID
-export async function getUserById(userId: string): Promise<SupportUser | null> {
-  const { data, error } = await supabase
-    .from('support_users')
-    .select('id, email, name, created_at')
-    .eq('id', userId)
-    .single()
-  
-  if (error) return null
-  return data
-}
-
 // Generate unique ticket ID
 function generateTicketId(): string {
   return 'DH-' + Math.floor(10000 + Math.random() * 90000).toString()
@@ -536,4 +488,553 @@ export function subscribeToTicketMessages(ticketId: string, callback: (message: 
       callback(payload.new as TicketMessage)
     })
     .subscribe()
+}
+
+
+// ==================== ORDER MANAGEMENT SYSTEM ====================
+
+// Website User (for login/signup)
+export interface WebUser {
+  id: string
+  email: string
+  name: string
+  password?: string
+  created_at: string
+}
+
+// Payment Method
+export interface PaymentMethod {
+  id: string
+  name: string
+  account_number: string
+  account_title: string
+  qr_code_url: string | null
+  icon: string
+  color_from: string
+  color_to: string
+  active: boolean
+  sort_order: number
+  created_at: string
+}
+
+// Order
+export interface Order {
+  id: string
+  order_id: string
+  user_id: string
+  user_name: string
+  user_email: string
+  plan_name: string
+  plan_price: number
+  plan_ram: string
+  location: string
+  processor: string
+  payment_method: string
+  transaction_id: string | null
+  screenshot_url: string | null
+  status: 'pending' | 'approved' | 'rejected'
+  panel_link: string | null
+  panel_password: string | null
+  panel_gmail: string | null
+  admin_notes: string | null
+  approved_at: string | null
+  created_at: string
+}
+
+// Register website user
+export async function registerWebUser(email: string, password: string, name: string): Promise<{ user: WebUser | null, error: string | null }> {
+  const passwordHash = await hashPassword(password)
+  
+  const { data, error } = await supabase
+    .from('users')
+    .insert([{ email: email.toLowerCase(), password: passwordHash, name }])
+    .select('id, email, name, created_at')
+    .single()
+  
+  if (error) {
+    if (error.code === '23505') {
+      return { user: null, error: 'Email already registered' }
+    }
+    return { user: null, error: error.message }
+  }
+  return { user: data, error: null }
+}
+
+// Login website user
+export async function loginWebUser(email: string, password: string): Promise<{ user: WebUser | null, error: string | null }> {
+  const passwordHash = await hashPassword(password)
+  
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email, name, created_at')
+    .eq('email', email.toLowerCase())
+    .eq('password', passwordHash)
+    .single()
+  
+  if (error || !data) {
+    return { user: null, error: 'Invalid email or password' }
+  }
+  return { user: data, error: null }
+}
+
+// Get web user by ID
+export async function getWebUserById(userId: string): Promise<WebUser | null> {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email, name, created_at')
+    .eq('id', userId)
+    .single()
+  
+  if (error) return null
+  return data
+}
+
+// Get all payment methods
+export async function getPaymentMethods(): Promise<PaymentMethod[]> {
+  const { data, error } = await supabase
+    .from('payment_methods')
+    .select('*')
+    .eq('active', true)
+    .order('sort_order', { ascending: true })
+  
+  if (error) {
+    console.error('Error fetching payment methods:', error)
+    return []
+  }
+  return data || []
+}
+
+// Get all payment methods (admin)
+export async function getAllPaymentMethods(): Promise<PaymentMethod[]> {
+  const { data, error } = await supabase
+    .from('payment_methods')
+    .select('*')
+    .order('sort_order', { ascending: true })
+  
+  if (error) return []
+  return data || []
+}
+
+// Update payment method
+export async function updatePaymentMethod(id: string, updates: Partial<PaymentMethod>): Promise<PaymentMethod | null> {
+  const { data, error } = await supabase
+    .from('payment_methods')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single()
+  
+  if (error) return null
+  return data
+}
+
+// Generate order ID
+function generateOrderId(): string {
+  return 'ORD-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 5).toUpperCase()
+}
+
+// Create order
+export async function createOrder(orderData: {
+  user_id: string
+  user_name: string
+  user_email: string
+  plan_name: string
+  plan_price: number
+  plan_ram: string
+  location: string
+  processor: string
+  payment_method: string
+  transaction_id?: string
+  screenshot_url?: string
+}): Promise<{ order: Order | null, error: string | null }> {
+  const orderId = generateOrderId()
+  
+  const { data, error } = await supabase
+    .from('orders')
+    .insert([{
+      order_id: orderId,
+      ...orderData,
+      status: 'pending'
+    }])
+    .select()
+    .single()
+  
+  if (error) {
+    return { order: null, error: error.message }
+  }
+  return { order: data, error: null }
+}
+
+// Get user orders
+export async function getUserOrders(userId: string): Promise<Order[]> {
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  
+  if (error) return []
+  return data || []
+}
+
+// Get all orders (admin)
+export async function getAllOrders(): Promise<Order[]> {
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*')
+    .order('created_at', { ascending: false })
+  
+  if (error) return []
+  return data || []
+}
+
+// Approve order (admin)
+export async function approveOrder(orderId: string, panelLink: string, panelPassword: string, panelGmail: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('orders')
+    .update({
+      status: 'approved',
+      panel_link: panelLink,
+      panel_password: panelPassword,
+      panel_gmail: panelGmail,
+      approved_at: new Date().toISOString()
+    })
+    .eq('order_id', orderId)
+  
+  if (error) return false
+  return true
+}
+
+// Reject order (admin)
+export async function rejectOrder(orderId: string, notes: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('orders')
+    .update({
+      status: 'rejected',
+      admin_notes: notes
+    })
+    .eq('order_id', orderId)
+  
+  if (error) return false
+  return true
+}
+
+// Upload order screenshot
+export async function uploadOrderScreenshot(file: File, orderId: string): Promise<string | null> {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${orderId}/${Date.now()}.${fileExt}`
+  
+  const { error } = await supabase.storage
+    .from('order-screenshots')
+    .upload(fileName, file)
+  
+  if (error) {
+    console.error('Upload error:', error)
+    return null
+  }
+  
+  const { data } = supabase.storage
+    .from('order-screenshots')
+    .getPublicUrl(fileName)
+  
+  return data.publicUrl
+}
+
+// Upload QR code for payment method
+export async function uploadQRCode(file: File, methodId: string): Promise<string | null> {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `qr-codes/${methodId}-${Date.now()}.${fileExt}`
+  
+  const { error } = await supabase.storage
+    .from('order-screenshots')
+    .upload(fileName, file)
+  
+  if (error) {
+    console.error('Upload error:', error)
+    return null
+  }
+  
+  const { data } = supabase.storage
+    .from('order-screenshots')
+    .getPublicUrl(fileName)
+  
+  return data.publicUrl
+}
+
+
+// ==================== USER SERVERS MANAGEMENT ====================
+
+// User Server type
+export interface UserServer {
+  id: string
+  server_id: string
+  user_id: string
+  user_name: string
+  user_email: string
+  order_id: string
+  plan_name: string
+  plan_ram: string
+  location: string
+  processor: string
+  panel_link: string
+  panel_password: string
+  panel_gmail: string
+  status: 'active' | 'suspended' | 'renewal_required'
+  suspension_reason: string | null
+  expires_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+// Generate server ID
+function generateServerId(): string {
+  return 'SRV-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 5).toUpperCase()
+}
+
+// Create server from approved order
+export async function createServerFromOrder(order: Order): Promise<UserServer | null> {
+  const serverId = generateServerId()
+  
+  // Calculate expiry date (1 month from now)
+  const expiresAt = new Date()
+  expiresAt.setMonth(expiresAt.getMonth() + 1)
+  
+  const { data, error } = await supabase
+    .from('user_servers')
+    .insert([{
+      server_id: serverId,
+      user_id: order.user_id,
+      user_name: order.user_name,
+      user_email: order.user_email,
+      order_id: order.order_id,
+      plan_name: order.plan_name,
+      plan_ram: order.plan_ram,
+      location: order.location,
+      processor: order.processor,
+      panel_link: order.panel_link,
+      panel_password: order.panel_password,
+      panel_gmail: order.panel_gmail,
+      status: 'active',
+      expires_at: expiresAt.toISOString()
+    }])
+    .select()
+    .single()
+  
+  if (error) {
+    console.error('Error creating server:', error)
+    return null
+  }
+  return data
+}
+
+// Get all servers (admin)
+export async function getAllServers(): Promise<UserServer[]> {
+  const { data, error } = await supabase
+    .from('user_servers')
+    .select('*')
+    .order('created_at', { ascending: false })
+  
+  if (error) {
+    console.error('Error fetching servers:', error)
+    return []
+  }
+  return data || []
+}
+
+// Get user's servers
+export async function getUserServers(userId: string): Promise<UserServer[]> {
+  const { data, error } = await supabase
+    .from('user_servers')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  
+  if (error) {
+    console.error('Error fetching user servers:', error)
+    return []
+  }
+  return data || []
+}
+
+// Suspend server
+export async function suspendServer(serverId: string, reason: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('user_servers')
+    .update({
+      status: 'suspended',
+      suspension_reason: reason,
+      updated_at: new Date().toISOString()
+    })
+    .eq('server_id', serverId)
+  
+  if (error) {
+    console.error('Error suspending server:', error)
+    return false
+  }
+  return true
+}
+
+// Mark server for renewal
+export async function markServerForRenewal(serverId: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('user_servers')
+    .update({
+      status: 'renewal_required',
+      suspension_reason: 'Your subscription has expired. Please renew via Support.',
+      updated_at: new Date().toISOString()
+    })
+    .eq('server_id', serverId)
+  
+  if (error) {
+    console.error('Error marking server for renewal:', error)
+    return false
+  }
+  return true
+}
+
+// Reactivate server
+export async function reactivateServer(serverId: string): Promise<boolean> {
+  // Calculate new expiry date (1 month from now)
+  const expiresAt = new Date()
+  expiresAt.setMonth(expiresAt.getMonth() + 1)
+  
+  const { error } = await supabase
+    .from('user_servers')
+    .update({
+      status: 'active',
+      suspension_reason: null,
+      expires_at: expiresAt.toISOString(),
+      updated_at: new Date().toISOString()
+    })
+    .eq('server_id', serverId)
+  
+  if (error) {
+    console.error('Error reactivating server:', error)
+    return false
+  }
+  return true
+}
+
+// Delete server
+export async function deleteServer(serverId: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('user_servers')
+    .delete()
+    .eq('server_id', serverId)
+  
+  if (error) {
+    console.error('Error deleting server:', error)
+    return false
+  }
+  return true
+}
+
+// Update server details
+export async function updateServer(serverId: string, updates: Partial<UserServer>): Promise<UserServer | null> {
+  const { data, error } = await supabase
+    .from('user_servers')
+    .update({
+      ...updates,
+      updated_at: new Date().toISOString()
+    })
+    .eq('server_id', serverId)
+    .select()
+    .single()
+  
+  if (error) {
+    console.error('Error updating server:', error)
+    return null
+  }
+  return data
+}
+
+
+// ==================== USER MANAGEMENT (ADMIN) ====================
+
+// Extended User type with ban status
+export interface AdminUser {
+  id: string
+  email: string
+  name: string
+  is_banned: boolean
+  ban_reason: string | null
+  created_at: string
+}
+
+// Get all users (admin)
+export async function getAllUsers(): Promise<AdminUser[]> {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email, name, is_banned, ban_reason, created_at')
+    .order('created_at', { ascending: false })
+  
+  if (error) {
+    console.error('Error fetching users:', error)
+    return []
+  }
+  return data || []
+}
+
+// Ban user
+export async function banUser(userId: string, reason: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('users')
+    .update({
+      is_banned: true,
+      ban_reason: reason
+    })
+    .eq('id', userId)
+  
+  if (error) {
+    console.error('Error banning user:', error)
+    return false
+  }
+  return true
+}
+
+// Unban user
+export async function unbanUser(userId: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('users')
+    .update({
+      is_banned: false,
+      ban_reason: null
+    })
+    .eq('id', userId)
+  
+  if (error) {
+    console.error('Error unbanning user:', error)
+    return false
+  }
+  return true
+}
+
+// Get user's servers (for admin view)
+export async function getServersByUserId(userId: string): Promise<UserServer[]> {
+  const { data, error } = await supabase
+    .from('user_servers')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  
+  if (error) {
+    console.error('Error fetching user servers:', error)
+    return []
+  }
+  return data || []
+}
+
+// Get user's orders (for admin view)
+export async function getOrdersByUserId(userId: string): Promise<Order[]> {
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  
+  if (error) {
+    console.error('Error fetching user orders:', error)
+    return []
+  }
+  return data || []
 }

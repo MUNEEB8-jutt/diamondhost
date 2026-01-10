@@ -2,8 +2,10 @@ import type { Metadata } from 'next'
 import { Orbitron, Inter } from 'next/font/google'
 import './globals.css'
 import { CurrencyProvider } from '@/lib/CurrencyContext'
+import { AuthProvider } from '@/lib/AuthContext'
 import LoadingOverlay from './components/LoadingOverlay'
 import CustomCursor from './components/CustomCursor'
+import AuthModal from './components/AuthModal'
 
 const orbitron = Orbitron({ 
   subsets: ['latin'],
@@ -56,9 +58,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${orbitron.variable} ${inter.variable} font-sans`}>
         <CurrencyProvider>
-          <CustomCursor />
-          <LoadingOverlay />
-          {children}
+          <AuthProvider>
+            <CustomCursor />
+            <LoadingOverlay />
+            <AuthModal />
+            {children}
+          </AuthProvider>
         </CurrencyProvider>
       </body>
     </html>
