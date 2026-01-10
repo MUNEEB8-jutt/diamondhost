@@ -7,15 +7,16 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    cursor: none !important;
   }
   
   body {
     @apply bg-slate-950 text-white overflow-x-hidden;
-    cursor: none;
+    cursor: none !important;
   }
   
-  /* Hide cursor on interactive elements too */
-  a, button, [role="button"], input, textarea, select {
+  /* Hide cursor on ALL elements */
+  *, *::before, *::after {
     cursor: none !important;
   }
 }
