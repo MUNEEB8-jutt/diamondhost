@@ -115,7 +115,7 @@ export const metadata: Metadata = {
   category: 'technology',
   classification: 'Game Server Hosting',
   other: {
-    'google-site-verification': 'YOUR_GOOGLE_VERIFICATION_CODE_HERE',
+    'google-site-verification': 'Xdq-rWVqZilANxxJr2c55PYCcNdzr-ZLNa-G_FOtbhU',
   },
 }
 
