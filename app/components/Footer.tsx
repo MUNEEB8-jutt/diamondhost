@@ -74,9 +74,9 @@ export default function Footer() {
             <ul className="space-y-3">
               {[
                 { label: 'Discord Server', href: 'https://discord.gg/tKDRWYNcuE', external: true },
-                { label: 'Minecraft Hosting', href: '#plans' },
-                { label: 'Intel Platinum', href: '#plans' },
-                { label: 'AMD EPYC', href: '#plans' },
+                { label: 'Minecraft Hosting', href: '/plans' },
+                { label: 'Intel Platinum', href: '/plans' },
+                { label: 'AMD EPYC', href: '/plans' },
                 { label: 'Contact Us', href: 'https://discord.gg/tKDRWYNcuE', external: true },
               ].map((item) => (
                 <li key={item.label}>

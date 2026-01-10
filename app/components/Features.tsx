@@ -238,7 +238,7 @@ export default function Features() {
           {[
             { value: '99.9%', label: 'Uptime', icon: Server },
             { value: '24/7', label: 'Support', icon: Headphones },
-            { value: '<50ms', label: 'Latency', icon: Zap },
+            { value: '<20ms', label: 'Latency', icon: Zap },
             { value: '500+', label: 'Happy Users', icon: Globe },
           ].map((stat, index) => (
             <motion.div

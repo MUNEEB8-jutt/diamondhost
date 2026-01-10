@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
+import AboutUs from './components/AboutUs'
 import Footer from './components/Footer'
 import Background from './components/Background'
 import LoadingScreen from './components/LoadingScreen'
@@ -26,6 +27,7 @@ export default function Home() {
         <div className="relative z-10">
           <Navbar />
           <Hero />
+          <AboutUs />
           <Footer />
         </div>
       </main>

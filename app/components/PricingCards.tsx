@@ -431,10 +431,6 @@ export default function PricingCards() {
                         <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
                         <span className="text-gray-300 text-sm">24/7 Support</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
-                        <span className="text-gray-300 text-sm">DDoS Protection</span>
-                      </div>
                     </div>
 
                     {/* Button */}
@@ -560,10 +556,6 @@ export default function PricingCards() {
                       <div className="flex items-center gap-2">
                         <Check className="h-4 w-4 text-red-400 flex-shrink-0" />
                         <span className="text-gray-300 text-sm">24/7 Support</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-red-400 flex-shrink-0" />
-                        <span className="text-gray-300 text-sm">DDoS Protection</span>
                       </div>
                     </div>
 

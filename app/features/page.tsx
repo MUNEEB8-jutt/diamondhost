@@ -2,6 +2,7 @@
 
 import Navbar from '../components/Navbar'
 import Features from '../components/Features'
+import PaymentMethods from '../components/PaymentMethods'
 import Footer from '../components/Footer'
 import Background from '../components/Background'
 
@@ -13,6 +14,7 @@ export default function FeaturesPage() {
         <Navbar />
         <div className="pt-20">
           <Features />
+          <PaymentMethods />
         </div>
         <Footer />
       </div>
