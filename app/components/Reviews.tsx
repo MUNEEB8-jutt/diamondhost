@@ -100,23 +100,23 @@ export default function Reviews() {
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-full px-4 py-1.5 text-yellow-400 text-sm mb-4 italic"
+            className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-full px-4 py-1.5 text-yellow-400 text-sm mb-4"
           >
             <Star className="h-4 w-4 fill-yellow-400" />
             <span>Customer Reviews</span>
           </motion.span>
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
             <span 
-              className="text-white italic inline-block"
-              style={{ fontFamily: "'Russo One', sans-serif", transform: 'skewX(-5deg)' }}
+              className="text-white uppercase inline-block"
+              style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.1em' }}
             >
               WHAT GAMERS{' '}
             </span>
             <span 
-              className="italic inline-block"
+              className="uppercase inline-block"
               style={{ 
                 fontFamily: "'Russo One', sans-serif", 
-                transform: 'skewX(-5deg)',
+                letterSpacing: '0.1em',
                 background: 'linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -184,23 +184,23 @@ export default function Reviews() {
                   </div>
 
                   {/* Review Text */}
-                  <p className="text-gray-300 text-lg md:text-xl leading-relaxed mb-8 italic">
+                  <p className="text-gray-300 text-lg md:text-xl leading-relaxed mb-8">
                     "{reviews[currentIndex].text}"
                   </p>
 
                   {/* Author */}
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg italic">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
                       {reviews[currentIndex].avatar}
                     </div>
                     <div>
                       <p 
-                        className="text-white font-bold text-lg italic"
-                        style={{ fontFamily: "'Russo One', sans-serif" }}
+                        className="text-white font-bold text-lg uppercase"
+                        style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.05em' }}
                       >
                         {reviews[currentIndex].name}
                       </p>
-                      <p className="text-cyan-400 text-sm italic">{reviews[currentIndex].role}</p>
+                      <p className="text-cyan-400 text-sm">{reviews[currentIndex].role}</p>
                     </div>
                   </div>
                 </motion.div>

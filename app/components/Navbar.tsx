@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, ChevronDown, MessageCircle, Home, Package, Zap, Loader2, Server, User, LogOut, Gamepad2 } from 'lucide-react'
+import { Menu, X, MessageCircle, Home, Package, Zap, Loader2, Server, User, LogOut } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useCurrency } from '@/lib/CurrencyContext'
 import { useAuth } from '@/lib/AuthContext'
@@ -37,12 +37,54 @@ const DiamondLogo = () => (
   </svg>
 )
 
+// SVG Flag Components - works on all platforms
+const USFlag = () => (
+  <svg viewBox="0 0 60 40" className="w-6 h-4 rounded-sm shadow-sm flex-shrink-0">
+    <rect width="60" height="40" fill="#B22234"/>
+    <rect y="3.08" width="60" height="3.08" fill="white"/>
+    <rect y="9.23" width="60" height="3.08" fill="white"/>
+    <rect y="15.38" width="60" height="3.08" fill="white"/>
+    <rect y="21.54" width="60" height="3.08" fill="white"/>
+    <rect y="27.69" width="60" height="3.08" fill="white"/>
+    <rect y="33.85" width="60" height="3.08" fill="white"/>
+    <rect width="24" height="21.54" fill="#3C3B6E"/>
+    <g fill="white">
+      <circle cx="4" cy="3" r="1.2"/><circle cx="8" cy="3" r="1.2"/><circle cx="12" cy="3" r="1.2"/><circle cx="16" cy="3" r="1.2"/><circle cx="20" cy="3" r="1.2"/>
+      <circle cx="6" cy="6" r="1.2"/><circle cx="10" cy="6" r="1.2"/><circle cx="14" cy="6" r="1.2"/><circle cx="18" cy="6" r="1.2"/>
+      <circle cx="4" cy="9" r="1.2"/><circle cx="8" cy="9" r="1.2"/><circle cx="12" cy="9" r="1.2"/><circle cx="16" cy="9" r="1.2"/><circle cx="20" cy="9" r="1.2"/>
+      <circle cx="6" cy="12" r="1.2"/><circle cx="10" cy="12" r="1.2"/><circle cx="14" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>
+      <circle cx="4" cy="15" r="1.2"/><circle cx="8" cy="15" r="1.2"/><circle cx="12" cy="15" r="1.2"/><circle cx="16" cy="15" r="1.2"/><circle cx="20" cy="15" r="1.2"/>
+      <circle cx="6" cy="18" r="1.2"/><circle cx="10" cy="18" r="1.2"/><circle cx="14" cy="18" r="1.2"/><circle cx="18" cy="18" r="1.2"/>
+    </g>
+  </svg>
+)
+
+const INFlag = () => (
+  <svg viewBox="0 0 60 40" className="w-6 h-4 rounded-sm shadow-sm flex-shrink-0">
+    <rect width="60" height="13.33" fill="#FF9933"/>
+    <rect y="13.33" width="60" height="13.33" fill="white"/>
+    <rect y="26.67" width="60" height="13.33" fill="#138808"/>
+    <circle cx="30" cy="20" r="5" fill="none" stroke="#000080" strokeWidth="0.8"/>
+    <circle cx="30" cy="20" r="1.5" fill="#000080"/>
+  </svg>
+)
+
+const PKFlag = () => (
+  <svg viewBox="0 0 60 40" className="w-6 h-4 rounded-sm shadow-sm flex-shrink-0">
+    <rect width="60" height="40" fill="#01411C"/>
+    <rect width="15" height="40" fill="white"/>
+    <circle cx="36" cy="20" r="8" fill="white"/>
+    <circle cx="39" cy="20" r="6.5" fill="#01411C"/>
+    <path d="M44 14 L45.5 18.5 L50 18.5 L46.5 21.5 L48 26 L44 23 L40 26 L41.5 21.5 L38 18.5 L42.5 18.5 Z" fill="white"/>
+  </svg>
+)
+
 type CurrencyCode = 'USD' | 'INR' | 'PKR'
 
 const currencies = [
-  { code: 'USD' as CurrencyCode, symbol: '$', flag: '🇺🇸' },
-  { code: 'INR' as CurrencyCode, symbol: '₹', flag: '🇮🇳' },
-  { code: 'PKR' as CurrencyCode, symbol: 'Rs', flag: '🇵🇰' },
+  { code: 'USD' as CurrencyCode, symbol: '$', Flag: USFlag },
+  { code: 'INR' as CurrencyCode, symbol: '₹', Flag: INFlag },
+  { code: 'PKR' as CurrencyCode, symbol: 'Rs', Flag: PKFlag },
 ]
 
 const navItems = [
@@ -65,6 +107,7 @@ export default function Navbar() {
   const router = useRouter()
 
   const currentCurrency = currencies.find(c => c.code === currency)
+  const CurrentFlag = currentCurrency?.Flag
 
   useEffect(() => {
     setLoadingPath(null)
@@ -77,7 +120,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
       setCurrencyOpen(false)
@@ -98,13 +140,13 @@ export default function Navbar() {
   }
 
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? 'bg-[#070b14]/95 backdrop-blur-xl shadow-lg shadow-cyan-500/5 border-b border-cyan-500/10' 
+        scrolled
+          ? 'bg-[#070b14]/95 backdrop-blur-xl shadow-lg shadow-cyan-500/5 border-b border-cyan-500/10'
           : 'bg-[#070b14]/80 backdrop-blur-xl border-b border-blue-500/10'
       }`}
     >
@@ -112,8 +154,8 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-18 md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <motion.div 
-              whileHover={{ scale: 1.05, rotate: 5 }} 
+            <motion.div
+              whileHover={{ scale: 1.05, rotate: 5 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
               <DiamondLogo />
@@ -160,7 +202,7 @@ export default function Navbar() {
 
           {/* Right Side Actions */}
           <div className="hidden md:flex items-center gap-2">
-            {/* Currency Selector */}
+            {/* Currency Selector - Flags Only */}
             <div className="relative">
               <motion.button
                 onClick={(e) => { e.stopPropagation(); setCurrencyOpen(!currencyOpen); setUserMenuOpen(false) }}
@@ -168,9 +210,8 @@ export default function Navbar() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <span>{currentCurrency?.flag}</span>
+                {CurrentFlag && <CurrentFlag />}
                 <span className="font-medium text-xs">{currency}</span>
-                <ChevronDown className={`h-3 w-3 transition-transform duration-300 ${currencyOpen ? 'rotate-180' : ''}`} />
               </motion.button>
 
               <AnimatePresence>
@@ -179,22 +220,25 @@ export default function Navbar() {
                     initial={{ opacity: 0, y: -10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    className="absolute top-full right-0 mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-600/50 rounded-xl overflow-hidden shadow-xl z-50 min-w-[120px]"
+                    className="absolute top-full right-0 mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-600/50 rounded-xl overflow-hidden shadow-xl z-50 min-w-[130px]"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {currencies.map((curr) => (
-                      <motion.button
-                        key={curr.code}
-                        onClick={() => { setCurrency(curr.code); setCurrencyOpen(false) }}
-                        className={`flex items-center gap-2 w-full px-4 py-2.5 text-sm transition-all ${
-                          currency === curr.code ? 'bg-cyan-600 text-white' : 'text-gray-300 hover:bg-slate-700'
-                        }`}
-                        whileHover={{ x: 2 }}
-                      >
-                        <span>{curr.flag}</span>
-                        <span className="font-medium">{curr.code}</span>
-                      </motion.button>
-                    ))}
+                    {currencies.map((curr) => {
+                      const FlagIcon = curr.Flag
+                      return (
+                        <motion.button
+                          key={curr.code}
+                          onClick={() => { setCurrency(curr.code); setCurrencyOpen(false) }}
+                          className={`flex items-center gap-3 w-full px-4 py-2.5 text-sm transition-all ${
+                            currency === curr.code ? 'bg-cyan-600 text-white' : 'text-gray-300 hover:bg-slate-700'
+                          }`}
+                          whileHover={{ x: 2 }}
+                        >
+                          <FlagIcon />
+                          <span className="font-medium">{curr.code}</span>
+                        </motion.button>
+                      )
+                    })}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -213,7 +257,6 @@ export default function Navbar() {
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                   <span className="font-medium max-w-[80px] truncate">{user.name}</span>
-                  <ChevronDown className={`h-3 w-3 transition-transform duration-300 ${userMenuOpen ? 'rotate-180' : ''}`} />
                 </motion.button>
 
                 <AnimatePresence>
@@ -263,8 +306,8 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <motion.button 
-            className="lg:hidden text-gray-300 p-2 rounded-xl hover:bg-slate-800/50 border border-slate-700/50" 
+          <motion.button
+            className="lg:hidden text-gray-300 p-2 rounded-xl hover:bg-slate-800/50 border border-slate-700/50"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             whileTap={{ scale: 0.95 }}
           >
@@ -275,7 +318,7 @@ export default function Navbar() {
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.nav 
+            <motion.nav
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -294,8 +337,8 @@ export default function Navbar() {
                       transition={{ delay: index * 0.05 }}
                       onClick={() => handleNavClick(item.href)}
                       className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                        isActive 
-                          ? 'text-white bg-gradient-to-r from-cyan-600/20 to-blue-600/20 border border-cyan-500/30' 
+                        isActive
+                          ? 'text-white bg-gradient-to-r from-cyan-600/20 to-blue-600/20 border border-cyan-500/30'
                           : 'text-gray-400 hover:text-white hover:bg-slate-800/50'
                       }`}
                     >
@@ -304,7 +347,7 @@ export default function Navbar() {
                     </motion.button>
                   )
                 })}
-                
+
                 {/* User Section - Mobile */}
                 <div className="mt-3 pt-3 border-t border-slate-700/50">
                   {user ? (
@@ -335,25 +378,28 @@ export default function Navbar() {
                     </motion.button>
                   )}
                 </div>
-                
-                {/* Currency - Mobile */}
+
+                {/* Currency - Mobile with Flags */}
                 <div className="px-4 py-3 mt-2">
                   <p className="text-gray-500 text-xs mb-2 font-medium">Currency</p>
                   <div className="flex gap-2">
-                    {currencies.map((curr) => (
-                      <button
-                        key={curr.code}
-                        onClick={() => setCurrency(curr.code)}
-                        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-all ${
-                          currency === curr.code 
-                            ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white' 
-                            : 'bg-slate-800 text-gray-300 hover:bg-slate-700'
-                        }`}
-                      >
-                        <span>{curr.flag}</span>
-                        <span>{curr.code}</span>
-                      </button>
-                    ))}
+                    {currencies.map((curr) => {
+                      const FlagIcon = curr.Flag
+                      return (
+                        <button
+                          key={curr.code}
+                          onClick={() => setCurrency(curr.code)}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+                            currency === curr.code
+                              ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
+                              : 'bg-slate-800 text-gray-300 hover:bg-slate-700'
+                          }`}
+                        >
+                          <FlagIcon />
+                          <span>{curr.code}</span>
+                        </button>
+                      )
+                    })}
                   </div>
                 </div>
               </div>

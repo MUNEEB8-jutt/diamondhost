@@ -4,37 +4,32 @@ import { useEffect, useRef, useState } from 'react'
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null)
-  const glowRef = useRef<HTMLDivElement>(null)
   const [isHovering, setIsHovering] = useState(false)
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
     const cursor = cursorRef.current
-    const glow = glowRef.current
-    if (!cursor || !glow) return
+    if (!cursor) return
 
+    // Direct DOM manipulation for zero delay
     const handleMouseMove = (e: MouseEvent) => {
-      // Direct transform - no delay, instant follow
-      cursor.style.transform = `translate(${e.clientX - 10}px, ${e.clientY - 10}px)`
-      glow.style.transform = `translate(${e.clientX - 15}px, ${e.clientY - 15}px)`
-      
+      cursor.style.left = e.clientX + 'px'
+      cursor.style.top = e.clientY + 'px'
       if (!isVisible) setIsVisible(true)
     }
 
     const handleMouseEnter = () => setIsVisible(true)
     const handleMouseLeave = () => setIsVisible(false)
 
-    // Detect hovering on interactive elements
     const addHoverListeners = () => {
       const interactiveElements = document.querySelectorAll('a, button, [role="button"], input, textarea, select')
-      
       interactiveElements.forEach(el => {
         el.addEventListener('mouseenter', () => setIsHovering(true))
         el.addEventListener('mouseleave', () => setIsHovering(false))
       })
     }
 
-    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
     document.addEventListener('mouseenter', handleMouseEnter)
     document.addEventListener('mouseleave', handleMouseLeave)
     
@@ -51,49 +46,28 @@ export default function CustomCursor() {
   }, [isVisible])
 
   return (
-    <>
-      {/* Main glow cursor - blur effect */}
-      <div
-        ref={glowRef}
-        className={`fixed top-0 left-0 pointer-events-none z-[9999] transition-opacity duration-200 ${
-          isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
-        style={{ willChange: 'transform' }}
+    <div
+      ref={cursorRef}
+      className={`fixed pointer-events-none z-[9999] ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+      style={{ willChange: 'left, top' }}
+    >
+      {/* Cyan Arrow Cursor */}
+      <svg 
+        width="24" 
+        height="24" 
+        viewBox="0 0 24 24" 
+        style={{
+          filter: `drop-shadow(0 0 ${isHovering ? '6px' : '3px'} rgba(6, 182, 212, ${isHovering ? '0.9' : '0.7'})) drop-shadow(0 0 ${isHovering ? '12px' : '6px'} rgba(6, 182, 212, 0.4))`,
+        }}
       >
-        <div 
-          className={`rounded-full transition-all duration-150 ${
-            isHovering ? 'w-12 h-12' : 'w-8 h-8'
-          }`}
-          style={{
-            background: isHovering 
-              ? 'radial-gradient(circle, rgba(6, 182, 212, 0.6) 0%, rgba(6, 182, 212, 0.3) 40%, transparent 70%)'
-              : 'radial-gradient(circle, rgba(6, 182, 212, 0.5) 0%, rgba(6, 182, 212, 0.2) 50%, transparent 70%)',
-            filter: 'blur(4px)',
-            boxShadow: isHovering
-              ? '0 0 25px 8px rgba(6, 182, 212, 0.4)'
-              : '0 0 15px 5px rgba(6, 182, 212, 0.3)',
-          }}
+        {/* Arrow shape - classic cursor */}
+        <path 
+          d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.48 0 .72-.58.38-.92L6.35 2.85a.5.5 0 0 0-.85.36Z"
+          fill={isHovering ? '#67e8f9' : '#22d3ee'}
+          stroke={isHovering ? '#fff' : '#cffafe'}
+          strokeWidth="1"
         />
-      </div>
-
-      {/* Center dot - precise point */}
-      <div
-        ref={cursorRef}
-        className={`fixed top-0 left-0 pointer-events-none z-[9999] transition-opacity duration-200 ${
-          isVisible ? 'opacity-100' : 'opacity-0'
-        }`}
-        style={{ willChange: 'transform' }}
-      >
-        <div 
-          className={`rounded-full bg-cyan-400 transition-all duration-100 ${
-            isHovering ? 'w-5 h-5 bg-cyan-300' : 'w-5 h-5'
-          }`}
-          style={{
-            boxShadow: '0 0 10px 3px rgba(6, 182, 212, 0.6), 0 0 20px 6px rgba(6, 182, 212, 0.3)',
-            filter: 'blur(2px)',
-          }}
-        />
-      </div>
-    </>
+      </svg>
+    </div>
   )
 }

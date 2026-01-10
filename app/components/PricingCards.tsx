@@ -38,40 +38,380 @@ const fallbackEpycPlans: EpycPlan[] = [
   { id: 'amd6', name: 'EPYC Ultimate', icon: 'Cpu', ram: '32GB RAM', performance: '1000%', location: 'UAE', price: 4499, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 6, active: true, created_at: '' },
 ]
 
-// Flag Component - Large cinematic style
-const FlagIcon = ({ code, size = 'normal' }: { code: string; size?: 'normal' | 'large' | 'xlarge' }) => {
-  const sizeClass = size === 'xlarge' ? 'w-24 h-16' : size === 'large' ? 'w-16 h-12' : 'w-10 h-7'
+// Circular 3D Flag Component - Large cinematic style
+const CircularFlag = ({ code, size = 'normal' }: { code: string; size?: 'small' | 'normal' | 'large' | 'xlarge' }) => {
+  const sizeClass = size === 'xlarge' ? 'w-32 h-32 md:w-40 md:h-40' : size === 'large' ? 'w-24 h-24 md:w-32 md:h-32' : size === 'normal' ? 'w-16 h-16 md:w-20 md:h-20' : 'w-12 h-12'
   
-  if (code === 'UAE' || code === 'AE') {
+  const FlagContent = () => {
+    if (code === 'UAE' || code === 'AE') {
+      return (
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          <defs>
+            <clipPath id="circleClipUAE">
+              <circle cx="50" cy="50" r="48" />
+            </clipPath>
+            <linearGradient id="uaeShine" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="white" stopOpacity="0.5" />
+              <stop offset="30%" stopColor="white" stopOpacity="0.2" />
+              <stop offset="50%" stopColor="white" stopOpacity="0" />
+              <stop offset="100%" stopColor="black" stopOpacity="0.3" />
+            </linearGradient>
+            <radialGradient id="uaeGlow" cx="30%" cy="30%" r="60%">
+              <stop offset="0%" stopColor="white" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="white" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <g clipPath="url(#circleClipUAE)">
+            <rect width="100" height="33.33" fill="#00732F" />
+            <rect y="33.33" width="100" height="33.33" fill="#FFFFFF" />
+            <rect y="66.66" width="100" height="33.34" fill="#000000" />
+            <rect width="25" height="100" fill="#FF0000" />
+          </g>
+          <circle cx="50" cy="50" r="48" fill="url(#uaeGlow)" />
+          <circle cx="50" cy="50" r="48" fill="url(#uaeShine)" />
+          <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
+          <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="1" />
+        </svg>
+      )
+    }
+    if (code === 'Singapore' || code === 'SG') {
+      return (
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          <defs>
+            <clipPath id="circleClipSG">
+              <circle cx="50" cy="50" r="48" />
+            </clipPath>
+            <linearGradient id="sgShine" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="white" stopOpacity="0.5" />
+              <stop offset="30%" stopColor="white" stopOpacity="0.2" />
+              <stop offset="50%" stopColor="white" stopOpacity="0" />
+              <stop offset="100%" stopColor="black" stopOpacity="0.3" />
+            </linearGradient>
+            <radialGradient id="sgGlow" cx="30%" cy="30%" r="60%">
+              <stop offset="0%" stopColor="white" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="white" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <g clipPath="url(#circleClipSG)">
+            <rect width="100" height="50" fill="#ED2939" />
+            <rect y="50" width="100" height="50" fill="#FFFFFF" />
+            <circle cx="25" cy="30" r="12" fill="#FFFFFF" />
+            <circle cx="28" cy="30" r="10" fill="#ED2939" />
+            <g fill="#FFFFFF">
+              <polygon points="40,18 41,22 45,22 42,25 43,29 40,26 37,29 38,25 35,22 39,22" />
+              <polygon points="28,15 29,18 32,18 29.5,20 30.5,23 28,21 25.5,23 26.5,20 24,18 27,18" />
+              <polygon points="20,22 21,25 24,25 21.5,27 22.5,30 20,28 17.5,30 18.5,27 16,25 19,25" />
+              <polygon points="22,35 23,38 26,38 23.5,40 24.5,43 22,41 19.5,43 20.5,40 18,38 21,38" />
+              <polygon points="34,35 35,38 38,38 35.5,40 36.5,43 34,41 31.5,43 32.5,40 30,38 33,38" />
+            </g>
+          </g>
+          <circle cx="50" cy="50" r="48" fill="url(#sgGlow)" />
+          <circle cx="50" cy="50" r="48" fill="url(#sgShine)" />
+          <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
+          <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="1" />
+        </svg>
+      )
+    }
+    if (code === 'Germany' || code === 'DE') {
+      return (
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          <defs>
+            <clipPath id="circleClipDE">
+              <circle cx="50" cy="50" r="48" />
+            </clipPath>
+            <linearGradient id="deShine" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="white" stopOpacity="0.5" />
+              <stop offset="30%" stopColor="white" stopOpacity="0.2" />
+              <stop offset="50%" stopColor="white" stopOpacity="0" />
+              <stop offset="100%" stopColor="black" stopOpacity="0.3" />
+            </linearGradient>
+            <radialGradient id="deGlow" cx="30%" cy="30%" r="60%">
+              <stop offset="0%" stopColor="white" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="white" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <g clipPath="url(#circleClipDE)">
+            <rect width="100" height="33.33" fill="#000000" />
+            <rect y="33.33" width="100" height="33.33" fill="#DD0000" />
+            <rect y="66.66" width="100" height="33.34" fill="#FFCC00" />
+          </g>
+          <circle cx="50" cy="50" r="48" fill="url(#deGlow)" />
+          <circle cx="50" cy="50" r="48" fill="url(#deShine)" />
+          <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
+          <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="1" />
+        </svg>
+      )
+    }
+    return <div className="w-full h-full bg-gray-600 rounded-full" />
+  }
+
+  return (
+    <div className={`${sizeClass} rounded-full overflow-hidden relative`}>
+      <FlagContent />
+    </div>
+  )
+}
+
+// 3D Carousel Location Selector
+const LocationCarousel = ({ 
+  locations, 
+  selectedIndex, 
+  onSelect 
+}: { 
+  locations: Location[]; 
+  selectedIndex: number; 
+  onSelect: (index: number) => void 
+}) => {
+  const [direction, setDirection] = useState(0) // -1 left, 1 right, 0 initial
+  const prevIndex = selectedIndex === 0 ? locations.length - 1 : selectedIndex - 1
+  const nextIndex = (selectedIndex + 1) % locations.length
+  const currentLoc = locations[selectedIndex]
+  const prevLoc = locations[prevIndex]
+  const nextLoc = locations[nextIndex]
+
+  const handleSelect = (idx: number) => {
+    if (idx === selectedIndex) return
+    // Determine direction
+    if (idx === nextIndex) {
+      setDirection(1)
+    } else if (idx === prevIndex) {
+      setDirection(-1)
+    } else {
+      setDirection(idx > selectedIndex ? 1 : -1)
+    }
+    onSelect(idx)
+  }
+
+  // Flag texture for arrows
+  const FlagArrow = ({ code, direction }: { code: string; direction: 'left' | 'right' }) => {
+    const isLeft = direction === 'left'
+    
+    const getFlagColors = () => {
+      if (code === 'UAE' || code === 'AE') {
+        return { c1: '#00732F', c2: '#FFFFFF', c3: '#000000', accent: '#FF0000' }
+      }
+      if (code === 'Singapore' || code === 'SG') {
+        return { c1: '#ED2939', c2: '#FFFFFF', c3: '#ED2939', accent: '#FFFFFF' }
+      }
+      if (code === 'Germany' || code === 'DE') {
+        return { c1: '#000000', c2: '#DD0000', c3: '#FFCC00', accent: '#DD0000' }
+      }
+      return { c1: '#666', c2: '#888', c3: '#AAA', accent: '#FFF' }
+    }
+    
+    const colors = getFlagColors()
+    const gradientId = `flagGrad${direction}${code}`
+    
     return (
-      <svg viewBox="0 0 36 24" className={`${sizeClass} rounded-lg shadow-lg`}>
-        <rect width="36" height="8" fill="#00732F" />
-        <rect y="8" width="36" height="8" fill="#FFFFFF" />
-        <rect y="16" width="36" height="8" fill="#000000" />
-        <rect width="9" height="24" fill="#FF0000" />
+      <svg 
+        viewBox="0 0 50 70" 
+        className={`w-10 h-14 md:w-14 md:h-20 ${isLeft ? '-rotate-6' : 'rotate-6'} drop-shadow-lg`}
+      >
+        <defs>
+          <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor={colors.c1} />
+            <stop offset="33%" stopColor={colors.c1} />
+            <stop offset="33%" stopColor={colors.c2} />
+            <stop offset="66%" stopColor={colors.c2} />
+            <stop offset="66%" stopColor={colors.c3} />
+            <stop offset="100%" stopColor={colors.c3} />
+          </linearGradient>
+          <linearGradient id={`shine${direction}${code}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="white" stopOpacity="0.5" />
+            <stop offset="40%" stopColor="white" stopOpacity="0.1" />
+            <stop offset="100%" stopColor="black" stopOpacity="0.2" />
+          </linearGradient>
+          <clipPath id={`arrowClip${direction}${code}`}>
+            <path d={isLeft 
+              ? "M40 5 L10 35 L40 65 L40 50 L22 35 L40 20 Z" 
+              : "M10 5 L40 35 L10 65 L10 50 L28 35 L10 20 Z"
+            } />
+          </clipPath>
+        </defs>
+        
+        {/* Flag texture background */}
+        <g clipPath={`url(#arrowClip${direction}${code})`}>
+          <rect width="50" height="70" fill={`url(#${gradientId})`} />
+          {/* UAE red stripe */}
+          {(code === 'UAE' || code === 'AE') && (
+            <rect x="0" y="0" width="12" height="70" fill={colors.accent} />
+          )}
+          <rect width="50" height="70" fill={`url(#shine${direction}${code})`} />
+        </g>
+        
+        {/* Arrow outline */}
+        <path 
+          d={isLeft 
+            ? "M40 5 L10 35 L40 65 L40 50 L22 35 L40 20 Z" 
+            : "M10 5 L40 35 L10 65 L10 50 L28 35 L10 20 Z"
+          }
+          fill="none"
+          stroke="rgba(255,255,255,0.6)"
+          strokeWidth="1.5"
+        />
       </svg>
     )
   }
-  if (code === 'Singapore' || code === 'SG') {
-    return (
-      <svg viewBox="0 0 36 24" className={`${sizeClass} rounded-lg shadow-lg`}>
-        <rect width="36" height="12" fill="#ED2939" />
-        <rect y="12" width="36" height="12" fill="#FFFFFF" />
-        <circle cx="10" cy="8" r="4" fill="#FFFFFF" />
-        <circle cx="11" cy="8" r="3" fill="#ED2939" />
-      </svg>
-    )
+
+  // Animation variants for smooth 3D-like transitions
+  const flagVariants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 100 : -100,
+      opacity: 0,
+      scale: 0.7,
+      rotateY: dir > 0 ? 45 : -45,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      rotateY: 0,
+    },
+    exit: (dir: number) => ({
+      x: dir > 0 ? -100 : 100,
+      opacity: 0,
+      scale: 0.7,
+      rotateY: dir > 0 ? -45 : 45,
+    }),
   }
-  if (code === 'Germany' || code === 'DE') {
-    return (
-      <svg viewBox="0 0 36 24" className={`${sizeClass} rounded-lg shadow-lg`}>
-        <rect width="36" height="8" fill="#000000" />
-        <rect y="8" width="36" height="8" fill="#DD0000" />
-        <rect y="16" width="36" height="8" fill="#FFCC00" />
-      </svg>
-    )
-  }
-  return <div className={`${sizeClass} bg-gray-600 rounded-lg`} />
+
+  return (
+    <div className="relative w-full flex flex-col items-center justify-center py-8" style={{ perspective: '1000px' }}>
+      {/* Main Container */}
+      <div className="relative flex items-center justify-center gap-8 md:gap-16 w-full max-w-4xl px-4">
+        
+        {/* Left Arrow with Flag Texture */}
+        <motion.button
+          onClick={() => handleSelect(prevIndex)}
+          className="relative group flex flex-col items-center"
+          whileHover={{ scale: 1.1, x: -5 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        >
+          <motion.div
+            key={prevLoc.code}
+            initial={{ opacity: 0, x: -20, rotate: -20 }}
+            animate={{ opacity: 1, x: 0, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          >
+            <FlagArrow code={prevLoc.code} direction="left" />
+          </motion.div>
+          <motion.span 
+            key={`prev-${prevLoc.name}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-[10px] md:text-xs text-gray-500 mt-2 group-hover:text-cyan-400 transition-colors"
+          >
+            {prevLoc.name}
+          </motion.span>
+        </motion.button>
+
+        {/* Center Flag - Main Display with AnimatePresence */}
+        <div className="relative flex flex-col items-center" style={{ transformStyle: 'preserve-3d' }}>
+          {/* Outer Glow - Static */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-36 h-36 md:w-48 md:h-48 bg-cyan-500/20 rounded-full blur-2xl" />
+          </div>
+          
+          {/* Popular Badge for UAE - Outside AnimatePresence */}
+          {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-30">
+              <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] md:text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg shadow-orange-500/40 whitespace-nowrap">
+                🔥 Popular
+              </span>
+            </div>
+          )}
+          
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={selectedIndex}
+              custom={direction}
+              variants={flagVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                type: 'spring',
+                stiffness: 300,
+                damping: 30,
+                mass: 0.8,
+              }}
+              className="relative flex flex-col items-center"
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              {/* Popular Badge for UAE - Outside AnimatePresence to prevent flickering */}
+              
+              {/* Flag with ring */}
+              <div className="relative">
+                {/* Cyan ring glow - only around edges, not on flag */}
+                <div className="absolute -inset-3 md:-inset-4 rounded-full border-2 border-cyan-500/60 shadow-[0_0_20px_rgba(6,182,212,0.4)]" />
+                
+                <div className="relative rounded-full overflow-hidden">
+                  <CircularFlag code={currentLoc.code} size="xlarge" />
+                </div>
+              </div>
+              
+              {/* Location Name */}
+              <motion.div 
+                className="text-center mt-5 md:mt-6"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <p className="text-lg md:text-2xl font-bold text-white tracking-wide">
+                  {currentLoc.name}
+                </p>
+                <p className="text-cyan-400 text-[10px] md:text-xs font-medium tracking-widest uppercase mt-0.5">
+                  Server Location
+                </p>
+              </motion.div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Right Arrow with Flag Texture */}
+        <motion.button
+          onClick={() => handleSelect(nextIndex)}
+          className="relative group flex flex-col items-center"
+          whileHover={{ scale: 1.1, x: 5 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        >
+          <motion.div
+            key={nextLoc.code}
+            initial={{ opacity: 0, x: 20, rotate: 20 }}
+            animate={{ opacity: 1, x: 0, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          >
+            <FlagArrow code={nextLoc.code} direction="right" />
+          </motion.div>
+          <motion.span 
+            key={`next-${nextLoc.name}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-[10px] md:text-xs text-gray-500 mt-2 group-hover:text-cyan-400 transition-colors"
+          >
+            {nextLoc.name}
+          </motion.span>
+        </motion.button>
+      </div>
+      
+      {/* Location Dots */}
+      <div className="flex gap-2 mt-6">
+        {locations.map((_, idx) => (
+          <motion.button
+            key={idx}
+            onClick={() => handleSelect(idx)}
+            className={`h-1.5 rounded-full transition-all duration-300 ${
+              idx === selectedIndex ? 'bg-cyan-400 w-5' : 'bg-slate-600 w-1.5 hover:bg-slate-500'
+            }`}
+            whileHover={{ scale: 1.3 }}
+            layout
+          />
+        ))}
+      </div>
+    </div>
+  )
 }
 
 export default function PricingCards() {
@@ -122,17 +462,11 @@ export default function PricingCards() {
     fetchInitialData()
   }, [])
 
-  const handleLocationChange = async (direction: 'prev' | 'next') => {
-    let newIndex = selectedLocationIndex
-    if (direction === 'next') {
-      newIndex = (selectedLocationIndex + 1) % locations.length
-    } else {
-      newIndex = selectedLocationIndex === 0 ? locations.length - 1 : selectedLocationIndex - 1
-    }
+  const handleLocationChange = async (newIndex: number) => {
+    if (newIndex === selectedLocationIndex) return
     setSelectedLocationIndex(newIndex)
     setPlansLoading(true)
     
-    // Reset to Intel if switching away from UAE while AMD is selected
     const newLocationCode = locations[newIndex]?.code || 'UAE'
     if (newLocationCode !== 'UAE' && newLocationCode !== 'AE' && selectedProcessor === 'amd') {
       setSelectedProcessor('intel')
@@ -166,120 +500,20 @@ export default function PricingCards() {
   return (
     <section id="plans" className="py-24 px-4 relative overflow-hidden">
       <div className="container mx-auto relative z-10">
-        {/* Cinematic Location Selector - Above Everything */}
+        {/* 3D VR Style Location Carousel */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }} 
           whileInView={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.5 }} 
           viewport={{ once: true }}
-          className="flex justify-center mb-16"
+          className="mb-12"
         >
-          <div className="relative flex items-center gap-6">
-            {/* Glow Background */}
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-blue-500/10 to-purple-500/20 blur-3xl rounded-full scale-150 opacity-50" />
-            
-            {/* Left Arrow - Sleek style */}
-            <motion.button
-              onClick={() => handleLocationChange('prev')}
-              className="relative z-10 p-4 text-slate-500 hover:text-cyan-400 transition-all duration-300 group"
-              whileHover={{ scale: 1.2, x: -5 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <div className="absolute inset-0 bg-cyan-500/0 group-hover:bg-cyan-500/10 rounded-full blur-xl transition-all duration-300" />
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </motion.button>
-
-            {/* Flag Display Card */}
-            <motion.div 
-              className="relative flex items-center gap-5 bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-2xl px-10 py-5 rounded-2xl border border-slate-600/30 shadow-2xl"
-              key={selectedLocationIndex}
-              initial={{ opacity: 0, scale: 0.9, rotateY: -20 }}
-              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-              transition={{ duration: 0.4, type: 'spring', stiffness: 200 }}
-            >
-              {/* Animated Border Glow */}
-              <div className="absolute inset-0 rounded-2xl">
-                <div className="absolute inset-[-2px] bg-gradient-to-r from-cyan-500/50 via-blue-500/50 to-purple-500/50 rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-500" />
-              </div>
-              
-              {/* Inner Glow */}
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 rounded-2xl" />
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-400/30 to-transparent" />
-              
-              {/* Popular Badge for UAE - Top right corner */}
-              {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
-                <motion.div 
-                  className="absolute -top-2 -right-2 z-30"
-                  initial={{ scale: 0, y: 10 }}
-                  animate={{ scale: 1, y: 0 }}
-                  transition={{ type: 'spring', stiffness: 400, delay: 0.3 }}
-                >
-                  <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg shadow-orange-500/40 whitespace-nowrap">
-                    Popular
-                  </span>
-                </motion.div>
-              )}
-              
-              {/* Flag with 3D effect */}
-              <motion.div
-                initial={{ rotateY: 90, opacity: 0 }}
-                animate={{ rotateY: 0, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="relative"
-              >
-                <div className="absolute inset-0 bg-white/10 blur-xl rounded-lg scale-110" />
-                <FlagIcon code={currentLoc.code} size="xlarge" />
-              </motion.div>
-              
-              {/* Location Info */}
-              <div className="relative z-10">
-                <motion.p 
-                  className="text-2xl font-bold text-white tracking-wide"
-                  initial={{ opacity: 0, x: 15 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.15 }}
-                >
-                  {currentLoc.name}
-                </motion.p>
-                <motion.p 
-                  className="text-xs text-cyan-400/80 font-medium tracking-widest uppercase"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.25 }}
-                >
-                  Server Location
-                </motion.p>
-              </div>
-            </motion.div>
-
-            {/* Right Arrow - Sleek style */}
-            <motion.button
-              onClick={() => handleLocationChange('next')}
-              className="relative z-10 p-4 text-slate-500 hover:text-cyan-400 transition-all duration-300 group"
-              whileHover={{ scale: 1.2, x: 5 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <div className="absolute inset-0 bg-cyan-500/0 group-hover:bg-cyan-500/10 rounded-full blur-xl transition-all duration-300" />
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </motion.button>
-          </div>
+          <LocationCarousel 
+            locations={locations}
+            selectedIndex={selectedLocationIndex}
+            onSelect={handleLocationChange}
+          />
         </motion.div>
-
-        {/* Location Dots */}
-        <div className="flex justify-center gap-3 mb-8">
-          {locations.map((loc, idx) => (
-            <motion.div
-              key={loc.id}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${idx === selectedLocationIndex ? 'bg-cyan-400 w-8' : 'bg-slate-600'}`}
-              whileHover={{ scale: 1.2 }}
-            />
-          ))}
-        </div>
 
         {/* Intel / AMD Toggle - Only show AMD for UAE */}
         <motion.div 
