@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -9,6 +11,12 @@
   
   body {
     @apply bg-slate-950 text-white overflow-x-hidden;
+    cursor: none;
+  }
+  
+  /* Hide cursor on interactive elements too */
+  a, button, [role="button"], input, textarea, select {
+    cursor: none !important;
   }
 }
 
@@ -23,6 +31,22 @@
   
   .btn-primary {
     @apply bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105;
+  }
+  
+  /* Gaming Style Text - Bold wide-spaced, no italic */
+  .gaming-text {
+    font-family: 'Russo One', var(--font-orbitron), sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  
+  .gaming-text-glow {
+    font-family: 'Russo One', var(--font-orbitron), sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px currentColor, 0 0 40px currentColor, 0 0 60px currentColor;
   }
 }
 

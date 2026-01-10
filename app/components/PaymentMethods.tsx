@@ -76,9 +76,26 @@ export default function PaymentMethods() {
             <Wallet className="h-4 w-4" />
             <span>Easy Payments</span>
           </motion.span>
-          <h2 className="font-orbitron text-3xl md:text-4xl font-bold mb-4">
-            <span className="text-white">Payment </span>
-            <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Methods</span>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <span 
+              className="text-white uppercase inline-block"
+              style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.1em' }}
+            >
+              PAYMENT{' '}
+            </span>
+            <span 
+              className="uppercase inline-block"
+              style={{ 
+                fontFamily: "'Russo One', sans-serif", 
+                letterSpacing: '0.1em',
+                background: 'linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                filter: 'drop-shadow(0 0 20px rgba(6, 182, 212, 0.5))'
+              }}
+            >
+              METHODS
+            </span>
           </h2>
           <p className="text-gray-400 max-w-xl mx-auto">
             Multiple payment options for your convenience
@@ -111,7 +128,7 @@ export default function PaymentMethods() {
                 
                 {/* Info */}
                 <div>
-                  <p className="text-white font-semibold">{method.name}</p>
+                  <p className="text-white font-semibold uppercase" style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.05em' }}>{method.name}</p>
                   <p className="text-gray-500 text-xs">{method.description}</p>
                 </div>
               </div>

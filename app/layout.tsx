@@ -3,6 +3,7 @@ import { Orbitron, Inter } from 'next/font/google'
 import './globals.css'
 import { CurrencyProvider } from '@/lib/CurrencyContext'
 import LoadingOverlay from './components/LoadingOverlay'
+import CustomCursor from './components/CustomCursor'
 
 const orbitron = Orbitron({ 
   subsets: ['latin'],
@@ -55,6 +56,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${orbitron.variable} ${inter.variable} font-sans`}>
         <CurrencyProvider>
+          <CustomCursor />
           <LoadingOverlay />
           {children}
         </CurrencyProvider>

@@ -31,41 +31,50 @@ export default function Hero() {
           <Sparkles className="h-4 w-4 text-cyan-400" />
         </motion.div>
 
-        {/* Main Heading */}
+        {/* Main Heading - Gaming Style (Bold, Wide-spaced, No italic) */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-6 font-orbitron relative"
+          className="mb-6 relative"
         >
-          {/* NEXT-LEVEL - White */}
+          {/* NEXT-LEVEL - White bold */}
           <motion.span 
-            className="block text-5xl md:text-7xl lg:text-8xl font-black tracking-wider text-white relative"
+            className="block text-5xl md:text-7xl lg:text-8xl font-black tracking-wider text-white uppercase"
             style={{
-              textShadow: '0 0 40px rgba(255, 255, 255, 0.3), 0 0 80px rgba(255, 255, 255, 0.1)',
+              fontFamily: "'Russo One', var(--font-orbitron), sans-serif",
+              textShadow: '0 0 30px rgba(255, 255, 255, 0.3), 2px 2px 0px rgba(59, 130, 246, 0.5)',
+              letterSpacing: '0.1em',
             }}
           >
             NEXT-LEVEL
           </motion.span>
           
-          {/* GAMING EXPERIENCE - Blue with glow */}
+          {/* GAMING EXPERIENCE - Blue/Cyan with glow */}
           <div className="relative mt-2">
             {/* Glow behind */}
             <motion.div
-              className="absolute inset-0 blur-2xl opacity-70"
-              animate={{ opacity: [0.5, 0.8, 0.5] }}
+              className="absolute inset-0 blur-2xl opacity-60"
+              animate={{ opacity: [0.4, 0.7, 0.4] }}
               transition={{ duration: 3, repeat: Infinity }}
             >
-              <span className="block text-4xl md:text-6xl lg:text-7xl font-black text-cyan-500">GAMING EXPERIENCE</span>
+              <span 
+                className="block text-4xl md:text-6xl lg:text-7xl font-black text-cyan-500 uppercase"
+                style={{ letterSpacing: '0.1em' }}
+              >
+                GAMING EXPERIENCE
+              </span>
             </motion.div>
             
             <motion.span 
-              className="block text-4xl md:text-6xl lg:text-7xl font-black tracking-wider relative"
+              className="block text-4xl md:text-6xl lg:text-7xl font-black tracking-wider relative uppercase"
               style={{
+                fontFamily: "'Russo One', var(--font-orbitron), sans-serif",
+                letterSpacing: '0.1em',
                 background: 'linear-gradient(180deg, #67e8f9 0%, #06b6d4 40%, #0891b2 70%, #3b82f6 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                filter: 'drop-shadow(0 0 40px rgba(6, 182, 212, 0.8)) drop-shadow(0 0 80px rgba(59, 130, 246, 0.5))',
+                filter: 'drop-shadow(0 0 30px rgba(6, 182, 212, 0.8)) drop-shadow(0 0 60px rgba(59, 130, 246, 0.5))',
               }}
             >
               GAMING EXPERIENCE
@@ -151,10 +160,12 @@ export default function Hero() {
                   <Sparkles className="h-5 w-5 md:h-6 md:w-6 text-cyan-400 relative z-10" />
                 </motion.div>
                 
-                {/* Text */}
+                {/* Text - Gaming Style (Bold, no italic) */}
                 <span 
-                  className="font-orbitron font-bold text-lg md:text-xl tracking-widest relative z-10"
+                  className="font-black text-lg md:text-xl tracking-widest relative z-10 uppercase"
                   style={{
+                    fontFamily: "'Russo One', var(--font-orbitron), sans-serif",
+                    letterSpacing: '0.15em',
                     background: 'linear-gradient(90deg, #ffffff 0%, #67e8f9 50%, #ffffff 100%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
@@ -200,8 +211,10 @@ export default function Hero() {
                 <stat.icon className="h-5 w-5 md:h-6 md:w-6 text-blue-400 group-hover:text-white transition-colors" />
               </div>
               <p 
-                className="font-orbitron text-2xl md:text-4xl font-black mb-1"
+                className="text-2xl md:text-4xl font-black mb-1 uppercase"
                 style={{
+                  fontFamily: "'Russo One', var(--font-orbitron), sans-serif",
+                  letterSpacing: '0.05em',
                   background: 'linear-gradient(180deg, #ffffff 0%, #67e8f9 50%, #3b82f6 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',

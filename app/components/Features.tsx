@@ -48,6 +48,21 @@ const features = [
   },
 ]
 
+const GamingText = ({ children, className = '', glow = false }: { children: React.ReactNode, className?: string, glow?: boolean }) => (
+  <span 
+    className={`uppercase ${className}`}
+    style={{
+      fontFamily: "'Russo One', var(--font-orbitron), sans-serif",
+      fontWeight: 700,
+      letterSpacing: '0.1em',
+      display: 'inline-block',
+      ...(glow ? { filter: 'drop-shadow(0 0 20px currentColor)' } : {})
+    }}
+  >
+    {children}
+  </span>
+)
+
 export default function Features() {
   return (
     <section id="features" className="py-24 px-4 relative z-10 overflow-hidden">
@@ -81,8 +96,9 @@ export default function Features() {
           >
             Why Choose Us
           </motion.span>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-            Powerful <span className="text-cyan-400">Features</span>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <GamingText className="text-white">POWERFUL </GamingText>
+            <GamingText className="text-cyan-400" glow>FEATURES</GamingText>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Everything you need for the perfect Minecraft server experience
@@ -110,19 +126,12 @@ export default function Features() {
               >
                 <div className="w-[350px] h-[400px] relative">
                   <svg viewBox="0 0 240 280" className="w-full h-full drop-shadow-2xl">
-                    {/* Main Server Cabinet */}
                     <rect x="40" y="20" width="160" height="240" rx="10" fill="#0f172a" stroke="#1e40af" strokeWidth="2"/>
-                    
-                    {/* Cabinet Top */}
                     <rect x="40" y="20" width="160" height="30" rx="10" fill="#1e293b"/>
-                    <text x="120" y="40" textAnchor="middle" fill="#60a5fa" fontSize="12" fontWeight="bold">DIAMOND HOST</text>
-                    
-                    {/* Server Blades */}
+                    <text x="120" y="40" textAnchor="middle" fill="#60a5fa" fontSize="12" fontWeight="bold" fontStyle="italic">DIAMOND HOST</text>
                     {[0, 1, 2, 3].map((i) => (
                       <g key={i}>
                         <rect x="50" y={60 + i * 50} width="140" height="42" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1"/>
-                        
-                        {/* Status LEDs */}
                         <circle cx="65" cy={81 + i * 50} r="5" fill="#22c55e">
                           <animate attributeName="opacity" values="1;0.4;1" dur={`${1.5 + i * 0.2}s`} repeatCount="indefinite"/>
                         </circle>
@@ -132,14 +141,10 @@ export default function Features() {
                         <circle cx="99" cy={81 + i * 50} r="5" fill="#f59e0b">
                           <animate attributeName="opacity" values="1;0.6;1" dur={`${2 + i * 0.1}s`} repeatCount="indefinite"/>
                         </circle>
-                        
-                        {/* Ventilation */}
                         <g fill="#475569">
-                          <rect x="115" y={68 + i * 50} width="65" height="2" rx="1"/>
-                          <rect x="115" y={74 + i * 50} width="65" height="2" rx="1"/>
-                          <rect x="115" y={80 + i * 50} width="65" height="2" rx="1"/>
-                          <rect x="115" y={86 + i * 50} width="65" height="2" rx="1"/>
-                          <rect x="115" y={92 + i * 50} width="65" height="2" rx="1"/>
+                          {[0,1,2,3,4].map(j => (
+                            <rect key={j} x="115" y={68 + i * 50 + j * 6} width="65" height="2" rx="1"/>
+                          ))}
                         </g>
                       </g>
                     ))}
@@ -209,7 +214,7 @@ export default function Features() {
                           </div>
                         </div>
                         <div>
-                          <h3 className="text-base font-bold text-white mb-0.5">{feature.title}</h3>
+                          <h3 className="text-base font-bold text-white mb-0.5 uppercase" style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.05em' }}>{feature.title}</h3>
                           <p className="text-cyan-400 text-xs mb-2">{feature.subtitle}</p>
                           <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
                         </div>
@@ -245,7 +250,18 @@ export default function Features() {
               className="text-center bg-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:border-cyan-500/30 transition-all group"
             >
               <stat.icon className="h-8 w-8 text-cyan-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-              <p className="text-3xl md:text-4xl font-bold text-cyan-400 mb-1">{stat.value}</p>
+              <p 
+                className="text-3xl md:text-4xl font-bold mb-1 uppercase"
+                style={{
+                  fontFamily: "'Russo One', sans-serif",
+                  letterSpacing: '0.05em',
+                  background: 'linear-gradient(180deg, #ffffff 0%, #67e8f9 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                {stat.value}
+              </p>
               <p className="text-gray-500 text-sm">{stat.label}</p>
             </motion.div>
           ))}

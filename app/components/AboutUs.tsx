@@ -15,22 +15,22 @@ const stats = [
 const values = [
   {
     icon: Shield,
-    title: 'Reliability',
+    title: 'RELIABILITY',
     description: 'Your server stays online with our enterprise-grade infrastructure and DDoS protection.',
   },
   {
     icon: Zap,
-    title: 'Performance',
+    title: 'PERFORMANCE',
     description: 'AMD EPYC & Intel Platinum processors ensure lag-free gaming experience.',
   },
   {
     icon: Heart,
-    title: 'Customer First',
+    title: 'CUSTOMER FIRST',
     description: 'We prioritize your needs with responsive support and flexible plans.',
   },
   {
     icon: Rocket,
-    title: 'Innovation',
+    title: 'INNOVATION',
     description: 'Constantly upgrading our systems to deliver cutting-edge hosting solutions.',
   },
 ]
@@ -59,10 +59,25 @@ export default function AboutUs() {
               <span>About Diamond Host</span>
             </motion.span>
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              <span className="text-white">Premium Hosting,</span>
+              <span 
+                className="block text-white uppercase mb-2"
+                style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.1em', display: 'inline-block' }}
+              >
+                PREMIUM HOSTING,
+              </span>
               <br />
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                Exceptional Experience
+              <span 
+                className="uppercase inline-block"
+                style={{ 
+                  fontFamily: "'Russo One', sans-serif", 
+                  letterSpacing: '0.1em',
+                  background: 'linear-gradient(180deg, #67e8f9 0%, #3b82f6 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.5))'
+                }}
+              >
+                EXCEPTIONAL EXPERIENCE
               </span>
             </h1>
             <p className="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
@@ -93,7 +108,12 @@ export default function AboutUs() {
                 <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center group-hover:scale-110 transition-transform">
                   <stat.icon className="h-7 w-7 text-white" />
                 </div>
-                <p className="text-3xl md:text-4xl font-bold text-white mb-1">{stat.value}</p>
+                <p 
+                  className="text-3xl md:text-4xl font-bold text-white mb-1 uppercase"
+                  style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.05em' }}
+                >
+                  {stat.value}
+                </p>
                 <p className="text-gray-500 text-sm">{stat.label}</p>
               </motion.div>
             ))}
@@ -116,7 +136,27 @@ export default function AboutUs() {
                 <Heart className="h-4 w-4" />
                 <span>What We Stand For</span>
               </motion.span>
-              <h2 className="text-3xl md:text-4xl font-bold text-white">Our Core Values</h2>
+              <h2 className="text-3xl md:text-4xl font-bold">
+                <span 
+                  className="text-white uppercase inline-block"
+                  style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.1em' }}
+                >
+                  OUR CORE{' '}
+                </span>
+                <span 
+                  className="uppercase inline-block"
+                  style={{ 
+                    fontFamily: "'Russo One', sans-serif", 
+                    letterSpacing: '0.1em',
+                    background: 'linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    filter: 'drop-shadow(0 0 20px rgba(6, 182, 212, 0.5))'
+                  }}
+                >
+                  VALUES
+                </span>
+              </h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -135,7 +175,12 @@ export default function AboutUs() {
                       <value.icon className="h-6 w-6 text-blue-400 group-hover:text-white transition-colors" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-white mb-2">{value.title}</h3>
+                      <h3 
+                        className="text-xl font-bold text-white mb-2 uppercase"
+                        style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.05em' }}
+                      >
+                        {value.title}
+                      </h3>
                       <p className="text-gray-400 text-sm leading-relaxed">{value.description}</p>
                     </div>
                   </div>

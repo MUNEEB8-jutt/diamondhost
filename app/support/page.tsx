@@ -243,47 +243,103 @@ export default function SupportPage() {
     }
   }
 
+  // Gaming text style component - Bold, wide-spaced, no italic
+  const GamingText = ({ children, className = '', glow = false }: { children: React.ReactNode, className?: string, glow?: boolean }) => (
+    <span 
+      className={`uppercase ${className}`}
+      style={{
+        fontFamily: "'Russo One', var(--font-orbitron), sans-serif",
+        fontWeight: 700,
+        letterSpacing: '0.1em',
+        display: 'inline-block',
+        ...(glow ? { filter: 'drop-shadow(0 0 20px currentColor)' } : {})
+      }}
+    >
+      {children}
+    </span>
+  )
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="h-10 w-10 text-cyan-400 animate-spin" />
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+        >
+          <Loader2 className="h-12 w-12 text-cyan-400" />
+        </motion.div>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-slate-950">
-      {/* Background */}
-      <div className="fixed inset-0 z-0">
+      {/* Animated Background */}
+      <div className="fixed inset-0 z-0 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#070b14] via-[#0c1929] to-[#070b14]" />
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-600/10 rounded-full blur-[120px]" />
+        <motion.div 
+          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[150px]"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.2, 0.1]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div 
+          className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-600/10 rounded-full blur-[120px]"
+          animate={{ 
+            scale: [1.2, 1, 1.2],
+            opacity: [0.15, 0.1, 0.15]
+          }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        {/* Grid overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
       </div>
 
       {/* Header */}
-      <header className="relative z-10 bg-slate-900/80 backdrop-blur-xl border-b border-blue-500/10">
+      <header className="relative z-10 bg-slate-900/80 backdrop-blur-xl border-b border-blue-500/20">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-              <ArrowLeft className="h-5 w-5" />
-              <Home className="h-5 w-5" />
+            <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors group">
+              <motion.div whileHover={{ x: -3 }}>
+                <ArrowLeft className="h-5 w-5" />
+              </motion.div>
+              <Home className="h-5 w-5 group-hover:scale-110 transition-transform" />
             </Link>
             <div className="h-6 w-px bg-slate-700" />
-            <div className="flex items-center gap-2">
-              <MessageCircle className="h-6 w-6 text-cyan-400" />
-              <h1 className="text-xl font-bold text-white">Support Center</h1>
+            <div className="flex items-center gap-3">
+              <motion.div
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity }}
+              >
+                <MessageCircle className="h-6 w-6 text-cyan-400" />
+              </motion.div>
+              <h1 className="text-xl font-bold">
+                <GamingText className="text-white">SUPPORT </GamingText>
+                <GamingText className="text-cyan-400" glow>CENTER</GamingText>
+              </h1>
             </div>
           </div>
           {user && (
-            <div className="flex items-center gap-4">
+            <motion.div 
+              className="flex items-center gap-4"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+            >
               <div className="text-right hidden sm:block">
                 <p className="text-white font-medium text-sm">{user.name}</p>
                 <p className="text-gray-500 text-xs">{user.email}</p>
               </div>
-              <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-400 transition-colors">
+              <motion.button 
+                onClick={handleLogout} 
+                className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
                 <LogOut className="h-5 w-5" />
-              </button>
-            </div>
+              </motion.button>
+            </motion.div>
           )}
         </div>
       </header>
