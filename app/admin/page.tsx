@@ -21,6 +21,19 @@ import {
 
 // No client-side secret - verification happens on server
 
+// Currency symbols
+const currencySymbols: Record<string, string> = {
+  USD: '$',
+  INR: '₹',
+  PKR: 'Rs',
+  AED: 'AED',
+}
+
+// Get currency symbol
+function getCurrencySymbol(currency: string): string {
+  return currencySymbols[currency] || currency
+}
+
 const iconOptions = ['Medal', 'Star', 'Crown', 'Award', 'Diamond', 'Gem', 'Trophy', 'Sparkles']
 const colorOptions = [
   { from: 'gray-400', to: 'gray-600', label: 'Silver' },
@@ -1024,7 +1037,7 @@ export default function AdminPage() {
                         </div>
                         
                         <div className="text-right">
-                          <p className="text-cyan-400 font-bold text-xl">Rs {order.plan_price < 100 ? Math.round(order.plan_price * 278) : order.plan_price} PKR</p>
+                          <p className="text-cyan-400 font-bold text-xl">{getCurrencySymbol(order.plan_currency || 'PKR')} {order.plan_price.toLocaleString()}</p>
                           <p className="text-gray-500 text-xs">{order.payment_method}</p>
                           <p className="text-gray-500 text-xs">{formatDate(order.created_at)}</p>
                         </div>
@@ -1627,7 +1640,7 @@ export default function AdminPage() {
                                         order.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
                                         'bg-red-500/20 text-red-400'
                                       }`}>{order.status}</span>
-                                      <p className="text-cyan-400 text-xs mt-1">PKR {order.plan_price < 100 ? Math.round(order.plan_price * 278) : order.plan_price}</p>
+                                      <p className="text-cyan-400 text-xs mt-1">{getCurrencySymbol(order.plan_currency || 'PKR')} {order.plan_price.toLocaleString()}</p>
                                     </div>
                                   </div>
                                 </div>

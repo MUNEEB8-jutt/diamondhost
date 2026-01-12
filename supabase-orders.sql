@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS orders (
   user_email TEXT NOT NULL,
   plan_name TEXT NOT NULL,
   plan_price DECIMAL(10,2) NOT NULL,
+  plan_currency TEXT DEFAULT 'PKR',
   plan_ram TEXT,
   location TEXT,
   processor TEXT,
@@ -45,6 +46,9 @@ CREATE TABLE IF NOT EXISTS orders (
   approved_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add currency column if table already exists
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS plan_currency TEXT DEFAULT 'PKR';
 
 -- Drop existing policies first (to avoid conflicts)
 DROP POLICY IF EXISTS "Anyone can create user" ON users;

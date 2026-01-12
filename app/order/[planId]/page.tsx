@@ -8,23 +8,64 @@ import {
   CheckCircle, AlertCircle, Server, Cpu, MapPin, Sparkles
 } from 'lucide-react'
 import { useAuth } from '@/lib/AuthContext'
+import { useCurrency } from '@/lib/CurrencyContext'
 import { 
   PaymentMethod, getPaymentMethods, createOrder, 
-  uploadOrderScreenshot, getPlans, HostingPlan 
+  uploadOrderScreenshot, getPlans, getEpycPlans, HostingPlan, EpycPlan 
 } from '@/lib/supabase'
 import Link from 'next/link'
 import Navbar from '../../components/Navbar'
 import Background from '../../components/Background'
 
+// Combined plan type for order page
+type AnyPlan = HostingPlan | EpycPlan
+
+// Fallback plans if database is empty
+function getFallbackPlans(): AnyPlan[] {
+  return [
+    // India Plans
+    { id: 'in1', name: 'Low-Fire Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'India', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+    { id: 'in2', name: 'Fire Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'India', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+    { id: 'in3', name: 'Low-Water Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'India', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+    { id: 'in4', name: 'Water Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'India', price: 1000, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 4, active: true, created_at: '' },
+    { id: 'in5', name: 'Spirit Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'India', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 5, active: true, created_at: '' },
+    { id: 'in6', name: 'Infinity Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'India', price: 1600, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+    { id: 'in7', name: 'Sharingan Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'India', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
+    { id: 'in8', name: 'Arise Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'India', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
+    { id: 'in9', name: 'Arise-Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'India', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
+    // Germany Plans
+    { id: 'de1', name: 'Low-Fire Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'Germany', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+    { id: 'de2', name: 'Fire Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'Germany', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+    { id: 'de3', name: 'Low-Water Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'Germany', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+    { id: 'de4', name: 'Water Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'Germany', price: 1000, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 4, active: true, created_at: '' },
+    { id: 'de5', name: 'Spirit Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'Germany', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 5, active: true, created_at: '' },
+    { id: 'de6', name: 'Infinity Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'Germany', price: 1600, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+    { id: 'de7', name: 'Sharingan Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'Germany', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
+    { id: 'de8', name: 'Arise Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'Germany', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
+    { id: 'de9', name: 'Arise-Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'Germany', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
+    // UAE AMD EPYC Plans
+    { id: 'amd1', name: 'Low-Fire Plan', icon: 'Cpu', ram: '2GB RAM', performance: '150%', location: 'UAE', price: 200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+    { id: 'amd2', name: 'Fire Plan', icon: 'Cpu', ram: '4GB RAM', performance: '200%', location: 'UAE', price: 400, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+    { id: 'amd3', name: 'Low-Water Plan', icon: 'Cpu', ram: '8GB RAM', performance: '300%', location: 'UAE', price: 800, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+    { id: 'amd4', name: 'Water Plan', icon: 'Cpu', ram: '12GB RAM', performance: '400%', location: 'UAE', price: 1200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: false, sort_order: 4, active: true, created_at: '' },
+    { id: 'amd5', name: 'Spirit Plan', icon: 'Cpu', ram: '16GB RAM', performance: '500%', location: 'UAE', price: 1600, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: true, sort_order: 5, active: true, created_at: '' },
+    { id: 'amd6', name: 'Infinity Plan', icon: 'Cpu', ram: '24GB RAM', performance: '750%', location: 'UAE', price: 2400, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+    { id: 'amd7', name: 'Sharingan Plan', icon: 'Cpu', ram: '32GB RAM', performance: '1000%', location: 'UAE', price: 3200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 7, active: true, created_at: '' },
+    { id: 'amd8', name: 'Arise Plan', icon: 'Cpu', ram: '48GB RAM', performance: '1500%', location: 'UAE', price: 4800, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 8, active: true, created_at: '' },
+    { id: 'amd9', name: 'Arise-Plus Plan', icon: 'Cpu', ram: '64GB RAM', performance: '2000%', location: 'UAE', price: 6400, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
+  ]
+}
+
 export default function OrderPage() {
   const params = useParams()
   const router = useRouter()
   const { user, loading: authLoading, setShowAuthModal } = useAuth()
+  const { currency, convertPrice, symbol } = useCurrency()
   
   // Step: 1 = Select Payment, 2 = Payment Details, 3 = Success
   const [step, setStep] = useState(1)
   
-  const [plan, setPlan] = useState<HostingPlan | null>(null)
+  const [plan, setPlan] = useState<AnyPlan | null>(null)
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null)
   const [loading, setLoading] = useState(true)
@@ -48,13 +89,33 @@ export default function OrderPage() {
 
   const loadData = async () => {
     setLoading(true)
-    const [plans, methods] = await Promise.all([
+    const [plans, epycPlans, methods] = await Promise.all([
       getPlans(),
+      getEpycPlans(),
       getPaymentMethods()
     ])
     
     const planId = decodeURIComponent(params.planId as string)
-    const foundPlan = plans.find(p => p.id === planId || p.name.toLowerCase().replace(/\s+/g, '-') === planId.toLowerCase())
+    
+    // Combine all plans
+    const allPlans = [...plans, ...epycPlans]
+    
+    // Try to find plan by various methods
+    let foundPlan = allPlans.find(p => 
+      p.id === planId || 
+      p.name.toLowerCase().replace(/\s+/g, '-') === planId.toLowerCase() ||
+      p.name.toLowerCase() === planId.toLowerCase()
+    )
+    
+    // If not found in database, check fallback plans
+    if (!foundPlan) {
+      const fallbackPlans = getFallbackPlans()
+      foundPlan = fallbackPlans.find(p => 
+        p.id === planId || 
+        p.name.toLowerCase().replace(/\s+/g, '-') === planId.toLowerCase() ||
+        p.name.toLowerCase() === planId.toLowerCase()
+      )
+    }
     
     if (foundPlan) {
       setPlan(foundPlan)
@@ -99,13 +160,17 @@ export default function OrderPage() {
 
     try {
       const screenshotUrl = await uploadOrderScreenshot(screenshot, `${user.id}-${Date.now()}`)
+      
+      // Convert price to selected currency for display in admin
+      const displayPrice = parseFloat(convertPrice(plan.price / 278))
 
       const { error: orderError } = await createOrder({
         user_id: user.id,
         user_name: user.name,
         user_email: user.email,
         plan_name: plan.name,
-        plan_price: plan.price,
+        plan_price: displayPrice,
+        plan_currency: currency,
         plan_ram: plan.ram,
         location: plan.location,
         processor: plan.performance,
@@ -263,7 +328,7 @@ export default function OrderPage() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-cyan-400">PKR {plan.price}</p>
+                <p className="text-3xl font-bold text-cyan-400">{symbol}{convertPrice(plan.price / 278)}</p>
                 <p className="text-gray-500 text-sm">per month</p>
               </div>
             </div>
@@ -417,7 +482,7 @@ export default function OrderPage() {
                     {/* Amount */}
                     <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl p-4 border border-cyan-500/30">
                       <span className="text-gray-400 text-sm block mb-2">Amount to Pay</span>
-                      <p className="text-cyan-400 font-bold text-2xl">PKR {plan.price}</p>
+                      <p className="text-cyan-400 font-bold text-2xl">{symbol}{convertPrice(plan.price / 278)}</p>
                     </div>
                   </div>
                 </div>
