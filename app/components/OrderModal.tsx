@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { X, Loader2, AlertCircle, CheckCircle, Upload, Copy, Check } from 'lucide-react'
 import { useAuth } from '@/lib/AuthContext'
+import { useCurrency } from '@/lib/CurrencyContext'
 import { PaymentMethod, getPaymentMethods, createOrder, uploadOrderScreenshot } from '@/lib/supabase'
 
 interface OrderModalProps {
@@ -20,6 +21,7 @@ interface OrderModalProps {
 
 export default function OrderModal({ isOpen, onClose, plan }: OrderModalProps) {
   const { user, setShowAuthModal } = useAuth()
+  const { currency, convertPrice } = useCurrency()
   const [step, setStep] = useState<'payment' | 'details' | 'success'>('payment')
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([])
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null)
@@ -82,7 +84,8 @@ export default function OrderModal({ isOpen, onClose, plan }: OrderModalProps) {
         user_name: user.name,
         user_email: user.email,
         plan_name: plan.name,
-        plan_price: plan.price,
+        plan_price: parseFloat(convertPrice(plan.price / 278).replace(/,/g, '')),
+        plan_currency: currency,
         plan_ram: plan.ram,
         location: plan.location,
         processor: plan.processor,
