@@ -37,45 +37,61 @@ const DiamondLogo = () => (
   </svg>
 )
 
-// SVG Flag Components - works on all platforms
+// SVG Flag Components - Circular style (bigger)
 const USFlag = () => (
-  <svg viewBox="0 0 60 40" className="w-6 h-4 rounded-sm shadow-sm flex-shrink-0">
-    <rect width="60" height="40" fill="#B22234"/>
-    <rect y="3.08" width="60" height="3.08" fill="white"/>
-    <rect y="9.23" width="60" height="3.08" fill="white"/>
-    <rect y="15.38" width="60" height="3.08" fill="white"/>
-    <rect y="21.54" width="60" height="3.08" fill="white"/>
-    <rect y="27.69" width="60" height="3.08" fill="white"/>
-    <rect y="33.85" width="60" height="3.08" fill="white"/>
-    <rect width="24" height="21.54" fill="#3C3B6E"/>
-    <g fill="white">
-      <circle cx="4" cy="3" r="1.2"/><circle cx="8" cy="3" r="1.2"/><circle cx="12" cy="3" r="1.2"/><circle cx="16" cy="3" r="1.2"/><circle cx="20" cy="3" r="1.2"/>
-      <circle cx="6" cy="6" r="1.2"/><circle cx="10" cy="6" r="1.2"/><circle cx="14" cy="6" r="1.2"/><circle cx="18" cy="6" r="1.2"/>
-      <circle cx="4" cy="9" r="1.2"/><circle cx="8" cy="9" r="1.2"/><circle cx="12" cy="9" r="1.2"/><circle cx="16" cy="9" r="1.2"/><circle cx="20" cy="9" r="1.2"/>
-      <circle cx="6" cy="12" r="1.2"/><circle cx="10" cy="12" r="1.2"/><circle cx="14" cy="12" r="1.2"/><circle cx="18" cy="12" r="1.2"/>
-      <circle cx="4" cy="15" r="1.2"/><circle cx="8" cy="15" r="1.2"/><circle cx="12" cy="15" r="1.2"/><circle cx="16" cy="15" r="1.2"/><circle cx="20" cy="15" r="1.2"/>
-      <circle cx="6" cy="18" r="1.2"/><circle cx="10" cy="18" r="1.2"/><circle cx="14" cy="18" r="1.2"/><circle cx="18" cy="18" r="1.2"/>
+  <svg viewBox="0 0 100 100" className="w-7 h-7 rounded-full shadow-sm flex-shrink-0">
+    <defs>
+      <clipPath id="usCircle">
+        <circle cx="50" cy="50" r="48" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#usCircle)">
+      <rect width="100" height="100" fill="#B22234"/>
+      <rect y="7.7" width="100" height="7.7" fill="white"/>
+      <rect y="23.1" width="100" height="7.7" fill="white"/>
+      <rect y="38.5" width="100" height="7.7" fill="white"/>
+      <rect y="53.8" width="100" height="7.7" fill="white"/>
+      <rect y="69.2" width="100" height="7.7" fill="white"/>
+      <rect y="84.6" width="100" height="7.7" fill="white"/>
+      <rect width="40" height="53.8" fill="#3C3B6E"/>
     </g>
+    <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
   </svg>
 )
 
 const INFlag = () => (
-  <svg viewBox="0 0 60 40" className="w-6 h-4 rounded-sm shadow-sm flex-shrink-0">
-    <rect width="60" height="13.33" fill="#FF9933"/>
-    <rect y="13.33" width="60" height="13.33" fill="white"/>
-    <rect y="26.67" width="60" height="13.33" fill="#138808"/>
-    <circle cx="30" cy="20" r="5" fill="none" stroke="#000080" strokeWidth="0.8"/>
-    <circle cx="30" cy="20" r="1.5" fill="#000080"/>
+  <svg viewBox="0 0 100 100" className="w-7 h-7 rounded-full shadow-sm flex-shrink-0">
+    <defs>
+      <clipPath id="inCircle">
+        <circle cx="50" cy="50" r="48" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#inCircle)">
+      <rect width="100" height="33.33" fill="#FF9933"/>
+      <rect y="33.33" width="100" height="33.33" fill="white"/>
+      <rect y="66.66" width="100" height="33.34" fill="#138808"/>
+      <circle cx="50" cy="50" r="10" fill="none" stroke="#000080" strokeWidth="1.5"/>
+      <circle cx="50" cy="50" r="3" fill="#000080"/>
+    </g>
+    <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
   </svg>
 )
 
 const PKFlag = () => (
-  <svg viewBox="0 0 60 40" className="w-6 h-4 rounded-sm shadow-sm flex-shrink-0">
-    <rect width="60" height="40" fill="#01411C"/>
-    <rect width="15" height="40" fill="white"/>
-    <circle cx="36" cy="20" r="8" fill="white"/>
-    <circle cx="39" cy="20" r="6.5" fill="#01411C"/>
-    <path d="M44 14 L45.5 18.5 L50 18.5 L46.5 21.5 L48 26 L44 23 L40 26 L41.5 21.5 L38 18.5 L42.5 18.5 Z" fill="white"/>
+  <svg viewBox="0 0 100 100" className="w-7 h-7 rounded-full shadow-sm flex-shrink-0">
+    <defs>
+      <clipPath id="pkCircle">
+        <circle cx="50" cy="50" r="48" />
+      </clipPath>
+    </defs>
+    <g clipPath="url(#pkCircle)">
+      <rect width="100" height="100" fill="#01411C"/>
+      <rect width="25" height="100" fill="white"/>
+      <circle cx="58" cy="50" r="16" fill="white"/>
+      <circle cx="63" cy="50" r="13" fill="#01411C"/>
+      <path d="M72 35 L75 44 L84 44 L77 50 L80 59 L72 53 L64 59 L67 50 L60 44 L69 44 Z" fill="white"/>
+    </g>
+    <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
   </svg>
 )
 
@@ -201,17 +217,20 @@ export default function Navbar() {
           </nav>
 
           {/* Right Side Actions */}
-          <div className="hidden md:flex items-center gap-2">
-            {/* Currency Selector - Flags Only */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Currency Selector - Premium Style */}
             <div className="relative">
               <motion.button
                 onClick={(e) => { e.stopPropagation(); setCurrencyOpen(!currencyOpen); setUserMenuOpen(false) }}
-                className="flex items-center gap-2 bg-slate-800/60 hover:bg-slate-700/60 border border-slate-600/40 text-white text-sm py-2 px-3 rounded-xl transition-all duration-300"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="flex items-center gap-3 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/50 text-white py-2.5 px-4 rounded-xl transition-all duration-300"
+                whileHover={{ scale: 1.03, borderColor: 'rgba(6, 182, 212, 0.5)' }}
+                whileTap={{ scale: 0.97 }}
               >
                 {CurrentFlag && <CurrentFlag />}
-                <span className="font-medium text-xs">{currency}</span>
+                <span className="font-semibold text-sm">{currency}</span>
+                <svg className={`w-4 h-4 transition-transform duration-200 ${currencyOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </motion.button>
 
               <AnimatePresence>
@@ -220,7 +239,7 @@ export default function Navbar() {
                     initial={{ opacity: 0, y: -10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    className="absolute top-full right-0 mt-2 bg-slate-800/95 backdrop-blur-xl border border-slate-600/50 rounded-xl overflow-hidden shadow-xl z-50 min-w-[130px]"
+                    className="absolute top-full right-0 mt-2 bg-slate-900/98 backdrop-blur-xl border border-slate-600/50 rounded-xl overflow-hidden shadow-2xl z-50 min-w-[160px]"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {currencies.map((curr) => {
@@ -229,8 +248,8 @@ export default function Navbar() {
                         <motion.button
                           key={curr.code}
                           onClick={() => { setCurrency(curr.code); setCurrencyOpen(false) }}
-                          className={`flex items-center gap-3 w-full px-4 py-2.5 text-sm transition-all ${
-                            currency === curr.code ? 'bg-cyan-600 text-white' : 'text-gray-300 hover:bg-slate-700'
+                          className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-medium transition-all ${
+                            currency === curr.code ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white' : 'text-gray-300 hover:bg-slate-700/80'
                           }`}
                           whileHover={{ x: 2 }}
                         >

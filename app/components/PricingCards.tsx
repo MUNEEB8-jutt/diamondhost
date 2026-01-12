@@ -18,35 +18,38 @@ const fallbackLocations: Location[] = [
 // Intel Platinum Plans - 100 PKR/GB for India & Germany (UAE = Coming Soon)
 const fallbackPlans: HostingPlan[] = [
   // India Plans - 100 PKR/GB
-  { id: 'in1', name: 'Bronze Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'India', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
-  { id: 'in2', name: 'Silver Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'India', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
-  { id: 'in3', name: 'Gold Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'India', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
-  { id: 'in4', name: 'Platinum Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'India', price: 1000, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 4, active: true, created_at: '' },
-  { id: 'in5', name: 'Diamond Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'India', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 5, active: true, created_at: '' },
-  { id: 'in6', name: 'Emerald Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'India', price: 1600, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
-  { id: 'in7', name: 'Nether Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'India', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
-  { id: 'in8', name: 'Ender Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'India', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
-  { id: 'in9', name: 'Diamond Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'India', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
+  { id: 'in1', name: 'Low-Fire Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'India', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+  { id: 'in2', name: 'Fire Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'India', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+  { id: 'in3', name: 'Low-Water Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'India', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+  { id: 'in4', name: 'Water Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'India', price: 1000, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 4, active: true, created_at: '' },
+  { id: 'in5', name: 'Spirit Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'India', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 5, active: true, created_at: '' },
+  { id: 'in6', name: 'Infinity Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'India', price: 1600, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+  { id: 'in7', name: 'Sharingan Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'India', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
+  { id: 'in8', name: 'Arise Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'India', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
+  { id: 'in9', name: 'Arise-Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'India', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
   // Germany Plans - 100 PKR/GB
-  { id: 'de1', name: 'Bronze Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'Germany', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
-  { id: 'de2', name: 'Silver Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'Germany', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
-  { id: 'de3', name: 'Gold Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'Germany', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
-  { id: 'de4', name: 'Platinum Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'Germany', price: 1000, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 4, active: true, created_at: '' },
-  { id: 'de5', name: 'Diamond Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'Germany', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 5, active: true, created_at: '' },
-  { id: 'de6', name: 'Emerald Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'Germany', price: 1600, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
-  { id: 'de7', name: 'Nether Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'Germany', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
-  { id: 'de8', name: 'Ender Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'Germany', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
-  { id: 'de9', name: 'Diamond Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'Germany', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
+  { id: 'de1', name: 'Low-Fire Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'Germany', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+  { id: 'de2', name: 'Fire Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'Germany', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+  { id: 'de3', name: 'Low-Water Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'Germany', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+  { id: 'de4', name: 'Water Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'Germany', price: 1000, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 4, active: true, created_at: '' },
+  { id: 'de5', name: 'Spirit Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'Germany', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 5, active: true, created_at: '' },
+  { id: 'de6', name: 'Infinity Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'Germany', price: 1600, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+  { id: 'de7', name: 'Sharingan Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'Germany', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
+  { id: 'de8', name: 'Arise Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'Germany', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
+  { id: 'de9', name: 'Arise-Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'Germany', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
 ]
 
 // AMD EPYC Plans - 100 PKR/GB for UAE only (India & Germany = Coming Soon)
 const fallbackEpycPlans: EpycPlan[] = [
-  { id: 'amd1', name: 'EPYC Bronze', icon: 'Cpu', ram: '2GB RAM', performance: '150%', location: 'UAE', price: 200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
-  { id: 'amd2', name: 'EPYC Silver', icon: 'Cpu', ram: '4GB RAM', performance: '200%', location: 'UAE', price: 400, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
-  { id: 'amd3', name: 'EPYC Gold', icon: 'Cpu', ram: '8GB RAM', performance: '300%', location: 'UAE', price: 800, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
-  { id: 'amd4', name: 'EPYC Platinum', icon: 'Cpu', ram: '12GB RAM', performance: '400%', location: 'UAE', price: 1200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: true, sort_order: 4, active: true, created_at: '' },
-  { id: 'amd5', name: 'EPYC Diamond', icon: 'Cpu', ram: '16GB RAM', performance: '500%', location: 'UAE', price: 1600, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: false, sort_order: 5, active: true, created_at: '' },
-  { id: 'amd6', name: 'EPYC Ultimate', icon: 'Cpu', ram: '32GB RAM', performance: '1000%', location: 'UAE', price: 3200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 6, active: true, created_at: '' },
+  { id: 'amd1', name: 'Low-Fire Plan', icon: 'Cpu', ram: '2GB RAM', performance: '150%', location: 'UAE', price: 200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+  { id: 'amd2', name: 'Fire Plan', icon: 'Cpu', ram: '4GB RAM', performance: '200%', location: 'UAE', price: 400, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+  { id: 'amd3', name: 'Low-Water Plan', icon: 'Cpu', ram: '8GB RAM', performance: '300%', location: 'UAE', price: 800, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+  { id: 'amd4', name: 'Water Plan', icon: 'Cpu', ram: '12GB RAM', performance: '400%', location: 'UAE', price: 1200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: false, sort_order: 4, active: true, created_at: '' },
+  { id: 'amd5', name: 'Spirit Plan', icon: 'Cpu', ram: '16GB RAM', performance: '500%', location: 'UAE', price: 1600, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: true, sort_order: 5, active: true, created_at: '' },
+  { id: 'amd6', name: 'Infinity Plan', icon: 'Cpu', ram: '24GB RAM', performance: '750%', location: 'UAE', price: 2400, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+  { id: 'amd7', name: 'Sharingan Plan', icon: 'Cpu', ram: '32GB RAM', performance: '1000%', location: 'UAE', price: 3200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 7, active: true, created_at: '' },
+  { id: 'amd8', name: 'Arise Plan', icon: 'Cpu', ram: '48GB RAM', performance: '1500%', location: 'UAE', price: 4800, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 8, active: true, created_at: '' },
+  { id: 'amd9', name: 'Arise-Plus Plan', icon: 'Cpu', ram: '64GB RAM', performance: '2000%', location: 'UAE', price: 6400, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
 ]
 
 // Circular 3D Flag Component - Large cinematic style
@@ -335,7 +338,7 @@ const LocationCarousel = ({
           {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
             <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-30">
               <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[9px] md:text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-lg shadow-orange-500/40 whitespace-nowrap">
-                🔥 Popular
+                Popular
               </span>
             </div>
           )}
@@ -649,7 +652,7 @@ export default function PricingCards() {
           <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
             className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-1 text-blue-400 text-sm mb-4">
             <Cpu className="h-4 w-4" />
-            <span>Budget Performance</span>
+            <span>Optimized Performance</span>
           </motion.div>
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
             <span className="text-blue-400">Intel</span> Platinum Plans
@@ -845,9 +848,13 @@ export default function PricingCards() {
                     {/* Name */}
                     <h3 className="text-lg font-bold text-center text-white mb-2 uppercase tracking-wide relative z-10 group-hover:text-red-300 transition-colors">{plan.name}</h3>
 
-                    {/* Price */}
+                    {/* Price with 10% OFF */}
                     <div className="text-center mb-4 relative z-10">
-                      <span className="text-4xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{symbol}{convertPrice(plan.price / 278)}</span>
+                      <div className="flex items-center justify-center gap-2 mb-1">
+                        <span className="text-gray-500 text-sm line-through">{symbol}{convertPrice(plan.price / 278)}</span>
+                        <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">10% OFF</span>
+                      </div>
+                      <span className="text-4xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{symbol}{convertPrice((plan.price * 0.9) / 278)}</span>
                       <p className="text-gray-500 text-xs mt-1">per month</p>
                     </div>
 
@@ -906,7 +913,7 @@ export default function PricingCards() {
   )
 }
 
-// Partner Section Component
+// Partner Section Component - Premium YouTube Creator Program
 function PartnerSection() {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -914,29 +921,29 @@ function PartnerSection() {
     {
       subscribers: '1,000+',
       reward: '8GB RAM',
-      color: 'from-green-500 to-emerald-600',
-      icon: '🌱',
-      description: 'Perfect for growing creators'
+      color: 'from-red-500 to-rose-600',
+      bgGlow: 'red',
+      description: 'Rising Creator'
     },
     {
       subscribers: '5,000+',
       reward: '16GB RAM',
-      color: 'from-blue-500 to-cyan-600',
-      icon: '⭐',
-      description: 'For established content creators'
+      color: 'from-red-600 to-red-500',
+      bgGlow: 'red',
+      description: 'Established Creator'
     },
     {
       subscribers: '10,000+',
       reward: '32GB RAM',
-      color: 'from-purple-500 to-pink-600',
-      icon: '👑',
-      description: 'Premium tier for top creators'
+      color: 'from-red-700 to-red-600',
+      bgGlow: 'red',
+      description: 'Elite Creator'
     }
   ]
 
   const requirements = [
     'Quality gaming content focused on Minecraft',
-    'Consistent upload schedule (minimum 2 videos/week)',
+    'Consistent upload schedule (minimum 1 video in 2 weeks)',
     'Active and engaged community',
     'Professional presentation and commentary',
     'Must mention Diamond Host in videos',
@@ -947,94 +954,127 @@ function PartnerSection() {
     'Partnership review every 3 months'
   ]
 
+  // YouTube Play Button SVG
+  const YouTubeIcon = ({ size = 24 }: { size?: number }) => (
+    <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  )
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 40 }} 
       whileInView={{ opacity: 1, y: 0 }} 
       transition={{ duration: 0.6 }} 
       viewport={{ once: true }}
-      className="mt-24"
+      className="mt-24 relative"
     >
+      {/* Background Glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-red-500/10 rounded-full blur-[120px]" />
+      </div>
+
       {/* Header */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-12 relative z-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-full px-4 py-1 text-purple-400 text-sm mb-4"
+          className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 rounded-full px-5 py-2 text-red-400 text-sm mb-6"
         >
-          <Users className="h-4 w-4" />
-          <span>Content Creator Program</span>
+          <YouTubeIcon size={18} />
+          <span className="font-medium">Content Creator Program</span>
         </motion.div>
         <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-          Become a <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Partner</span>
+          Become a <span className="text-red-500">YouTube</span> Partner
         </h2>
-        <p className="text-gray-400 max-w-2xl mx-auto">
-          Are you a content creator? Get FREE premium servers based on your audience size!
+        <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+          Get <span className="text-red-400 font-semibold">FREE</span> premium servers based on your subscriber count!
         </p>
       </div>
 
-      {/* Partner Tiers */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-10">
+      {/* Partner Tiers - Premium Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-12 relative z-10 px-4">
         {partnerTiers.map((tier, idx) => (
           <motion.div
             key={idx}
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: idx * 0.1 }}
+            transition={{ duration: 0.5, delay: idx * 0.15 }}
             viewport={{ once: true }}
             className="group relative"
           >
-            <div className="absolute -inset-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-              <div className={`absolute inset-0 bg-gradient-to-r ${tier.color} blur-xl rounded-3xl opacity-30`} />
-            </div>
+            {/* Glow Effect */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-red-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition-all duration-500" />
             
-            <div className="relative bg-slate-900/90 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300">
-              <div className="text-4xl mb-3 text-center">{tier.icon}</div>
-              <div className="text-center">
-                <p className="text-gray-400 text-sm mb-1">Subscribers</p>
-                <p className={`text-2xl font-bold bg-gradient-to-r ${tier.color} bg-clip-text text-transparent`}>
-                  {tier.subscribers}
-                </p>
+            <motion.div 
+              className="relative bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl p-8 border border-red-500/20 hover:border-red-500/50 transition-all duration-300 overflow-hidden"
+              whileHover={{ y: -8, scale: 1.02 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
+              {/* YouTube Icon Background */}
+              <div className="absolute top-4 right-4 text-red-500/10">
+                <YouTubeIcon size={80} />
               </div>
-              <div className="my-4 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent" />
-              <div className="text-center">
-                <p className="text-gray-400 text-sm mb-1">FREE Server</p>
-                <p className="text-xl font-bold text-white">{tier.reward}</p>
+              
+              {/* Tier Badge */}
+              <div className="relative z-10">
+                <div className={`inline-flex items-center gap-2 bg-gradient-to-r ${tier.color} text-white text-xs font-bold px-3 py-1.5 rounded-full mb-6`}>
+                  <YouTubeIcon size={14} />
+                  <span>{tier.description}</span>
+                </div>
+                
+                {/* Subscribers */}
+                <div className="mb-6">
+                  <p className="text-gray-500 text-sm uppercase tracking-wider mb-1">Subscribers</p>
+                  <p className="text-4xl font-bold text-white">{tier.subscribers}</p>
+                </div>
+                
+                {/* Divider */}
+                <div className="h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent mb-6" />
+                
+                {/* Reward */}
+                <div className="text-center">
+                  <p className="text-gray-500 text-sm uppercase tracking-wider mb-2">FREE Server</p>
+                  <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
+                    <Cpu className="h-5 w-5 text-red-400" />
+                    <span className="text-2xl font-bold text-red-400">{tier.reward}</span>
+                  </div>
+                </div>
               </div>
-              <p className="text-gray-500 text-xs text-center mt-3">{tier.description}</p>
-            </div>
+            </motion.div>
           </motion.div>
         ))}
       </div>
 
       {/* Requirements Expandable Section */}
       <motion.div 
-        className="max-w-4xl mx-auto"
+        className="max-w-4xl mx-auto px-4 relative z-10"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
       >
         <motion.button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full bg-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300 flex items-center justify-between"
+          className="w-full bg-gradient-to-r from-slate-900 to-slate-950 backdrop-blur-xl rounded-2xl p-6 border border-red-500/20 hover:border-red-500/40 transition-all duration-300 flex items-center justify-between"
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
         >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
-              <Star className="h-5 w-5 text-white" />
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shadow-lg shadow-red-500/30">
+              <Star className="h-6 w-6 text-white" />
             </div>
             <div className="text-left">
-              <p className="text-white font-semibold">Partnership Requirements</p>
-              <p className="text-gray-500 text-sm">Click to view all requirements</p>
+              <p className="text-white font-bold text-lg">Partnership Requirements</p>
+              <p className="text-gray-500 text-sm">Click to view eligibility criteria</p>
             </div>
           </div>
           <motion.div
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.3 }}
+            className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center"
           >
-            <ChevronDown className="h-6 w-6 text-gray-400" />
+            <ChevronDown className="h-5 w-5 text-red-400" />
           </motion.div>
         </motion.button>
 
@@ -1047,7 +1087,7 @@ function PartnerSection() {
               transition={{ duration: 0.3 }}
               className="overflow-hidden"
             >
-              <div className="bg-slate-900/60 backdrop-blur-xl rounded-b-2xl p-6 border border-t-0 border-slate-700/50 -mt-2">
+              <div className="bg-slate-900/80 backdrop-blur-xl rounded-b-2xl p-8 border border-t-0 border-red-500/20 -mt-2">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {requirements.map((req, idx) => (
                     <motion.div
@@ -1055,20 +1095,25 @@ function PartnerSection() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: idx * 0.05 }}
-                      className="flex items-start gap-3"
+                      className="flex items-start gap-3 p-3 rounded-lg hover:bg-red-500/5 transition-colors"
                     >
-                      <div className="w-5 h-5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="h-3 w-3 text-white" />
+                      <div className="w-6 h-6 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="h-3.5 w-3.5 text-white" />
                       </div>
-                      <span className="text-gray-300 text-sm">{req}</span>
+                      <span className="text-gray-300">{req}</span>
                     </motion.div>
                   ))}
                 </div>
                 
-                <div className="mt-6 p-4 bg-purple-500/10 border border-purple-500/20 rounded-xl">
-                  <p className="text-purple-300 text-sm">
-                    <strong>Note:</strong> All partnerships are reviewed every 3 months. Servers are provided free of charge as long as requirements are met. Diamond Host reserves the right to terminate partnerships that don't meet the criteria.
-                  </p>
+                <div className="mt-8 p-5 bg-red-500/10 border border-red-500/20 rounded-xl">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                      <YouTubeIcon size={16} />
+                    </div>
+                    <p className="text-red-300 text-sm leading-relaxed">
+                      <strong>Important:</strong> All partnerships are reviewed every 3 months. Servers are provided free of charge as long as requirements are met. Diamond Host reserves the right to modify or terminate partnerships.
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -1078,7 +1123,7 @@ function PartnerSection() {
 
       {/* Apply Button */}
       <motion.div 
-        className="text-center mt-10"
+        className="text-center mt-12 relative z-10"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
@@ -1088,14 +1133,14 @@ function PartnerSection() {
           href="https://discord.gg/tKDRWYNcuE"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold py-4 px-10 rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/30"
-          whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -12px rgba(168, 85, 247, 0.5)' }}
+          className="inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-bold py-4 px-12 rounded-xl transition-all duration-300 shadow-lg shadow-red-500/30 text-lg"
+          whileHover={{ scale: 1.05, boxShadow: '0 25px 50px -12px rgba(239, 68, 68, 0.5)' }}
           whileTap={{ scale: 0.95 }}
         >
-          <Youtube className="h-5 w-5" />
-          <span>Apply for Content Creator</span>
+          <YouTubeIcon size={24} />
+          <span>Apply for Creator Program</span>
         </motion.a>
-        <p className="text-gray-500 text-sm mt-3">Opens Discord - Create a ticket to apply</p>
+        <p className="text-gray-500 text-sm mt-4">Opens Discord → Create a ticket to apply</p>
       </motion.div>
     </motion.div>
   )
