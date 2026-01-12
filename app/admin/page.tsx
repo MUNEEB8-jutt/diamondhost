@@ -610,7 +610,7 @@ export default function AdminPage() {
                               <span className="text-xs bg-slate-800 px-2 py-0.5 rounded text-gray-400">{plan.location}</span>
                               {plan.popular && <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">Popular</span>}
                             </div>
-                            <p className="text-gray-500 text-sm">{plan.ram} • {plan.performance} • {plan.price} {plan.currency}</p>
+                            <p className="text-gray-500 text-sm">{plan.ram} • {plan.performance} • Rs {plan.price} PKR</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -1024,7 +1024,7 @@ export default function AdminPage() {
                         </div>
                         
                         <div className="text-right">
-                          <p className="text-cyan-400 font-bold text-xl">${order.plan_price.toFixed(2)}</p>
+                          <p className="text-cyan-400 font-bold text-xl">Rs {order.plan_price} PKR</p>
                           <p className="text-gray-500 text-xs">{order.payment_method}</p>
                           <p className="text-gray-500 text-xs">{formatDate(order.created_at)}</p>
                         </div>
