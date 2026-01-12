@@ -31,7 +31,32 @@ const currencySymbols: Record<string, string> = {
 
 // Get currency symbol
 function getCurrencySymbol(currency: string): string {
-  return currencySymbols[currency] || currency
+  return currencySymbols[currency] || 'Rs'
+}
+
+// Format price with currency - handles old orders without currency
+function formatOrderPrice(price: number, currency: string | null | undefined): string {
+  // If currency is set, use it directly
+  if (currency) {
+    const symbol = getCurrencySymbol(currency)
+    if (currency === 'USD') {
+      return `$${price.toFixed(2)}`
+    } else if (currency === 'INR') {
+      return `₹${Math.round(price).toLocaleString()}`
+    } else if (currency === 'AED') {
+      return `AED ${Math.round(price).toLocaleString()}`
+    }
+    return `Rs ${Math.round(price).toLocaleString()}`
+  }
+  
+  // Old orders without currency - price was stored in dollars, convert to PKR
+  if (price < 100) {
+    const pkrPrice = Math.round(price * 278)
+    return `Rs ${pkrPrice.toLocaleString()} (converted)`
+  }
+  
+  // Assume PKR for old orders with larger amounts
+  return `Rs ${Math.round(price).toLocaleString()}`
 }
 
 const iconOptions = ['Medal', 'Star', 'Crown', 'Award', 'Diamond', 'Gem', 'Trophy', 'Sparkles']
@@ -1037,7 +1062,7 @@ export default function AdminPage() {
                         </div>
                         
                         <div className="text-right">
-                          <p className="text-cyan-400 font-bold text-xl">{getCurrencySymbol(order.plan_currency || 'PKR')} {order.plan_price.toLocaleString()}</p>
+                          <p className="text-cyan-400 font-bold text-xl">{formatOrderPrice(order.plan_price, order.plan_currency)}</p>
                           <p className="text-gray-500 text-xs">{order.payment_method}</p>
                           <p className="text-gray-500 text-xs">{formatDate(order.created_at)}</p>
                         </div>
@@ -1640,7 +1665,7 @@ export default function AdminPage() {
                                         order.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
                                         'bg-red-500/20 text-red-400'
                                       }`}>{order.status}</span>
-                                      <p className="text-cyan-400 text-xs mt-1">{getCurrencySymbol(order.plan_currency || 'PKR')} {order.plan_price.toLocaleString()}</p>
+                                      <p className="text-cyan-400 text-xs mt-1">{formatOrderPrice(order.plan_price, order.plan_currency)}</p>
                                     </div>
                                   </div>
                                 </div>

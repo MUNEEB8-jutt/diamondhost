@@ -162,7 +162,9 @@ export default function OrderPage() {
       const screenshotUrl = await uploadOrderScreenshot(screenshot, `${user.id}-${Date.now()}`)
       
       // Convert price to selected currency for display in admin
-      const displayPrice = parseFloat(convertPrice(plan.price / 278))
+      // Remove commas from converted price string and parse as float
+      const convertedPriceStr = convertPrice(plan.price / 278)
+      const displayPrice = parseFloat(convertedPriceStr.replace(/,/g, ''))
 
       const { error: orderError } = await createOrder({
         user_id: user.id,

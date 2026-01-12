@@ -4,7 +4,6 @@ import './globals.css'
 import { CurrencyProvider } from '@/lib/CurrencyContext'
 import { AuthProvider } from '@/lib/AuthContext'
 import LoadingOverlay from './components/LoadingOverlay'
-import Crosshair from './components/Crosshair'
 import AuthModal from './components/AuthModal'
 
 const orbitron = Orbitron({ 
@@ -180,7 +179,6 @@ export default function RootLayout({
       <body className={`${orbitron.variable} ${inter.variable} font-sans`}>
         <CurrencyProvider>
           <AuthProvider>
-            <Crosshair />
             <LoadingOverlay />
             <AuthModal />
             {children}
