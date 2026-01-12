@@ -19,7 +19,7 @@ import {
   getAllUsers, banUser, unbanUser, getServersByUserId, getOrdersByUserId, AdminUser
 } from '@/lib/supabase'
 
-const ADMIN_SECRET = process.env.NEXT_PUBLIC_ADMIN_SECRET || 'diamondhost2024'
+// No client-side secret - verification happens on server
 
 const iconOptions = ['Medal', 'Star', 'Crown', 'Award', 'Diamond', 'Gem', 'Trophy', 'Sparkles']
 const colorOptions = [
@@ -111,6 +111,7 @@ export default function AdminPage() {
   const [loadingUserData, setLoadingUserData] = useState(false)
   
   const [saving, setSaving] = useState(false)
+  const [loggingIn, setLoggingIn] = useState(false)
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
 
   const [planForm, setPlanForm] = useState({
@@ -175,17 +176,33 @@ export default function AdminPage() {
     setLoading(false)
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (secretCode === ADMIN_SECRET) {
-      const session = { authenticated: true, expires_at: Date.now() + 24 * 60 * 60 * 1000 }
-      localStorage.setItem('admin_session', JSON.stringify(session))
-      setAuthenticated(true)
-      setError('')
-      fetchData()
-    } else {
-      setError('Invalid secret code')
+    setLoggingIn(true)
+    setError('')
+    
+    try {
+      const response = await fetch('/api/admin/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secretCode })
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        const session = { authenticated: true, token: data.token, expires_at: data.expires_at }
+        localStorage.setItem('admin_session', JSON.stringify(session))
+        setAuthenticated(true)
+        fetchData()
+      } else {
+        setError(data.error || 'Invalid secret code')
+      }
+    } catch (err) {
+      setError('Connection error. Please try again.')
     }
+    
+    setLoggingIn(false)
   }
 
   const handleLogout = () => {
@@ -467,8 +484,8 @@ export default function AdminPage() {
               </button>
             </div>
             {error && <p className="text-red-400 text-sm flex items-center gap-2"><AlertCircle className="h-4 w-4" />{error}</p>}
-            <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold py-3 rounded-xl">
-              Access Admin Panel
+            <button type="submit" disabled={loggingIn} className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold py-3 rounded-xl disabled:opacity-50 flex items-center justify-center gap-2">
+              {loggingIn ? <><Loader2 className="h-5 w-5 animate-spin" /> Verifying...</> : 'Access Admin Panel'}
             </button>
           </form>
           <div className="mt-6 text-center">
