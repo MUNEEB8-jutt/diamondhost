@@ -131,7 +131,7 @@ const jsonLd = {
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'customer service',
-    email: 'support@diamondhost.pk',
+    email: 'support@diamondhost.site',
     availableLanguage: ['English', 'Urdu'],
   },
   sameAs: [

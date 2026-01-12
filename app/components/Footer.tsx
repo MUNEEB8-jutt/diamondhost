@@ -53,7 +53,7 @@ export default function Footer() {
                 <MessageCircle className="h-4 w-4" />
               </motion.a>
               <motion.a
-                href="mailto:support@diamondhost.pk"
+                href="mailto:support@diamondhost.site"
                 className="w-9 h-9 rounded-lg bg-slate-800/80 hover:bg-cyan-500/20 flex items-center justify-center text-gray-400 hover:text-cyan-400 transition-all duration-300"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
@@ -131,14 +131,14 @@ export default function Footer() {
           >
             <h3 className="text-white font-semibold mb-5 text-sm uppercase tracking-wider">Contact Us</h3>
             <motion.a
-              href="mailto:support@diamondhost.pk"
+              href="mailto:support@diamondhost.site"
               className="flex items-center gap-3 text-gray-400 hover:text-cyan-400 transition-colors duration-200 group"
               whileHover={{ x: 3 }}
             >
               <div className="w-10 h-10 rounded-lg bg-slate-800/80 group-hover:bg-cyan-500/20 flex items-center justify-center transition-colors">
                 <Mail className="h-5 w-5" />
               </div>
-              <span className="text-sm">support@diamondhost.pk</span>
+              <span className="text-sm">support@diamondhost.site</span>
             </motion.a>
           </motion.div>
         </div>

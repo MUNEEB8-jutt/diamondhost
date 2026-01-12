@@ -151,7 +151,7 @@ export default function PrivacyPolicy() {
                 <a href="https://discord.gg/tKDRWYNcuE" target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:text-cyan-300">
                   discord.gg/tKDRWYNcuE
                 </a>{' '}
-                or email us at support@diamondhost.pk
+                or email us at support@diamondhost.site
               </p>
             </section>
           </div>
