@@ -298,6 +298,21 @@ const LocationCarousel = ({
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center py-8" style={{ perspective: '1000px' }}>
+      {/* Become a Creator Button - Above right arrow area */}
+      <motion.a
+        href="#creator-program"
+        className="absolute top-2 right-[15%] md:right-[20%] hidden md:inline-flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40 hover:border-red-500/60 text-red-400 hover:text-red-300 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 backdrop-blur-sm shadow-lg shadow-red-500/10 z-20"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ scale: 1.05, boxShadow: '0 10px 30px -10px rgba(239, 68, 68, 0.4)' }}
+        whileTap={{ scale: 0.95 }}
+      >
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+        </svg>
+        <span>Become a Creator</span>
+      </motion.a>
+
       {/* Main Container */}
       <div className="relative flex items-center justify-center gap-8 md:gap-16 w-full max-w-4xl px-4">
         
@@ -551,27 +566,6 @@ export default function PricingCards() {
   return (
     <section id="plans" className="py-24 px-4 relative overflow-hidden">
       <div className="container mx-auto relative z-10">
-        {/* Become a Creator Button - Top Right Corner */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.4 }}
-          viewport={{ once: true }}
-          className="absolute top-4 right-4 md:right-8 z-20"
-        >
-          <motion.a
-            href="#creator-program"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40 hover:border-red-500/60 text-red-400 hover:text-red-300 px-4 py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-300 backdrop-blur-sm shadow-lg shadow-red-500/10"
-            whileHover={{ scale: 1.05, boxShadow: '0 10px 30px -10px rgba(239, 68, 68, 0.4)' }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-            <span>Become a Creator</span>
-          </motion.a>
-        </motion.div>
-
         {/* 3D VR Style Location Carousel */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }} 
