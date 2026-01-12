@@ -10,32 +10,43 @@ import { useRouter } from 'next/navigation'
 
 // Fallback data - UAE in center (index 1)
 const fallbackLocations: Location[] = [
-  { id: '2', name: 'Singapore', code: 'Singapore', flag: 'SG', active: true, sort_order: 1, created_at: '' },
+  { id: '2', name: 'India', code: 'India', flag: 'IN', active: true, sort_order: 1, created_at: '' },
   { id: '1', name: 'UAE', code: 'UAE', flag: 'AE', active: true, sort_order: 2, created_at: '' },
   { id: '3', name: 'Germany', code: 'Germany', flag: 'DE', active: true, sort_order: 3, created_at: '' },
 ]
 
-// Intel Platinum Plans
+// Intel Platinum Plans - 100 PKR/GB for India & Germany (UAE = Coming Soon)
 const fallbackPlans: HostingPlan[] = [
-  { id: '1', name: 'Bronze Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'UAE', price: 240, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
-  { id: '2', name: 'Silver Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'UAE', price: 480, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
-  { id: '3', name: 'Gold Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'UAE', price: 960, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
-  { id: '4', name: 'Platinum Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'UAE', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 4, active: true, created_at: '' },
-  { id: '5', name: 'Diamond Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'UAE', price: 1440, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 5, active: true, created_at: '' },
-  { id: '6', name: 'Emerald Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'UAE', price: 1920, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
-  { id: '7', name: 'Nether Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'UAE', price: 2640, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
-  { id: '8', name: 'Ender Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'UAE', price: 3840, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
-  { id: '9', name: 'Diamond Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'UAE', price: 5760, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
+  // India Plans - 100 PKR/GB
+  { id: 'in1', name: 'Bronze Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'India', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+  { id: 'in2', name: 'Silver Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'India', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+  { id: 'in3', name: 'Gold Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'India', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+  { id: 'in4', name: 'Platinum Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'India', price: 1000, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 4, active: true, created_at: '' },
+  { id: 'in5', name: 'Diamond Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'India', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 5, active: true, created_at: '' },
+  { id: 'in6', name: 'Emerald Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'India', price: 1600, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+  { id: 'in7', name: 'Nether Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'India', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
+  { id: 'in8', name: 'Ender Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'India', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
+  { id: 'in9', name: 'Diamond Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'India', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
+  // Germany Plans - 100 PKR/GB
+  { id: 'de1', name: 'Bronze Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'Germany', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+  { id: 'de2', name: 'Silver Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'Germany', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+  { id: 'de3', name: 'Gold Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'Germany', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+  { id: 'de4', name: 'Platinum Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'Germany', price: 1000, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 4, active: true, created_at: '' },
+  { id: 'de5', name: 'Diamond Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'Germany', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 5, active: true, created_at: '' },
+  { id: 'de6', name: 'Emerald Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'Germany', price: 1600, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+  { id: 'de7', name: 'Nether Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'Germany', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
+  { id: 'de8', name: 'Ender Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'Germany', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
+  { id: 'de9', name: 'Diamond Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'Germany', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
 ]
 
-// AMD EPYC Plans (fallback)
+// AMD EPYC Plans - 100 PKR/GB for UAE only (India & Germany = Coming Soon)
 const fallbackEpycPlans: EpycPlan[] = [
-  { id: 'amd1', name: 'EPYC Bronze', icon: 'Cpu', ram: '2GB RAM', performance: '150%', location: 'UAE', price: 319, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
-  { id: 'amd2', name: 'EPYC Silver', icon: 'Cpu', ram: '4GB RAM', performance: '200%', location: 'UAE', price: 599, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
-  { id: 'amd3', name: 'EPYC Gold', icon: 'Cpu', ram: '8GB RAM', performance: '300%', location: 'UAE', price: 1199, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
-  { id: 'amd4', name: 'EPYC Platinum', icon: 'Cpu', ram: '12GB RAM', performance: '400%', location: 'UAE', price: 1899, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: true, sort_order: 4, active: true, created_at: '' },
-  { id: 'amd5', name: 'EPYC Diamond', icon: 'Cpu', ram: '16GB RAM', performance: '500%', location: 'UAE', price: 2499, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: false, sort_order: 5, active: true, created_at: '' },
-  { id: 'amd6', name: 'EPYC Ultimate', icon: 'Cpu', ram: '32GB RAM', performance: '1000%', location: 'UAE', price: 4499, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 6, active: true, created_at: '' },
+  { id: 'amd1', name: 'EPYC Bronze', icon: 'Cpu', ram: '2GB RAM', performance: '150%', location: 'UAE', price: 200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+  { id: 'amd2', name: 'EPYC Silver', icon: 'Cpu', ram: '4GB RAM', performance: '200%', location: 'UAE', price: 400, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+  { id: 'amd3', name: 'EPYC Gold', icon: 'Cpu', ram: '8GB RAM', performance: '300%', location: 'UAE', price: 800, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+  { id: 'amd4', name: 'EPYC Platinum', icon: 'Cpu', ram: '12GB RAM', performance: '400%', location: 'UAE', price: 1200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: true, sort_order: 4, active: true, created_at: '' },
+  { id: 'amd5', name: 'EPYC Diamond', icon: 'Cpu', ram: '16GB RAM', performance: '500%', location: 'UAE', price: 1600, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Priority Support'], popular: false, sort_order: 5, active: true, created_at: '' },
+  { id: 'amd6', name: 'EPYC Ultimate', icon: 'Cpu', ram: '32GB RAM', performance: '1000%', location: 'UAE', price: 3200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 6, active: true, created_at: '' },
 ]
 
 // Circular 3D Flag Component - Large cinematic style
@@ -74,39 +85,46 @@ const CircularFlag = ({ code, size = 'normal' }: { code: string; size?: 'small' 
         </svg>
       )
     }
-    if (code === 'Singapore' || code === 'SG') {
+    if (code === 'India' || code === 'IN') {
       return (
         <svg viewBox="0 0 100 100" className="w-full h-full">
           <defs>
-            <clipPath id="circleClipSG">
+            <clipPath id="circleClipIN">
               <circle cx="50" cy="50" r="48" />
             </clipPath>
-            <linearGradient id="sgShine" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id="inShine" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="white" stopOpacity="0.5" />
               <stop offset="30%" stopColor="white" stopOpacity="0.2" />
               <stop offset="50%" stopColor="white" stopOpacity="0" />
               <stop offset="100%" stopColor="black" stopOpacity="0.3" />
             </linearGradient>
-            <radialGradient id="sgGlow" cx="30%" cy="30%" r="60%">
+            <radialGradient id="inGlow" cx="30%" cy="30%" r="60%">
               <stop offset="0%" stopColor="white" stopOpacity="0.3" />
               <stop offset="100%" stopColor="white" stopOpacity="0" />
             </radialGradient>
           </defs>
-          <g clipPath="url(#circleClipSG)">
-            <rect width="100" height="50" fill="#ED2939" />
-            <rect y="50" width="100" height="50" fill="#FFFFFF" />
-            <circle cx="25" cy="30" r="12" fill="#FFFFFF" />
-            <circle cx="28" cy="30" r="10" fill="#ED2939" />
-            <g fill="#FFFFFF">
-              <polygon points="40,18 41,22 45,22 42,25 43,29 40,26 37,29 38,25 35,22 39,22" />
-              <polygon points="28,15 29,18 32,18 29.5,20 30.5,23 28,21 25.5,23 26.5,20 24,18 27,18" />
-              <polygon points="20,22 21,25 24,25 21.5,27 22.5,30 20,28 17.5,30 18.5,27 16,25 19,25" />
-              <polygon points="22,35 23,38 26,38 23.5,40 24.5,43 22,41 19.5,43 20.5,40 18,38 21,38" />
-              <polygon points="34,35 35,38 38,38 35.5,40 36.5,43 34,41 31.5,43 32.5,40 30,38 33,38" />
-            </g>
+          <g clipPath="url(#circleClipIN)">
+            {/* Saffron stripe */}
+            <rect width="100" height="33.33" fill="#FF9933" />
+            {/* White stripe */}
+            <rect y="33.33" width="100" height="33.33" fill="#FFFFFF" />
+            {/* Green stripe */}
+            <rect y="66.66" width="100" height="33.34" fill="#138808" />
+            {/* Ashoka Chakra - Navy blue wheel */}
+            <circle cx="50" cy="50" r="10" fill="none" stroke="#000080" strokeWidth="1.5" />
+            <circle cx="50" cy="50" r="3" fill="#000080" />
+            {/* 24 spokes */}
+            {[...Array(24)].map((_, i) => {
+              const angle = (i * 15) * Math.PI / 180
+              const x1 = 50 + 3.5 * Math.cos(angle)
+              const y1 = 50 + 3.5 * Math.sin(angle)
+              const x2 = 50 + 9.5 * Math.cos(angle)
+              const y2 = 50 + 9.5 * Math.sin(angle)
+              return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#000080" strokeWidth="0.8" />
+            })}
           </g>
-          <circle cx="50" cy="50" r="48" fill="url(#sgGlow)" />
-          <circle cx="50" cy="50" r="48" fill="url(#sgShine)" />
+          <circle cx="50" cy="50" r="48" fill="url(#inGlow)" />
+          <circle cx="50" cy="50" r="48" fill="url(#inShine)" />
           <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="2" />
           <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,0,0,0.2)" strokeWidth="1" />
         </svg>
@@ -190,8 +208,8 @@ const LocationCarousel = ({
       if (code === 'UAE' || code === 'AE') {
         return { c1: '#00732F', c2: '#FFFFFF', c3: '#000000', accent: '#FF0000' }
       }
-      if (code === 'Singapore' || code === 'SG') {
-        return { c1: '#ED2939', c2: '#FFFFFF', c3: '#ED2939', accent: '#FFFFFF' }
+      if (code === 'India' || code === 'IN') {
+        return { c1: '#FF9933', c2: '#FFFFFF', c3: '#138808', accent: '#000080' }
       }
       if (code === 'Germany' || code === 'DE') {
         return { c1: '#000000', c2: '#DD0000', c3: '#FFCC00', accent: '#DD0000' }
@@ -421,7 +439,8 @@ export default function PricingCards() {
   const [selectedLocationIndex, setSelectedLocationIndex] = useState(1) // UAE is center (index 1)
   const [loading, setLoading] = useState(true)
   const [plansLoading, setPlansLoading] = useState(false)
-  const [selectedProcessor, setSelectedProcessor] = useState<'intel' | 'amd'>('intel')
+  // Default processor: AMD for UAE, Intel for India/Germany
+  const [selectedProcessor, setSelectedProcessor] = useState<'intel' | 'amd'>('amd')
   const { convertPrice, symbol } = useCurrency()
   const { user, setShowAuthModal } = useAuth()
   const router = useRouter()
@@ -468,7 +487,12 @@ export default function PricingCards() {
     setPlansLoading(true)
     
     const newLocationCode = locations[newIndex]?.code || 'UAE'
-    if (newLocationCode !== 'UAE' && newLocationCode !== 'AE' && selectedProcessor === 'amd') {
+    // Set default processor based on location
+    // UAE: AMD is main, Intel is coming soon
+    // India & Germany: Intel is main, AMD is coming soon
+    if (newLocationCode === 'UAE' || newLocationCode === 'AE') {
+      setSelectedProcessor('amd')
+    } else {
       setSelectedProcessor('intel')
     }
     
@@ -515,7 +539,7 @@ export default function PricingCards() {
           />
         </motion.div>
 
-        {/* Intel / AMD Toggle - Only show AMD for UAE */}
+        {/* Intel / AMD Toggle with Coming Soon badges */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           whileInView={{ opacity: 1, y: 0 }} 
@@ -524,41 +548,54 @@ export default function PricingCards() {
           className="flex justify-center mb-16"
         >
           <div className="inline-flex bg-slate-900/90 backdrop-blur-xl p-2 rounded-2xl border border-slate-700/50 shadow-xl">
+            {/* Intel Button - Coming Soon for UAE */}
             <motion.button
-              onClick={() => setSelectedProcessor('intel')}
+              onClick={() => (currentLoc.code === 'UAE' || currentLoc.code === 'AE') ? null : setSelectedProcessor('intel')}
               className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
-                selectedProcessor === 'intel' 
-                  ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' 
-                  : 'text-gray-400 hover:text-white'
+                (currentLoc.code === 'UAE' || currentLoc.code === 'AE')
+                  ? 'text-gray-500 cursor-not-allowed opacity-60'
+                  : selectedProcessor === 'intel' 
+                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' 
+                    : 'text-gray-400 hover:text-white'
               }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={(currentLoc.code === 'UAE' || currentLoc.code === 'AE') ? {} : { scale: 1.02 }}
+              whileTap={(currentLoc.code === 'UAE' || currentLoc.code === 'AE') ? {} : { scale: 0.98 }}
             >
               <Cpu className="h-5 w-5" />
               <span>Intel Platinum</span>
+              {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
+                <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase">
+                  Soon
+                </span>
+              )}
             </motion.button>
-            {/* AMD button only for UAE */}
-            {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
+            
+            {/* AMD Button - Coming Soon for India & Germany */}
             <motion.button
-              onClick={() => setSelectedProcessor('amd')}
+              onClick={() => (currentLoc.code !== 'UAE' && currentLoc.code !== 'AE') ? null : setSelectedProcessor('amd')}
               className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
-                selectedProcessor === 'amd' 
-                  ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/30' 
-                  : 'text-gray-400 hover:text-white'
+                (currentLoc.code !== 'UAE' && currentLoc.code !== 'AE')
+                  ? 'text-gray-500 cursor-not-allowed opacity-60'
+                  : selectedProcessor === 'amd' 
+                    ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/30' 
+                    : 'text-gray-400 hover:text-white'
               }`}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={(currentLoc.code !== 'UAE' && currentLoc.code !== 'AE') ? {} : { scale: 1.02 }}
+              whileTap={(currentLoc.code !== 'UAE' && currentLoc.code !== 'AE') ? {} : { scale: 0.98 }}
             >
               <Zap className="h-5 w-5" />
               <span>AMD EPYC</span>
+              {(currentLoc.code !== 'UAE' && currentLoc.code !== 'AE') && (
+                <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase">
+                  Soon
+                </span>
+              )}
             </motion.button>
-            )}
           </div>
         </motion.div>
-
-        {/* Intel Platinum Section */}
+        {/* Intel Platinum Section - Only show when Intel is selected AND available */}
         <AnimatePresence mode="wait">
-        {selectedProcessor === 'intel' && (
+        {selectedProcessor === 'intel' && (currentLoc.code !== 'UAE' && currentLoc.code !== 'AE') && (
         <motion.div
           key="intel-section"
           initial={{ opacity: 0, y: 30 }}
@@ -685,8 +722,8 @@ export default function PricingCards() {
         </motion.div>
         )}
 
-        {/* AMD EPYC Section */}
-        {selectedProcessor === 'amd' && epycPlans.length > 0 && (
+        {/* AMD EPYC Section - Only show for UAE */}
+        {selectedProcessor === 'amd' && (currentLoc.code === 'UAE' || currentLoc.code === 'AE') && epycPlans.length > 0 && (
         <motion.div
           key="amd-section"
           initial={{ opacity: 0, y: 30 }}
