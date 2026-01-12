@@ -1,23 +1,37 @@
-# Diamond Host - Robots.txt
+# DiamondHost - Robots.txt
 # https://www.diamondhost.site
 
 User-agent: *
 Allow: /
+Allow: /plans
+Allow: /features
+Allow: /support
+Allow: /about
+Allow: /servers
+Allow: /reviews
+
+# Disallow admin and API
+Disallow: /admin
+Disallow: /api/
+Disallow: /order/
 
 # Sitemaps
 Sitemap: https://www.diamondhost.site/sitemap.xml
 
-# Disallow admin pages
-Disallow: /admin
-Disallow: /api/
+# Crawl-delay for politeness
+Crawl-delay: 1
 
-# Allow all crawlers
+# Google
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 0
 
+# Bing
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
+# Other search engines
 User-agent: Slurp
 Allow: /
 

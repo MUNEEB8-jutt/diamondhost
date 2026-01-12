@@ -1,27 +1,28 @@
 {
-  "name": "Diamond Host - Minecraft Server Hosting",
-  "short_name": "Diamond Host",
-  "description": "Premium Minecraft server hosting with Intel Platinum & AMD EPYC processors. 99.9% uptime, DDoS protection & 24/7 support.",
+  "name": "DiamondHost - Minecraft Server Hosting Pakistan",
+  "short_name": "DiamondHost",
+  "description": "Pakistan's #1 Minecraft server hosting. Premium Intel Platinum & AMD EPYC servers with 99.9% uptime, DDoS protection & 24/7 support.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#070b14",
   "theme_color": "#06b6d4",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
       "src": "/linklogo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     }
   ],
-  "categories": ["games", "utilities"],
+  "categories": ["games", "utilities", "entertainment"],
   "lang": "en",
-  "dir": "ltr"
+  "dir": "ltr",
+  "prefer_related_applications": false
 }

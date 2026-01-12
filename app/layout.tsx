@@ -27,73 +27,81 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.diamondhost.site'),
   title: {
-    default: 'Diamond Host - Best Minecraft Server Hosting in Pakistan | Low Latency Gaming Servers',
-    template: '%s | Diamond Host'
+    default: 'DiamondHost - #1 Minecraft Server Hosting Pakistan | Premium Gaming Servers',
+    template: '%s | DiamondHost'
   },
-  description: 'Diamond Host offers premium Minecraft server hosting in Pakistan, UAE, India & Germany. Get Intel Platinum & AMD EPYC powered servers with 99.9% uptime, DDoS protection, instant setup & 24/7 support. Starting from just Rs 240/month.',
+  description: 'DiamondHost - Pakistan\'s best Minecraft server hosting. Premium Intel Platinum & AMD EPYC servers in UAE, India & Germany. 99.9% uptime, DDoS protection, instant setup, 24/7 support. Starting Rs 200/month. Join 500+ happy gamers!',
   keywords: [
+    'diamondhost',
+    'diamond host',
+    'diamondhost.site',
     'minecraft server hosting',
     'minecraft hosting pakistan',
-    'game server hosting',
-    'minecraft server pakistan',
-    'cheap minecraft hosting',
     'best minecraft hosting',
+    'cheap minecraft server',
+    'minecraft server pakistan',
+    'game server hosting pakistan',
     'minecraft server UAE',
-    'low latency minecraft server',
-    'ddos protected minecraft',
-    'premium minecraft hosting',
-    'minecraft server rental',
-    'gaming server hosting',
-    'intel platinum minecraft',
-    'amd epyc minecraft server',
-    'minecraft hosting asia',
-    'affordable minecraft server',
     'minecraft server india',
     'minecraft server germany',
-    'diamond host',
-    'diamondhost',
+    'low latency minecraft',
+    'ddos protected minecraft server',
+    'premium minecraft hosting',
+    'intel platinum minecraft',
+    'amd epyc minecraft',
     'minecraft pk',
+    'minecraft hosting asia',
+    'affordable minecraft server',
     '24/7 minecraft server',
-    'instant minecraft server',
-    'minecraft server cheap pakistan'
+    'instant minecraft setup',
+    'minecraft server rental',
+    'gaming server pakistan',
+    'best game hosting pakistan'
   ],
-  authors: [{ name: 'Diamond Host', url: 'https://www.diamondhost.site' }],
-  creator: 'Diamond Host',
-  publisher: 'Diamond Host',
+  authors: [{ name: 'DiamondHost', url: 'https://www.diamondhost.site' }],
+  creator: 'DiamondHost',
+  publisher: 'DiamondHost',
+  applicationName: 'DiamondHost',
+  generator: 'Next.js',
+  referrer: 'origin-when-cross-origin',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/linklogo.png', type: 'image/png', sizes: '512x512' },
+    ],
+    shortcut: '/linklogo.png',
+    apple: '/linklogo.png',
   },
   manifest: '/manifest.json',
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://www.diamondhost.site',
-    siteName: 'Diamond Host',
-    title: 'Diamond Host - Best Minecraft Server Hosting in Pakistan',
-    description: 'Premium Minecraft server hosting with Intel Platinum & AMD EPYC processors. 99.9% uptime, DDoS protection, instant setup & 24/7 support. Servers in UAE, India & Germany.',
+    siteName: 'DiamondHost',
+    title: 'DiamondHost - #1 Minecraft Server Hosting Pakistan',
+    description: 'Pakistan\'s best Minecraft server hosting. Premium Intel Platinum & AMD EPYC servers. 99.9% uptime, DDoS protection, instant setup & 24/7 support.',
     images: [
       {
-        url: '/linklogo.png',
-        width: 1200,
-        height: 630,
-        alt: 'Diamond Host - Premium Minecraft Server Hosting',
+        url: 'https://www.diamondhost.site/linklogo.png',
+        width: 512,
+        height: 512,
+        alt: 'DiamondHost - Premium Minecraft Server Hosting',
         type: 'image/png',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Diamond Host - Best Minecraft Server Hosting',
+    title: 'DiamondHost - #1 Minecraft Server Hosting Pakistan',
     description: 'Premium Minecraft hosting with Intel Platinum & AMD EPYC. 99.9% uptime, DDoS protection & 24/7 support.',
-    images: ['/linklogo.png'],
+    images: ['https://www.diamondhost.site/linklogo.png'],
     creator: '@diamondhostpk',
+    site: '@diamondhostpk',
   },
   robots: {
     index: true,
@@ -118,44 +126,121 @@ export const metadata: Metadata = {
   },
 }
 
-// JSON-LD Structured Data
+// JSON-LD Structured Data - Organization
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Diamond Host',
+  '@id': 'https://www.diamondhost.site/#organization',
+  name: 'DiamondHost',
+  alternateName: ['Diamond Host', 'DiamondHost.site'],
   url: 'https://www.diamondhost.site',
-  logo: 'https://www.diamondhost.site/linklogo.png',
-  description: 'Premium Minecraft server hosting with Intel Platinum & AMD EPYC processors. Servers in UAE, India & Germany.',
+  logo: {
+    '@type': 'ImageObject',
+    url: 'https://www.diamondhost.site/linklogo.png',
+    width: 512,
+    height: 512,
+  },
+  image: 'https://www.diamondhost.site/linklogo.png',
+  description: 'DiamondHost - Pakistan\'s #1 Minecraft server hosting provider. Premium Intel Platinum & AMD EPYC servers with 99.9% uptime.',
   foundingDate: '2024',
+  founder: {
+    '@type': 'Person',
+    name: 'DiamondHost Team',
+  },
   contactPoint: {
     '@type': 'ContactPoint',
     contactType: 'customer service',
     email: 'support@diamondhost.site',
-    availableLanguage: ['English', 'Urdu'],
+    availableLanguage: ['English', 'Urdu', 'Hindi'],
+    areaServed: ['PK', 'IN', 'AE', 'DE'],
   },
   sameAs: [
     'https://discord.gg/tKDRWYNcuE',
   ],
-  offers: {
-    '@type': 'AggregateOffer',
-    priceCurrency: 'PKR',
-    lowPrice: '240',
-    highPrice: '5760',
-    offerCount: '15',
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'PK',
   },
 }
 
+// JSON-LD WebSite for Sitelinks Search Box
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': 'https://www.diamondhost.site/#website',
+  name: 'DiamondHost',
+  alternateName: 'Diamond Host',
+  url: 'https://www.diamondhost.site',
+  publisher: {
+    '@id': 'https://www.diamondhost.site/#organization',
+  },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://www.diamondhost.site/plans?search={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+}
+
+// JSON-LD Service
 const serviceJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Service',
+  '@id': 'https://www.diamondhost.site/#service',
   name: 'Minecraft Server Hosting',
   provider: {
-    '@type': 'Organization',
-    name: 'Diamond Host',
+    '@id': 'https://www.diamondhost.site/#organization',
   },
-  description: 'Premium Minecraft server hosting with high performance Intel Platinum and AMD EPYC processors',
-  areaServed: ['Pakistan', 'India', 'UAE', 'Germany', 'Worldwide'],
+  description: 'Premium Minecraft server hosting with high performance Intel Platinum and AMD EPYC processors. DDoS protection, instant setup, 24/7 support.',
+  areaServed: [
+    { '@type': 'Country', name: 'Pakistan' },
+    { '@type': 'Country', name: 'India' },
+    { '@type': 'Country', name: 'United Arab Emirates' },
+    { '@type': 'Country', name: 'Germany' },
+  ],
   serviceType: 'Game Server Hosting',
+  offers: {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'PKR',
+    lowPrice: '200',
+    highPrice: '6400',
+    offerCount: '20',
+    availability: 'https://schema.org/InStock',
+  },
+}
+
+// JSON-LD BreadcrumbList for better navigation
+const breadcrumbJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://www.diamondhost.site',
+    },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: 'Plans',
+      item: 'https://www.diamondhost.site/plans',
+    },
+    {
+      '@type': 'ListItem',
+      position: 3,
+      name: 'Features',
+      item: 'https://www.diamondhost.site/features',
+    },
+    {
+      '@type': 'ListItem',
+      position: 4,
+      name: 'Support',
+      item: 'https://www.diamondhost.site/support',
+    },
+  ],
 }
 
 export default function RootLayout({
@@ -167,13 +252,23 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="google-site-verification" content="Xdq-rWVqZilANxxJr2c55PYCcNdzr-ZLNa-G_FOtbhU" />
+        <link rel="icon" href="/linklogo.png" type="image/png" sizes="512x512" />
+        <link rel="apple-touch-icon" href="/linklogo.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <script
           type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
         />
       </head>
       <body className={`${orbitron.variable} ${inter.variable} font-sans`}>
