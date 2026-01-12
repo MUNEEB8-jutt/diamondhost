@@ -551,6 +551,27 @@ export default function PricingCards() {
   return (
     <section id="plans" className="py-24 px-4 relative overflow-hidden">
       <div className="container mx-auto relative z-10">
+        {/* Become a Creator Button - Top Right Corner */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
+          viewport={{ once: true }}
+          className="absolute top-4 right-4 md:right-8 z-20"
+        >
+          <motion.a
+            href="#creator-program"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40 hover:border-red-500/60 text-red-400 hover:text-red-300 px-4 py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-300 backdrop-blur-sm shadow-lg shadow-red-500/10"
+            whileHover={{ scale: 1.05, boxShadow: '0 10px 30px -10px rgba(239, 68, 68, 0.4)' }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+            <span>Become a Creator</span>
+          </motion.a>
+        </motion.div>
+
         {/* 3D VR Style Location Carousel */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }} 
@@ -572,27 +593,34 @@ export default function PricingCards() {
           whileInView={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.5, delay: 0.1 }} 
           viewport={{ once: true }}
-          className="flex justify-center mb-16"
+          className="flex flex-col justify-center items-center gap-3 mb-16"
         >
-          <div className="inline-flex bg-slate-900/90 backdrop-blur-xl p-2 rounded-2xl border border-slate-700/50 shadow-xl">
+          <div className="inline-flex bg-slate-900/90 backdrop-blur-xl p-2 rounded-2xl border border-slate-700/50 shadow-xl overflow-visible">
             {/* For UAE: AMD (left, main) | Intel (right, coming soon) */}
             {/* For India/Germany: Intel (left, main) | AMD (right, coming soon) */}
             
             {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') ? (
               <>
-                {/* UAE: AMD Button (Left - Main) */}
+                {/* UAE: AMD Button (Left - Main) with 10% OFF */}
                 <motion.button
                   onClick={() => setSelectedProcessor('amd')}
-                  className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                  className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 overflow-visible ${
                     selectedProcessor === 'amd' 
                       ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/30' 
                       : 'text-gray-400 hover:text-white'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  style={{ overflow: 'visible' }}
                 >
                   <Zap className="h-5 w-5" />
                   <span>AMD EPYC</span>
+                  {/* 10% OFF Badge - Outside button flow */}
+                  <div className="absolute -top-4 -right-4 z-50 pointer-events-none">
+                    <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase shadow-lg shadow-green-500/50 whitespace-nowrap">
+                      10% OFF
+                    </span>
+                  </div>
                 </motion.button>
                 
                 {/* UAE: Intel Button (Right - Coming Soon) */}
@@ -636,6 +664,18 @@ export default function PricingCards() {
               </>
             )}
           </div>
+          
+          {/* Limited Offer Text - Only for UAE */}
+          {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-emerald-400 text-xs font-medium tracking-wide flex items-center gap-2"
+            >
+              <span className="inline-block w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+              Limited Offer • 30 Days Only
+            </motion.p>
+          )}
         </motion.div>
         {/* Intel Platinum Section - Only show when Intel is selected AND available */}
         <AnimatePresence mode="wait">
@@ -963,11 +1003,12 @@ function PartnerSection() {
 
   return (
     <motion.div 
+      id="creator-program"
       initial={{ opacity: 0, y: 40 }} 
       whileInView={{ opacity: 1, y: 0 }} 
       transition={{ duration: 0.6 }} 
       viewport={{ once: true }}
-      className="mt-24 relative"
+      className="mt-24 relative scroll-mt-24"
     >
       {/* Background Glow */}
       <div className="absolute inset-0 pointer-events-none">
