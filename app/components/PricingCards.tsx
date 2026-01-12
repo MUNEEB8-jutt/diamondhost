@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Loader2, Cpu, Zap } from 'lucide-react'
+import { Check, Loader2, Cpu, Zap, Users, Star, Youtube, ChevronDown, ChevronUp } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { getPlans, getLocations, getPlansByLocation, getEpycPlansByLocation, HostingPlan, Location, EpycPlan } from '@/lib/supabase'
 import { useCurrency } from '@/lib/CurrencyContext'
@@ -563,7 +563,7 @@ export default function PricingCards() {
           />
         </motion.div>
 
-        {/* Intel / AMD Toggle with Coming Soon badges */}
+        {/* Processor Toggle - Dynamic order based on location */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           whileInView={{ opacity: 1, y: 0 }} 
@@ -572,49 +572,66 @@ export default function PricingCards() {
           className="flex justify-center mb-16"
         >
           <div className="inline-flex bg-slate-900/90 backdrop-blur-xl p-2 rounded-2xl border border-slate-700/50 shadow-xl">
-            {/* Intel Button - Coming Soon for UAE */}
-            <motion.button
-              onClick={() => (currentLoc.code === 'UAE' || currentLoc.code === 'AE') ? null : setSelectedProcessor('intel')}
-              className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
-                (currentLoc.code === 'UAE' || currentLoc.code === 'AE')
-                  ? 'text-gray-500 cursor-not-allowed opacity-60'
-                  : selectedProcessor === 'intel' 
-                    ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' 
-                    : 'text-gray-400 hover:text-white'
-              }`}
-              whileHover={(currentLoc.code === 'UAE' || currentLoc.code === 'AE') ? {} : { scale: 1.02 }}
-              whileTap={(currentLoc.code === 'UAE' || currentLoc.code === 'AE') ? {} : { scale: 0.98 }}
-            >
-              <Cpu className="h-5 w-5" />
-              <span>Intel Platinum</span>
-              {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
-                <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase">
-                  Soon
-                </span>
-              )}
-            </motion.button>
+            {/* For UAE: AMD (left, main) | Intel (right, coming soon) */}
+            {/* For India/Germany: Intel (left, main) | AMD (right, coming soon) */}
             
-            {/* AMD Button - Coming Soon for India & Germany */}
-            <motion.button
-              onClick={() => (currentLoc.code !== 'UAE' && currentLoc.code !== 'AE') ? null : setSelectedProcessor('amd')}
-              className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
-                (currentLoc.code !== 'UAE' && currentLoc.code !== 'AE')
-                  ? 'text-gray-500 cursor-not-allowed opacity-60'
-                  : selectedProcessor === 'amd' 
-                    ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/30' 
-                    : 'text-gray-400 hover:text-white'
-              }`}
-              whileHover={(currentLoc.code !== 'UAE' && currentLoc.code !== 'AE') ? {} : { scale: 1.02 }}
-              whileTap={(currentLoc.code !== 'UAE' && currentLoc.code !== 'AE') ? {} : { scale: 0.98 }}
-            >
-              <Zap className="h-5 w-5" />
-              <span>AMD EPYC</span>
-              {(currentLoc.code !== 'UAE' && currentLoc.code !== 'AE') && (
-                <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase">
-                  Soon
-                </span>
-              )}
-            </motion.button>
+            {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') ? (
+              <>
+                {/* UAE: AMD Button (Left - Main) */}
+                <motion.button
+                  onClick={() => setSelectedProcessor('amd')}
+                  className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                    selectedProcessor === 'amd' 
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/30' 
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Zap className="h-5 w-5" />
+                  <span>AMD EPYC</span>
+                </motion.button>
+                
+                {/* UAE: Intel Button (Right - Coming Soon) */}
+                <motion.button
+                  className="relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 text-gray-500 cursor-not-allowed opacity-60"
+                >
+                  <Cpu className="h-5 w-5" />
+                  <span>Intel Platinum</span>
+                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase">
+                    Soon
+                  </span>
+                </motion.button>
+              </>
+            ) : (
+              <>
+                {/* India/Germany: Intel Button (Left - Main) */}
+                <motion.button
+                  onClick={() => setSelectedProcessor('intel')}
+                  className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                    selectedProcessor === 'intel' 
+                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' 
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Cpu className="h-5 w-5" />
+                  <span>Intel Platinum</span>
+                </motion.button>
+                
+                {/* India/Germany: AMD Button (Right - Coming Soon) */}
+                <motion.button
+                  className="relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 text-gray-500 cursor-not-allowed opacity-60"
+                >
+                  <Zap className="h-5 w-5" />
+                  <span>AMD EPYC</span>
+                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase">
+                    Soon
+                  </span>
+                </motion.button>
+              </>
+            )}
           </div>
         </motion.div>
         {/* Intel Platinum Section - Only show when Intel is selected AND available */}
@@ -881,7 +898,206 @@ export default function PricingCards() {
             Contact Us
           </motion.a>
         </motion.div>
+
+        {/* Become a Partner Section */}
+        <PartnerSection />
       </div>
     </section>
   )
+}
+
+// Partner Section Component
+function PartnerSection() {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const partnerTiers = [
+    {
+      subscribers: '1,000+',
+      reward: '8GB RAM',
+      color: 'from-green-500 to-emerald-600',
+      icon: '🌱',
+      description: 'Perfect for growing creators'
+    },
+    {
+      subscribers: '5,000+',
+      reward: '16GB RAM',
+      color: 'from-blue-500 to-cyan-600',
+      icon: '⭐',
+      description: 'For established content creators'
+    },
+    {
+      subscribers: '10,000+',
+      reward: '32GB RAM',
+      color: 'from-purple-500 to-pink-600',
+      icon: '👑',
+      description: 'Premium tier for top creators'
+    }
+  ]
+
+  const requirements = [
+    'Quality gaming content focused on Minecraft',
+    'Consistent upload schedule (minimum 2 videos/week)',
+    'Active and engaged community',
+    'Professional presentation and commentary',
+    'Must mention Diamond Host in videos',
+    'Server link in video description',
+    'Minimum 1,000 subscribers on YouTube/Twitch',
+    'No controversial or inappropriate content',
+    'Must stream/record on Diamond Host servers',
+    'Partnership review every 3 months'
+  ]
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 40 }} 
+      whileInView={{ opacity: 1, y: 0 }} 
+      transition={{ duration: 0.6 }} 
+      viewport={{ once: true }}
+      className="mt-24"
+    >
+      {/* Header */}
+      <div className="text-center mb-12">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-full px-4 py-1 text-purple-400 text-sm mb-4"
+        >
+          <Users className="h-4 w-4" />
+          <span>Content Creator Program</span>
+        </motion.div>
+        <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+          Become a <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">Partner</span>
+        </h2>
+        <p className="text-gray-400 max-w-2xl mx-auto">
+          Are you a content creator? Get FREE premium servers based on your audience size!
+        </p>
+      </div>
+
+      {/* Partner Tiers */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-10">
+        {partnerTiers.map((tier, idx) => (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: idx * 0.1 }}
+            viewport={{ once: true }}
+            className="group relative"
+          >
+            <div className="absolute -inset-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+              <div className={`absolute inset-0 bg-gradient-to-r ${tier.color} blur-xl rounded-3xl opacity-30`} />
+            </div>
+            
+            <div className="relative bg-slate-900/90 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300">
+              <div className="text-4xl mb-3 text-center">{tier.icon}</div>
+              <div className="text-center">
+                <p className="text-gray-400 text-sm mb-1">Subscribers</p>
+                <p className={`text-2xl font-bold bg-gradient-to-r ${tier.color} bg-clip-text text-transparent`}>
+                  {tier.subscribers}
+                </p>
+              </div>
+              <div className="my-4 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent" />
+              <div className="text-center">
+                <p className="text-gray-400 text-sm mb-1">FREE Server</p>
+                <p className="text-xl font-bold text-white">{tier.reward}</p>
+              </div>
+              <p className="text-gray-500 text-xs text-center mt-3">{tier.description}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Requirements Expandable Section */}
+      <motion.div 
+        className="max-w-4xl mx-auto"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+      >
+        <motion.button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full bg-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border border-slate-700/50 hover:border-purple-500/30 transition-all duration-300 flex items-center justify-between"
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center">
+              <Star className="h-5 w-5 text-white" />
+            </div>
+            <div className="text-left">
+              <p className="text-white font-semibold">Partnership Requirements</p>
+              <p className="text-gray-500 text-sm">Click to view all requirements</p>
+            </div>
+          </div>
+          <motion.div
+            animate={{ rotate: isExpanded ? 180 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <ChevronDown className="h-6 w-6 text-gray-400" />
+          </motion.div>
+        </motion.button>
+
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="bg-slate-900/60 backdrop-blur-xl rounded-b-2xl p-6 border border-t-0 border-slate-700/50 -mt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {requirements.map((req, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="flex items-start gap-3"
+                    >
+                      <div className="w-5 h-5 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="h-3 w-3 text-white" />
+                      </div>
+                      <span className="text-gray-300 text-sm">{req}</span>
+                    </motion.div>
+                  ))}
+                </div>
+                
+                <div className="mt-6 p-4 bg-purple-500/10 border border-purple-500/20 rounded-xl">
+                  <p className="text-purple-300 text-sm">
+                    <strong>Note:</strong> All partnerships are reviewed every 3 months. Servers are provided free of charge as long as requirements are met. Diamond Host reserves the right to terminate partnerships that don't meet the criteria.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Apply Button */}
+      <motion.div 
+        className="text-center mt-10"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        viewport={{ once: true }}
+      >
+        <motion.a
+          href="https://discord.gg/tKDRWYNcuE"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold py-4 px-10 rounded-xl transition-all duration-300 shadow-lg shadow-purple-500/30"
+          whileHover={{ scale: 1.05, boxShadow: '0 20px 40px -12px rgba(168, 85, 247, 0.5)' }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Youtube className="h-5 w-5" />
+          <span>Apply for Content Creator</span>
+        </motion.a>
+        <p className="text-gray-500 text-sm mt-3">Opens Discord - Create a ticket to apply</p>
+      </motion.div>
+    </motion.div>
+  )
+
 }

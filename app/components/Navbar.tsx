@@ -82,9 +82,9 @@ const PKFlag = () => (
 type CurrencyCode = 'USD' | 'INR' | 'PKR'
 
 const currencies = [
+  { code: 'PKR' as CurrencyCode, symbol: 'Rs', Flag: PKFlag },
   { code: 'USD' as CurrencyCode, symbol: '$', Flag: USFlag },
   { code: 'INR' as CurrencyCode, symbol: '₹', Flag: INFlag },
-  { code: 'PKR' as CurrencyCode, symbol: 'Rs', Flag: PKFlag },
 ]
 
 const navItems = [

@@ -26,7 +26,7 @@ const symbols: Record<Currency, string> = {
 const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined)
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currency, setCurrency] = useState<Currency>('USD')
+  const [currency, setCurrency] = useState<Currency>('PKR')
 
   const convertPrice = (usdPrice: number): string => {
     const converted = usdPrice * exchangeRates[currency]
