@@ -27,10 +27,10 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.diamondhost.site'),
   title: {
-    default: 'DiamondHost - #1 Minecraft Server Hosting Pakistan | Premium Gaming Servers',
+    default: 'DiamondHost - World\'s Best Minecraft Server Hosting | Premium Gaming Servers',
     template: '%s | DiamondHost'
   },
-  description: 'DiamondHost - Pakistan\'s best Minecraft server hosting. Premium Intel Platinum & AMD EPYC servers in UAE, India & Germany. 99.9% uptime, DDoS protection, instant setup, 24/7 support. Starting Rs 200/month. Join 500+ happy gamers!',
+  description: 'DiamondHost - World\'s best Minecraft server hosting. Premium Intel Platinum & AMD EPYC servers in UAE, India & Germany. 99.9% uptime, DDoS protection, instant setup, 24/7 support. Affordable pricing. Join 500+ happy gamers worldwide!',
   keywords: [
     'diamondhost',
     'diamond host',
@@ -83,8 +83,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://www.diamondhost.site',
     siteName: 'DiamondHost',
-    title: 'DiamondHost - #1 Minecraft Server Hosting Pakistan',
-    description: 'Pakistan\'s best Minecraft server hosting. Premium Intel Platinum & AMD EPYC servers. 99.9% uptime, DDoS protection, instant setup & 24/7 support.',
+    title: 'DiamondHost - World\'s Best Minecraft Server Hosting',
+    description: 'Premium Minecraft server hosting worldwide. Intel Platinum & AMD EPYC servers. 99.9% uptime, DDoS protection, instant setup & 24/7 support.',
     images: [
       {
         url: 'https://www.diamondhost.site/linklogo.png',
@@ -97,7 +97,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'DiamondHost - #1 Minecraft Server Hosting Pakistan',
+    title: 'DiamondHost - World\'s Best Minecraft Server Hosting',
     description: 'Premium Minecraft hosting with Intel Platinum & AMD EPYC. 99.9% uptime, DDoS protection & 24/7 support.',
     images: ['https://www.diamondhost.site/linklogo.png'],
     creator: '@diamondhostpk',
@@ -141,7 +141,7 @@ const jsonLd = {
     height: 512,
   },
   image: 'https://www.diamondhost.site/linklogo.png',
-  description: 'DiamondHost - Pakistan\'s #1 Minecraft server hosting provider. Premium Intel Platinum & AMD EPYC servers with 99.9% uptime.',
+  description: 'DiamondHost - World\'s best Minecraft server hosting provider. Premium Intel Platinum & AMD EPYC servers with 99.9% uptime.',
   foundingDate: '2024',
   founder: {
     '@type': 'Person',
@@ -253,7 +253,7 @@ const faqJsonLd = {
       name: 'What is DiamondHost?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'DiamondHost is Pakistan\'s #1 Minecraft server hosting provider offering premium Intel Platinum and AMD EPYC powered servers with 99.9% uptime, DDoS protection, and 24/7 support.',
+        text: 'DiamondHost is the world\'s best Minecraft server hosting provider offering premium Intel Platinum and AMD EPYC powered servers with 99.9% uptime, DDoS protection, and 24/7 support.',
       },
     },
     {
