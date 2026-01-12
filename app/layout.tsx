@@ -243,6 +243,62 @@ const breadcrumbJsonLd = {
   ],
 }
 
+// JSON-LD FAQ for rich snippets in Google
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is DiamondHost?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'DiamondHost is Pakistan\'s #1 Minecraft server hosting provider offering premium Intel Platinum and AMD EPYC powered servers with 99.9% uptime, DDoS protection, and 24/7 support.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How much does Minecraft server hosting cost at DiamondHost?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'DiamondHost Minecraft server hosting starts from just Rs 200/month for 2GB RAM. We offer plans up to 64GB RAM with prices varying based on RAM and location (UAE, India, Germany).',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What locations are available for DiamondHost servers?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'DiamondHost offers Minecraft servers in UAE (Dubai), India, and Germany. UAE servers use AMD EPYC processors while India and Germany use Intel Platinum processors.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Does DiamondHost offer DDoS protection?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, all DiamondHost Minecraft servers come with enterprise-grade DDoS protection included at no extra cost to keep your server safe from attacks.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How fast is server setup at DiamondHost?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'DiamondHost offers instant server setup. After payment confirmation, your Minecraft server is typically ready within 2-3 hours.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'What payment methods does DiamondHost accept?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'DiamondHost accepts Easypaisa, JazzCash, Bank Transfer, PayPal, and Cryptocurrency payments for maximum convenience.',
+      },
+    },
+  ],
+}
+
 export default function RootLayout({
   children,
 }: {
@@ -269,6 +325,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       </head>
       <body className={`${orbitron.variable} ${inter.variable} font-sans`}>
