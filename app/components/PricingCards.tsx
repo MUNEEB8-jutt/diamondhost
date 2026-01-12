@@ -298,7 +298,7 @@ const LocationCarousel = ({
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center py-8" style={{ perspective: '1000px' }}>
-      {/* Become a Creator Button - Above right arrow area */}
+      {/* Become a YouTube Partner Button - Above right arrow area */}
       <motion.a
         href="#creator-program"
         className="absolute top-2 right-[15%] md:right-[20%] hidden md:inline-flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40 hover:border-red-500/60 text-red-400 hover:text-red-300 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 backdrop-blur-sm shadow-lg shadow-red-500/10 z-20"
@@ -312,7 +312,7 @@ const LocationCarousel = ({
           <rect width="28" height="20" rx="5" fill="#FF0000"/>
           <polygon points="11,5 11,15 20,10" fill="white"/>
         </svg>
-        <span>Become a Creator</span>
+        <span>Become a YouTube Partner</span>
       </motion.a>
 
       {/* Main Container */}
