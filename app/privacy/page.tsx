@@ -81,7 +81,7 @@ export default function PrivacyPolicy() {
             <section>
               <h2 className="text-xl font-semibold text-white mb-4">4. Data Storage and Security</h2>
               <p className="text-gray-300 leading-relaxed">
-                Your data is stored on secure servers located in UAE, Singapore, and Germany. We implement industry-standard security measures including:
+                Your data is stored on secure servers located in UAE, India, and Germany. We implement industry-standard security measures including:
               </p>
               <ul className="list-disc list-inside text-gray-300 space-y-2 mt-3">
                 <li>SSL/TLS encryption for data transmission</li>

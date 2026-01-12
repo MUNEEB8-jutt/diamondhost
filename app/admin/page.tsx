@@ -34,7 +34,7 @@ const flagOptions = ['🇦🇪', '🇸🇬', '🇩🇪', '🇺🇸', '🇬🇧',
 
 const fallbackLocations: Location[] = [
   { id: '1', name: 'UAE', code: 'UAE', flag: '🇦🇪', active: true, sort_order: 1, created_at: '' },
-  { id: '2', name: 'Singapore', code: 'Singapore', flag: '🇸🇬', active: true, sort_order: 2, created_at: '' },
+  { id: '2', name: 'India', code: 'India', flag: '🇮🇳', active: true, sort_order: 2, created_at: '' },
   { id: '3', name: 'Germany', code: 'Germany', flag: '🇩🇪', active: true, sort_order: 3, created_at: '' },
 ]
 

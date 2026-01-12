@@ -28,7 +28,7 @@ const features = [
   {
     icon: Globe,
     title: 'Multiple Locations',
-    subtitle: 'UAE • Singapore • Germany',
+    subtitle: 'UAE • India • Germany',
     description: 'Choose from 3 global locations for best gaming experience.',
     color: 'from-purple-500 to-pink-500',
   },

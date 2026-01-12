@@ -461,6 +461,14 @@ export default function PricingCards() {
       const [locsData, plansData] = await Promise.all([getLocations(), getPlans()])
       let locs = locsData.length > 0 ? locsData : fallbackLocations
       
+      // Map Singapore to India (database migration)
+      locs = locs.map(loc => {
+        if (loc.code === 'Singapore' || loc.code === 'SG') {
+          return { ...loc, name: 'India', code: 'India', flag: 'IN' }
+        }
+        return loc
+      })
+      
       // Reorder to put UAE in center
       const uaeIndex = locs.findIndex(l => l.code === 'UAE' || l.code === 'AE')
       if (uaeIndex !== -1 && uaeIndex !== 1 && locs.length >= 3) {
@@ -470,7 +478,12 @@ export default function PricingCards() {
       }
       
       setLocations(locs)
-      setPlans(plansData.length > 0 ? plansData : fallbackPlans)
+      
+      // Map Singapore plans to India
+      const mappedPlans = plansData.length > 0 
+        ? plansData.map(p => p.location === 'Singapore' ? { ...p, location: 'India' } : p)
+        : fallbackPlans
+      setPlans(mappedPlans)
       
       // Start with UAE (index 1)
       const startLocation = locs[1]?.code || 'UAE'
@@ -496,12 +509,23 @@ export default function PricingCards() {
       setSelectedProcessor('intel')
     }
     
-    const locationCode = locations[newIndex]?.code || 'UAE'
+    // Map Singapore to India for database queries
+    let locationCode = locations[newIndex]?.code || 'UAE'
+    const queryLocation = locationCode === 'India' ? 'Singapore' : locationCode // Query with Singapore if India (for old DB)
+    
     const [ryzenData, epycData] = await Promise.all([
       getPlansByLocation(locationCode),
       getEpycPlansByLocation(locationCode)
     ])
-    setPlans(ryzenData.length > 0 ? ryzenData : fallbackPlans.filter(p => p.location === locationCode))
+    
+    // Also try Singapore if India returns empty
+    let finalPlans = ryzenData
+    if (ryzenData.length === 0 && locationCode === 'India') {
+      const sgPlans = await getPlansByLocation('Singapore')
+      finalPlans = sgPlans.map(p => ({ ...p, location: 'India' }))
+    }
+    
+    setPlans(finalPlans.length > 0 ? finalPlans : fallbackPlans.filter(p => p.location === locationCode))
     setEpycPlans(epycData.length > 0 ? epycData : fallbackEpycPlans.filter(p => p.location === locationCode))
     setPlansLoading(false)
   }

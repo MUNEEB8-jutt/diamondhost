@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     default: 'Diamond Host - Best Minecraft Server Hosting in Pakistan | Low Latency Gaming Servers',
     template: '%s | Diamond Host'
   },
-  description: 'Diamond Host offers premium Minecraft server hosting in Pakistan, UAE, Singapore & Germany. Get Intel Platinum & AMD EPYC powered servers with 99.9% uptime, DDoS protection, instant setup & 24/7 support. Starting from just Rs 240/month.',
+  description: 'Diamond Host offers premium Minecraft server hosting in Pakistan, UAE, India & Germany. Get Intel Platinum & AMD EPYC powered servers with 99.9% uptime, DDoS protection, instant setup & 24/7 support. Starting from just Rs 240/month.',
   keywords: [
     'minecraft server hosting',
     'minecraft hosting pakistan',
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     'amd epyc minecraft server',
     'minecraft hosting asia',
     'affordable minecraft server',
-    'minecraft server singapore',
+    'minecraft server india',
     'minecraft server germany',
     'diamond host',
     'diamondhost',
@@ -78,7 +78,7 @@ export const metadata: Metadata = {
     url: 'https://www.diamondhost.site',
     siteName: 'Diamond Host',
     title: 'Diamond Host - Best Minecraft Server Hosting in Pakistan',
-    description: 'Premium Minecraft server hosting with Intel Platinum & AMD EPYC processors. 99.9% uptime, DDoS protection, instant setup & 24/7 support. Servers in UAE, Singapore & Germany.',
+    description: 'Premium Minecraft server hosting with Intel Platinum & AMD EPYC processors. 99.9% uptime, DDoS protection, instant setup & 24/7 support. Servers in UAE, India & Germany.',
     images: [
       {
         url: '/linklogo.png',
@@ -126,7 +126,7 @@ const jsonLd = {
   name: 'Diamond Host',
   url: 'https://www.diamondhost.site',
   logo: 'https://www.diamondhost.site/linklogo.png',
-  description: 'Premium Minecraft server hosting with Intel Platinum & AMD EPYC processors. Servers in UAE, Singapore & Germany.',
+  description: 'Premium Minecraft server hosting with Intel Platinum & AMD EPYC processors. Servers in UAE, India & Germany.',
   foundingDate: '2024',
   contactPoint: {
     '@type': 'ContactPoint',
@@ -155,7 +155,7 @@ const serviceJsonLd = {
     name: 'Diamond Host',
   },
   description: 'Premium Minecraft server hosting with high performance Intel Platinum and AMD EPYC processors',
-  areaServed: ['Pakistan', 'India', 'UAE', 'Singapore', 'Germany', 'Worldwide'],
+  areaServed: ['Pakistan', 'India', 'UAE', 'Germany', 'Worldwide'],
   serviceType: 'Game Server Hosting',
 }
 
