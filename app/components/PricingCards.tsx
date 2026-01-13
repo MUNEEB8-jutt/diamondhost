@@ -568,6 +568,23 @@ export default function PricingCards() {
   return (
     <section id="plans" className="py-24 px-4 relative overflow-hidden">
       <div className="container mx-auto relative z-10">
+        {/* Launch Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex justify-center mb-8"
+        >
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-red-500/20 border border-amber-500/40 px-6 py-3 rounded-full backdrop-blur-sm">
+            <span className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+            </span>
+            <span className="text-amber-400 font-semibold text-sm md:text-base">
+              Launching January 15 — Pre-Order Now!
+            </span>
+          </div>
+        </motion.div>
+
         {/* 3D VR Style Location Carousel */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }} 
@@ -984,7 +1001,7 @@ function PartnerSection() {
     'Professional presentation and commentary',
     'Must mention Diamond Host in videos',
     'Server link in video description',
-    'Minimum 1,000 subscribers on YouTube/Twitch',
+    'Minimum 1,000 subscribers on YouTube',
     'No controversial or inappropriate content',
     'Must stream/record on Diamond Host servers',
     'Partnership review every 3 months'
