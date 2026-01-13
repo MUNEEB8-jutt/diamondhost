@@ -119,7 +119,7 @@ INSERT INTO epyc_plans (name, icon, ram, performance, location, price, currency,
 ('Spirit Plan', 'Cpu', '16GB RAM', '500%', 'UAE', 1600, 'PKR', ARRAY['24/7 Support', 'AMD EPYC', 'Priority Support'], true, 5, true),
 ('Infinity Plan', 'Cpu', '24GB RAM', '750%', 'UAE', 2400, 'PKR', ARRAY['24/7 Support', 'AMD EPYC', 'Priority Support'], false, 6, true),
 ('Sharingan Plan', 'Cpu', '32GB RAM', '1000%', 'UAE', 3200, 'PKR', ARRAY['24/7 Support', 'AMD EPYC', 'Custom Plans'], false, 7, true),
-('Arise Plan', 'Cpu', '48GB RAM', '1500%', 'UAE', 4800, 'PKR', ARRAY['24/7 Support', 'AMD EPYC', 'Custom Plans'], false, 8, true),
+('Arise Plan', 'Cpu', '48GB RAM ', '1500%', 'UAE', 4800, 'PKR', ARRAY['24/7 Support', 'AMD EPYC', 'Custom Plans'], false, 8, true),
 ('Arise-Plus Plan', 'Cpu', '64GB RAM', '2000%', 'UAE', 6400, 'PKR', ARRAY['24/7 Support', 'AMD EPYC', 'Custom Plans'], false, 9, true);
 
 -- Verify

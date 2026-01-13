@@ -71,11 +71,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: '/favicon.png', type: 'image/png', sizes: '512x512' },
       { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/linklogo.png', type: 'image/png', sizes: '512x512' },
     ],
-    shortcut: '/linklogo.png',
-    apple: '/linklogo.png',
+    shortcut: '/favicon.png',
+    apple: '/favicon.png',
   },
   manifest: '/manifest.json',
   openGraph: {
@@ -134,13 +134,16 @@ const jsonLd = {
   name: 'DiamondHost',
   alternateName: ['Diamond Host', 'DiamondHost.site'],
   url: 'https://www.diamondhost.site',
-  logo: {
+  logo: 'https://www.diamondhost.site/favicon.png',
+  image: {
     '@type': 'ImageObject',
-    url: 'https://www.diamondhost.site/linklogo.png',
+    '@id': 'https://www.diamondhost.site/#logo',
+    url: 'https://www.diamondhost.site/favicon.png',
+    contentUrl: 'https://www.diamondhost.site/favicon.png',
+    caption: 'DiamondHost Logo',
     width: 512,
     height: 512,
   },
-  image: 'https://www.diamondhost.site/linklogo.png',
   description: 'DiamondHost - World\'s best Minecraft server hosting provider. Premium Intel Platinum & AMD EPYC servers with 99.9% uptime.',
   foundingDate: '2024',
   founder: {
@@ -308,8 +311,8 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="google-site-verification" content="Xdq-rWVqZilANxxJr2c55PYCcNdzr-ZLNa-G_FOtbhU" />
-        <link rel="icon" href="/linklogo.png" type="image/png" sizes="512x512" />
-        <link rel="apple-touch-icon" href="/linklogo.png" />
+        <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
