@@ -76,8 +76,20 @@ export default function OrderPage() {
   const [transactionId, setTransactionId] = useState('')
   const [screenshot, setScreenshot] = useState<File | null>(null)
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null)
+  
+  // Get discount from URL params (0.9 for 10% off, 1 for no discount)
+  const [discount, setDiscount] = useState(1)
+  const [processor, setProcessor] = useState<'intel' | 'amd'>('intel')
 
   useEffect(() => {
+    // Parse URL params for discount and processor
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search)
+      const discountParam = urlParams.get('discount')
+      const processorParam = urlParams.get('processor')
+      if (discountParam) setDiscount(parseFloat(discountParam))
+      if (processorParam) setProcessor(processorParam as 'intel' | 'amd')
+    }
     loadData()
   }, [params.planId])
 
@@ -162,8 +174,9 @@ export default function OrderPage() {
       const screenshotUrl = await uploadOrderScreenshot(screenshot, `${user.id}-${Date.now()}`)
       
       // Convert price to selected currency for display in admin
-      // Remove commas from converted price string and parse as float
-      const convertedPriceStr = convertPrice(plan.price / 278)
+      // Apply discount if applicable (0.9 for 10% off)
+      const finalPrice = plan.price * discount
+      const convertedPriceStr = convertPrice(finalPrice / 278)
       const displayPrice = parseFloat(convertedPriceStr.replace(/,/g, ''))
 
       const { error: orderError } = await createOrder({
@@ -175,7 +188,7 @@ export default function OrderPage() {
         plan_currency: currency,
         plan_ram: plan.ram,
         location: plan.location,
-        processor: plan.performance,
+        processor: processor === 'amd' ? 'AMD EPYC' : 'Intel Platinum',
         payment_method: selectedMethod.name,
         transaction_id: transactionId || undefined,
         screenshot_url: screenshotUrl || undefined
@@ -330,7 +343,17 @@ export default function OrderPage() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-cyan-400">{symbol}{convertPrice(plan.price / 278)}</p>
+                {discount < 1 ? (
+                  <>
+                    <div className="flex items-center justify-end gap-2 mb-1">
+                      <span className="text-gray-500 text-lg line-through">{symbol}{convertPrice(plan.price / 278)}</span>
+                      <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">10% OFF</span>
+                    </div>
+                    <p className="text-3xl font-bold text-cyan-400">{symbol}{convertPrice((plan.price * discount) / 278)}</p>
+                  </>
+                ) : (
+                  <p className="text-3xl font-bold text-cyan-400">{symbol}{convertPrice(plan.price / 278)}</p>
+                )}
                 <p className="text-gray-500 text-sm">per month</p>
               </div>
             </div>
@@ -484,7 +507,17 @@ export default function OrderPage() {
                     {/* Amount */}
                     <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl p-4 border border-cyan-500/30">
                       <span className="text-gray-400 text-sm block mb-2">Amount to Pay</span>
-                      <p className="text-cyan-400 font-bold text-2xl">{symbol}{convertPrice(plan.price / 278)}</p>
+                      {discount < 1 ? (
+                        <>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-gray-500 text-lg line-through">{symbol}{convertPrice(plan.price / 278)}</span>
+                            <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">10% OFF</span>
+                          </div>
+                          <p className="text-cyan-400 font-bold text-2xl">{symbol}{convertPrice((plan.price * discount) / 278)}</p>
+                        </>
+                      ) : (
+                        <p className="text-cyan-400 font-bold text-2xl">{symbol}{convertPrice(plan.price / 278)}</p>
+                      )}
                     </div>
                   </div>
                 </div>

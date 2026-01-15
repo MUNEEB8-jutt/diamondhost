@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Loader2, Cpu, Zap, Users, Star, Youtube, ChevronDown, ChevronUp } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { getPlans, getLocations, getPlansByLocation, getEpycPlansByLocation, HostingPlan, Location, EpycPlan } from '@/lib/supabase'
 import { useCurrency } from '@/lib/CurrencyContext'
 import { useAuth } from '@/lib/AuthContext'
@@ -15,9 +15,9 @@ const fallbackLocations: Location[] = [
   { id: '3', name: 'Germany', code: 'Germany', flag: 'DE', active: true, sort_order: 3, created_at: '' },
 ]
 
-// Intel Platinum Plans - 100 PKR/GB for India & Germany (UAE = Coming Soon)
+// Intel Platinum Plans - 100 PKR/GB for India & Germany & UAE (with 10% OFF)
 const fallbackPlans: HostingPlan[] = [
-  // India Plans - 100 PKR/GB
+  // India Plans - 100 PKR/GB with 10% OFF
   { id: 'in1', name: 'Low-Fire Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'India', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
   { id: 'in2', name: 'Fire Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'India', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
   { id: 'in3', name: 'Low-Water Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'India', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
@@ -27,7 +27,7 @@ const fallbackPlans: HostingPlan[] = [
   { id: 'in7', name: 'Sharingan Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'India', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
   { id: 'in8', name: 'Arise Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'India', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
   { id: 'in9', name: 'Arise-Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'India', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
-  // Germany Plans - 100 PKR/GB
+  // Germany Plans - 100 PKR/GB with 10% OFF
   { id: 'de1', name: 'Low-Fire Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'Germany', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
   { id: 'de2', name: 'Fire Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'Germany', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
   { id: 'de3', name: 'Low-Water Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'Germany', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
@@ -37,6 +37,16 @@ const fallbackPlans: HostingPlan[] = [
   { id: 'de7', name: 'Sharingan Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'Germany', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
   { id: 'de8', name: 'Arise Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'Germany', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
   { id: 'de9', name: 'Arise-Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'Germany', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
+  // UAE Intel Plans - 100 PKR/GB with 10% OFF
+  { id: 'uae1', name: 'Low-Fire Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'UAE', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+  { id: 'uae2', name: 'Fire Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'UAE', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+  { id: 'uae3', name: 'Low-Water Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'UAE', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+  { id: 'uae4', name: 'Water Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'UAE', price: 1000, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 4, active: true, created_at: '' },
+  { id: 'uae5', name: 'Spirit Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'UAE', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 5, active: true, created_at: '' },
+  { id: 'uae6', name: 'Infinity Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'UAE', price: 1600, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+  { id: 'uae7', name: 'Sharingan Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'UAE', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
+  { id: 'uae8', name: 'Arise Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'UAE', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
+  { id: 'uae9', name: 'Arise-Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'UAE', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
 ]
 
 // AMD EPYC Plans - 100 PKR/GB for UAE only (India & Germany = Coming Soon)
@@ -297,26 +307,26 @@ const LocationCarousel = ({
   }
 
   return (
-    <div className="relative w-full flex flex-col items-center justify-center py-8" style={{ perspective: '1000px' }}>
-      {/* Become a YouTube Partner Button - Above right arrow area */}
+    <div className="relative w-full flex flex-col items-center justify-center py-3" style={{ perspective: '1000px' }}>
+      {/* Become a YouTube Partner Button - Above carousel, centered */}
       <motion.a
         href="#creator-program"
-        className="absolute top-2 right-[15%] md:right-[20%] hidden md:inline-flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40 hover:border-red-500/60 text-red-400 hover:text-red-300 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 backdrop-blur-sm shadow-lg shadow-red-500/10 z-20"
+        className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40 hover:border-red-500/60 text-red-400 hover:text-red-300 px-4 py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-300 backdrop-blur-sm shadow-lg shadow-red-500/10 mb-4"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         whileHover={{ scale: 1.05, boxShadow: '0 10px 30px -10px rgba(239, 68, 68, 0.4)' }}
         whileTap={{ scale: 0.95 }}
       >
         {/* YouTube Logo - Red rounded rectangle with white play button */}
-        <svg viewBox="0 0 28 20" width="22" height="16">
+        <svg viewBox="0 0 28 20" width="18" height="14">
           <rect width="28" height="20" rx="5" fill="#FF0000"/>
           <polygon points="11,5 11,15 20,10" fill="white"/>
         </svg>
         <span>Become a YouTube Partner</span>
       </motion.a>
 
-      {/* Main Container */}
-      <div className="relative flex items-center justify-center gap-8 md:gap-16 w-full max-w-4xl px-4">
+      {/* Main Container - More compact */}
+      <div className="relative flex items-center justify-center gap-4 md:gap-8 w-full max-w-3xl px-4">
         
         {/* Left Arrow with Flag Texture */}
         <motion.button
@@ -382,7 +392,7 @@ const LocationCarousel = ({
               {/* Flag with ring */}
               <div className="relative">
                 {/* Cyan ring glow - only around edges, not on flag */}
-                <div className="absolute -inset-3 md:-inset-4 rounded-full border-2 border-cyan-500/60 shadow-[0_0_20px_rgba(6,182,212,0.4)]" />
+                <div className="absolute -inset-2 md:-inset-3 rounded-full border-2 border-cyan-500/60 shadow-[0_0_20px_rgba(6,182,212,0.4)]" />
                 
                 <div className="relative rounded-full overflow-hidden">
                   <CircularFlag code={currentLoc.code} size="xlarge" />
@@ -391,7 +401,7 @@ const LocationCarousel = ({
               
               {/* Location Name */}
               <motion.div 
-                className="text-center mt-5 md:mt-6"
+                className="text-center mt-3 md:mt-4"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
@@ -434,14 +444,14 @@ const LocationCarousel = ({
         </motion.button>
       </div>
       
-      {/* Location Dots */}
-      <div className="flex gap-2 mt-6">
+      {/* Location Dots - Smaller */}
+      <div className="flex gap-1.5 mt-2">
         {locations.map((_, idx) => (
           <motion.button
             key={idx}
             onClick={() => handleSelect(idx)}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              idx === selectedIndex ? 'bg-cyan-400 w-5' : 'bg-slate-600 w-1.5 hover:bg-slate-500'
+            className={`h-1 rounded-full transition-all duration-300 ${
+              idx === selectedIndex ? 'bg-cyan-400 w-4' : 'bg-slate-600 w-1 hover:bg-slate-500'
             }`}
             whileHover={{ scale: 1.3 }}
             layout
@@ -467,13 +477,37 @@ export default function PricingCards() {
 
   const selectedLocation = locations[selectedLocationIndex]?.code || 'UAE'
   
+  // Ref for processor toggle section to scroll to
+  const processorSectionRef = useRef<HTMLDivElement>(null)
+  
+  // Determine if plan is available or pre-order based on location and processor
+  const isPlanAvailable = (location: string, processor: 'intel' | 'amd') => {
+    // Germany Intel: Available now with 10% OFF
+    if ((location === 'Germany' || location === 'DE') && processor === 'intel') return true
+    // India Intel: Available now with 10% OFF
+    if ((location === 'India' || location === 'IN') && processor === 'intel') return true
+    // UAE Intel: Available now with 10% OFF
+    if ((location === 'UAE' || location === 'AE') && processor === 'intel') return true
+    // AMD EPYC UAE: Launch Jan 17 (pre-order)
+    if ((location === 'UAE' || location === 'AE') && processor === 'amd') return false
+    return false
+  }
+  
+  // Check if plan has 10% discount (All Intel plans: India, Germany, UAE)
+  const hasDiscount = (location: string, processor: 'intel' | 'amd') => {
+    return processor === 'intel'
+  }
+  
   // Handle Order Click - Redirect to order page
-  const handleOrderClick = (plan: { id: string; name: string; price: number; ram: string }) => {
+  const handleOrderClick = (plan: { id: string; name: string; price: number; ram: string; location?: string }, processor: 'intel' | 'amd') => {
     if (!user) {
       setShowAuthModal(true)
       return
     }
-    router.push(`/order/${plan.id}`)
+    // Pass discount info in URL if applicable
+    const planLocation = plan.location || selectedLocation
+    const discount = hasDiscount(planLocation, processor) ? '0.9' : '1'
+    router.push(`/order/${plan.id}?discount=${discount}&processor=${processor}`)
   }
 
   useEffect(() => {
@@ -548,6 +582,14 @@ export default function PricingCards() {
     setPlans(finalPlans.length > 0 ? finalPlans : fallbackPlans.filter(p => p.location === locationCode))
     setEpycPlans(epycData.length > 0 ? epycData : fallbackEpycPlans.filter(p => p.location === locationCode))
     setPlansLoading(false)
+    
+    // Smooth scroll to processor section after location change
+    setTimeout(() => {
+      processorSectionRef.current?.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      })
+    }, 300)
   }
 
   const filteredPlans = plans.filter(p => p.location === selectedLocation)
@@ -566,32 +608,15 @@ export default function PricingCards() {
   const currentLoc = locations[selectedLocationIndex] || fallbackLocations[0]
 
   return (
-    <section id="plans" className="py-24 px-4 relative overflow-hidden">
+    <section id="plans" className="py-16 px-4 relative overflow-hidden">
       <div className="container mx-auto relative z-10">
-        {/* Launch Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex justify-center mb-8"
-        >
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-red-500/20 border border-amber-500/40 px-6 py-3 rounded-full backdrop-blur-sm">
-            <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-            </span>
-            <span className="text-amber-400 font-semibold text-sm md:text-base">
-              Launching January 15 — Pre-Order Now!
-            </span>
-          </div>
-        </motion.div>
-
         {/* 3D VR Style Location Carousel */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }} 
           whileInView={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.5 }} 
           viewport={{ once: true }}
-          className="mb-12"
+          className="mb-4"
         >
           <LocationCarousel 
             locations={locations}
@@ -602,22 +627,23 @@ export default function PricingCards() {
 
         {/* Processor Toggle - Dynamic order based on location */}
         <motion.div 
+          ref={processorSectionRef}
           initial={{ opacity: 0, y: 20 }} 
           whileInView={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.5, delay: 0.1 }} 
           viewport={{ once: true }}
-          className="flex flex-col justify-center items-center gap-3 mb-16"
+          className="flex flex-col justify-center items-center gap-2 mb-8"
         >
-          <div className="inline-flex bg-slate-900/90 backdrop-blur-xl p-2 rounded-2xl border border-slate-700/50 shadow-xl overflow-visible">
+          <div className="inline-flex bg-slate-900/90 backdrop-blur-xl p-1.5 rounded-xl border border-slate-700/50 shadow-xl overflow-visible">
             {/* For UAE: AMD (left, main) | Intel (right, coming soon) */}
             {/* For India/Germany: Intel (left, main) | AMD (right, coming soon) */}
             
             {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') ? (
               <>
-                {/* UAE: AMD Button (Left - Main) with 10% OFF */}
+                {/* UAE: AMD Button (Left - Pre-Order Jan 17) */}
                 <motion.button
                   onClick={() => setSelectedProcessor('amd')}
-                  className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 overflow-visible ${
+                  className={`relative px-6 md:px-8 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 overflow-visible ${
                     selectedProcessor === 'amd' 
                       ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/30' 
                       : 'text-gray-400 hover:text-white'
@@ -626,66 +652,83 @@ export default function PricingCards() {
                   whileTap={{ scale: 0.98 }}
                   style={{ overflow: 'visible' }}
                 >
-                  <Zap className="h-5 w-5" />
+                  <Zap className="h-4 w-4 md:h-5 md:w-5" />
                   <span>AMD EPYC</span>
-                  {/* 10% OFF Badge - Outside button flow */}
-                  <div className="absolute -top-4 -right-4 z-50 pointer-events-none">
-                    <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase shadow-lg shadow-green-500/50 whitespace-nowrap">
-                      10% OFF
+                  {/* Launching Jan 17 Badge - Only on toggle */}
+                  <div className="absolute -top-3 md:-top-4 -right-3 md:-right-4 z-50 pointer-events-none">
+                    <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[8px] md:text-[10px] font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full uppercase shadow-lg shadow-amber-500/50 whitespace-nowrap">
+                      Jan 17
                     </span>
                   </div>
                 </motion.button>
                 
-                {/* UAE: Intel Button (Right - Coming Soon) */}
-                <motion.button
-                  className="relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 text-gray-500 cursor-not-allowed opacity-60"
-                >
-                  <Cpu className="h-5 w-5" />
-                  <span>Intel Platinum</span>
-                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase">
-                    Soon
-                  </span>
-                </motion.button>
-              </>
-            ) : (
-              <>
-                {/* India/Germany: Intel Button (Left - Main) */}
+                {/* UAE: Intel Button (Right - Available with 10% OFF) */}
                 <motion.button
                   onClick={() => setSelectedProcessor('intel')}
-                  className={`relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 ${
+                  className={`relative px-6 md:px-8 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 overflow-visible ${
                     selectedProcessor === 'intel' 
                       ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' 
                       : 'text-gray-400 hover:text-white'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  style={{ overflow: 'visible' }}
                 >
-                  <Cpu className="h-5 w-5" />
+                  <Cpu className="h-4 w-4 md:h-5 md:w-5" />
                   <span>Intel Platinum</span>
+                  {/* 10% OFF Badge */}
+                  <div className="absolute -top-3 md:-top-4 -right-3 md:-right-4 z-50 pointer-events-none">
+                    <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[8px] md:text-[10px] font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full uppercase shadow-lg shadow-green-500/50 whitespace-nowrap">
+                      10% OFF
+                    </span>
+                  </div>
+                </motion.button>
+              </>
+            ) : (
+              <>
+                {/* India/Germany: Intel Button (Left - Main with 10% OFF) */}
+                <motion.button
+                  onClick={() => setSelectedProcessor('intel')}
+                  className={`relative px-6 md:px-8 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 overflow-visible ${
+                    selectedProcessor === 'intel' 
+                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' 
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{ overflow: 'visible' }}
+                >
+                  <Cpu className="h-4 w-4 md:h-5 md:w-5" />
+                  <span>Intel Platinum</span>
+                  {/* 10% OFF Badge for India & Germany */}
+                  <div className="absolute -top-3 md:-top-4 -right-3 md:-right-4 z-50 pointer-events-none">
+                    <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[8px] md:text-[10px] font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full uppercase shadow-lg shadow-green-500/50 whitespace-nowrap">
+                      10% OFF
+                    </span>
+                  </div>
                 </motion.button>
                 
                 {/* India/Germany: AMD Button (Right - Coming Soon) */}
                 <motion.button
-                  className="relative px-8 py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 text-gray-500 cursor-not-allowed opacity-60"
+                  className="relative px-6 md:px-8 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 text-gray-500 cursor-not-allowed opacity-60"
                 >
-                  <Zap className="h-5 w-5" />
+                  <Zap className="h-4 w-4 md:h-5 md:w-5" />
                   <span>AMD EPYC</span>
-                  <span className="absolute -top-2 -right-2 bg-amber-500 text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase">
+                  <span className="absolute -top-1.5 md:-top-2 -right-1.5 md:-right-2 bg-amber-500 text-white text-[7px] md:text-[8px] font-bold px-1.5 md:px-2 py-0.5 rounded-full uppercase">
                     Soon
                   </span>
                 </motion.button>
               </>
             )}
           </div>
-          
-          {/* Limited Offer Text - Only for UAE */}
-          {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') && (
+          {/* Limited Offer Text - For all Intel plans */}
+          {selectedProcessor === 'intel' && (
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-emerald-400 text-xs font-medium tracking-wide flex items-center gap-2"
+              className="text-emerald-400 text-[10px] md:text-xs font-medium tracking-wide flex items-center gap-1.5 md:gap-2"
             >
-              <span className="inline-block w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+              <span className="inline-block w-1.5 h-1.5 md:w-2 md:h-2 bg-emerald-400 rounded-full animate-pulse"></span>
               Limited Offer • 30 Days Only
             </motion.p>
           )}
@@ -743,6 +786,15 @@ export default function PricingCards() {
                     </div>
                   )}
                   
+                  {/* 10% OFF Badge for Intel plans - Top Right */}
+                  {hasDiscount(plan.location, 'intel') && (
+                    <div className="absolute -top-3 right-4 z-20">
+                      <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap shadow-lg shadow-green-500/40">
+                        10% OFF
+                      </span>
+                    </div>
+                  )}
+                  
                   {/* Stable Glow Effect - No animation, just smooth transition */}
                   <div className="absolute -inset-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-0">
                     <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-blue-500/30 to-cyan-500/30 blur-2xl rounded-3xl" />
@@ -777,7 +829,16 @@ export default function PricingCards() {
 
                     {/* Price */}
                     <div className="text-center mb-4 relative z-10">
-                      <span className="text-4xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">{symbol}{convertPrice(plan.price / 278)}</span>
+                      {hasDiscount(plan.location, 'intel') ? (
+                        <>
+                          <div className="flex items-center justify-center gap-2 mb-1">
+                            <span className="text-gray-500 text-sm line-through">{symbol}{convertPrice(plan.price / 278)}</span>
+                          </div>
+                          <span className="text-4xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">{symbol}{convertPrice((plan.price * 0.9) / 278)}</span>
+                        </>
+                      ) : (
+                        <span className="text-4xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">{symbol}{convertPrice(plan.price / 278)}</span>
+                      )}
                       <p className="text-gray-500 text-xs mt-1">per month</p>
                     </div>
 
@@ -803,12 +864,12 @@ export default function PricingCards() {
 
                     {/* Button */}
                     <motion.button 
-                      onClick={() => handleOrderClick(plan)}
+                      onClick={() => handleOrderClick(plan, 'intel')}
                       className="w-full py-3 rounded-xl font-semibold text-white text-sm text-center block transition-all duration-300 bg-blue-600 hover:bg-blue-500 relative z-10"
                       whileHover={{ scale: 1.02 }} 
                       whileTap={{ scale: 0.98 }}
                     >
-                      Order Now
+                      {isPlanAvailable(plan.location, 'intel') ? 'Order Now' : 'Pre-Order Now'}
                     </motion.button>
                   </motion.div>
                 </motion.div>
@@ -901,13 +962,9 @@ export default function PricingCards() {
                     {/* Name */}
                     <h3 className="text-lg font-bold text-center text-white mb-2 uppercase tracking-wide relative z-10 group-hover:text-red-300 transition-colors">{plan.name}</h3>
 
-                    {/* Price with 10% OFF */}
+                    {/* Price - No discount for AMD EPYC */}
                     <div className="text-center mb-4 relative z-10">
-                      <div className="flex items-center justify-center gap-2 mb-1">
-                        <span className="text-gray-500 text-sm line-through">{symbol}{convertPrice(plan.price / 278)}</span>
-                        <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">10% OFF</span>
-                      </div>
-                      <span className="text-4xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{symbol}{convertPrice((plan.price * 0.9) / 278)}</span>
+                      <span className="text-4xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{symbol}{convertPrice(plan.price / 278)}</span>
                       <p className="text-gray-500 text-xs mt-1">per month</p>
                     </div>
 
@@ -933,12 +990,12 @@ export default function PricingCards() {
 
                     {/* Button */}
                     <motion.button
-                      onClick={() => handleOrderClick(plan)}
-                      className="w-full py-3 rounded-xl font-semibold text-white text-sm text-center block transition-all duration-300 bg-blue-600 hover:bg-blue-500 relative z-10"
+                      onClick={() => handleOrderClick(plan, 'amd')}
+                      className="w-full py-3 rounded-xl font-semibold text-white text-sm text-center block transition-all duration-300 bg-red-600 hover:bg-red-500 relative z-10"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      Order Now
+                      Pre-Order Now
                     </motion.button>
                   </motion.div>
                 </motion.div>
