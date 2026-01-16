@@ -53,6 +53,16 @@ function getFallbackPlans(): AnyPlan[] {
     { id: 'amd7', name: 'Sharingan Plan', icon: 'Cpu', ram: '32GB RAM', performance: '1000%', location: 'UAE', price: 3200, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 7, active: true, created_at: '' },
     { id: 'amd8', name: 'Arise Plan', icon: 'Cpu', ram: '48GB RAM', performance: '1500%', location: 'UAE', price: 4800, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 8, active: true, created_at: '' },
     { id: 'amd9', name: 'Arise-Plus Plan', icon: 'Cpu', ram: '64GB RAM', performance: '2000%', location: 'UAE', price: 6400, currency: 'PKR', features: ['24/7 Support', 'AMD EPYC', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
+    // UAE Intel Plans - 100 PKR/GB with 10% OFF
+    { id: 'uae1', name: 'Low-Fire Plan', icon: 'Medal', ram: '2GB RAM', performance: '100%', location: 'UAE', price: 200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 1, active: true, created_at: '' },
+    { id: 'uae2', name: 'Fire Plan', icon: 'Star', ram: '4GB RAM', performance: '150%', location: 'UAE', price: 400, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 2, active: true, created_at: '' },
+    { id: 'uae3', name: 'Low-Water Plan', icon: 'Crown', ram: '8GB RAM', performance: '250%', location: 'UAE', price: 800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Instant Setup'], popular: false, sort_order: 3, active: true, created_at: '' },
+    { id: 'uae4', name: 'Water Plan', icon: 'Award', ram: '10GB RAM', performance: '300%', location: 'UAE', price: 1000, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 4, active: true, created_at: '' },
+    { id: 'uae5', name: 'Spirit Plan', icon: 'Diamond', ram: '12GB RAM', performance: '350%', location: 'UAE', price: 1200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: true, sort_order: 5, active: true, created_at: '' },
+    { id: 'uae6', name: 'Infinity Plan', icon: 'Gem', ram: '16GB RAM', performance: '500%', location: 'UAE', price: 1600, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 6, active: true, created_at: '' },
+    { id: 'uae7', name: 'Sharingan Plan', icon: 'Nether', ram: '22GB RAM', performance: '700%', location: 'UAE', price: 2200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 7, active: true, created_at: '' },
+    { id: 'uae8', name: 'Arise Plan', icon: 'Ender', ram: '32GB RAM', performance: '900%', location: 'UAE', price: 3200, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Priority Support'], popular: false, sort_order: 8, active: true, created_at: '' },
+    { id: 'uae9', name: 'Arise-Plus Plan', icon: 'Trophy', ram: '48GB RAM', performance: '1200%', location: 'UAE', price: 4800, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600', features: ['24/7 Support', 'Intel Platinum', 'Custom Plans'], popular: false, sort_order: 9, active: true, created_at: '' },
   ]
 }
 
@@ -174,8 +184,8 @@ export default function OrderPage() {
       const screenshotUrl = await uploadOrderScreenshot(screenshot, `${user.id}-${Date.now()}`)
       
       // Convert price to selected currency for display in admin
-      // Apply discount if applicable (0.9 for 10% off)
-      const finalPrice = plan.price * discount
+      // Apply 10% discount for AMD EPYC plans
+      const finalPrice = processor === 'amd' ? plan.price * 0.9 : plan.price
       const convertedPriceStr = convertPrice(finalPrice / 278)
       const displayPrice = parseFloat(convertedPriceStr.replace(/,/g, ''))
 
@@ -343,13 +353,13 @@ export default function OrderPage() {
                 </div>
               </div>
               <div className="text-right">
-                {discount < 1 ? (
+                {processor === 'amd' ? (
                   <>
                     <div className="flex items-center justify-end gap-2 mb-1">
                       <span className="text-gray-500 text-lg line-through">{symbol}{convertPrice(plan.price / 278)}</span>
                       <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">10% OFF</span>
                     </div>
-                    <p className="text-3xl font-bold text-cyan-400">{symbol}{convertPrice((plan.price * discount) / 278)}</p>
+                    <p className="text-3xl font-bold text-cyan-400">{symbol}{convertPrice((plan.price * 0.9) / 278)}</p>
                   </>
                 ) : (
                   <p className="text-3xl font-bold text-cyan-400">{symbol}{convertPrice(plan.price / 278)}</p>
@@ -507,13 +517,13 @@ export default function OrderPage() {
                     {/* Amount */}
                     <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl p-4 border border-cyan-500/30">
                       <span className="text-gray-400 text-sm block mb-2">Amount to Pay</span>
-                      {discount < 1 ? (
+                      {processor === 'amd' ? (
                         <>
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-gray-500 text-lg line-through">{symbol}{convertPrice(plan.price / 278)}</span>
                             <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">10% OFF</span>
                           </div>
-                          <p className="text-cyan-400 font-bold text-2xl">{symbol}{convertPrice((plan.price * discount) / 278)}</p>
+                          <p className="text-cyan-400 font-bold text-2xl">{symbol}{convertPrice((plan.price * 0.9) / 278)}</p>
                         </>
                       ) : (
                         <p className="text-cyan-400 font-bold text-2xl">{symbol}{convertPrice(plan.price / 278)}</p>

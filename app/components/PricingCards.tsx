@@ -493,9 +493,9 @@ export default function PricingCards() {
     return false
   }
   
-  // Check if plan has 10% discount (All Intel plans: India, Germany, UAE)
+  // Check if plan has 10% discount - Only AMD EPYC plans
   const hasDiscount = (location: string, processor: 'intel' | 'amd') => {
-    return processor === 'intel'
+    return processor === 'amd'
   }
   
   // Handle Order Click - Redirect to order page
@@ -634,51 +634,47 @@ export default function PricingCards() {
           viewport={{ once: true }}
           className="flex flex-col justify-center items-center gap-2 mb-8"
         >
-          <div className="inline-flex bg-slate-900/90 backdrop-blur-xl p-1.5 rounded-xl border border-slate-700/50 shadow-xl overflow-visible">
-            {/* For UAE: AMD (left, main) | Intel (right, coming soon) */}
-            {/* For India/Germany: Intel (left, main) | AMD (right, coming soon) */}
+          {/* Label */}
+          <p className="text-gray-400 text-xs md:text-sm uppercase tracking-widest mb-2">Select Processor</p>
+          
+          <div className="inline-flex bg-slate-800/80 backdrop-blur-xl p-1 rounded-2xl border border-slate-600/50 shadow-xl shadow-black/20 overflow-visible">
+            {/* For UAE: Intel (left) | AMD (right) */}
+            {/* For India/Germany: Intel (left) | AMD (right, coming soon) */}
             
             {(currentLoc.code === 'UAE' || currentLoc.code === 'AE') ? (
               <>
-                {/* UAE: AMD Button (Left - Pre-Order Jan 17) */}
+                {/* UAE: Intel Button (Left) */}
+                <motion.button
+                  onClick={() => setSelectedProcessor('intel')}
+                  className={`relative px-5 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 ${
+                    selectedProcessor === 'intel' 
+                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/40' 
+                      : 'text-gray-400 hover:text-gray-200 hover:bg-slate-700/50'
+                  }`}
+                  whileHover={{ scale: selectedProcessor === 'intel' ? 1 : 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Cpu className="h-4 w-4 md:h-5 md:w-5" />
+                  <span>Intel Platinum</span>
+                </motion.button>
+                
+                {/* UAE: AMD Button (Right) with 10% OFF */}
                 <motion.button
                   onClick={() => setSelectedProcessor('amd')}
-                  className={`relative px-6 md:px-8 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 overflow-visible ${
+                  className={`relative px-5 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 overflow-visible ${
                     selectedProcessor === 'amd' 
-                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/30' 
-                      : 'text-gray-400 hover:text-white'
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/40' 
+                      : 'text-gray-400 hover:text-gray-200 hover:bg-slate-700/50'
                   }`}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: selectedProcessor === 'amd' ? 1 : 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   style={{ overflow: 'visible' }}
                 >
                   <Zap className="h-4 w-4 md:h-5 md:w-5" />
                   <span>AMD EPYC</span>
-                  {/* Launching Jan 17 Badge - Only on toggle */}
-                  <div className="absolute -top-3 md:-top-4 -right-3 md:-right-4 z-50 pointer-events-none">
-                    <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[8px] md:text-[10px] font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full uppercase shadow-lg shadow-amber-500/50 whitespace-nowrap">
-                      Jan 17
-                    </span>
-                  </div>
-                </motion.button>
-                
-                {/* UAE: Intel Button (Right - Available with 10% OFF) */}
-                <motion.button
-                  onClick={() => setSelectedProcessor('intel')}
-                  className={`relative px-6 md:px-8 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 overflow-visible ${
-                    selectedProcessor === 'intel' 
-                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' 
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  style={{ overflow: 'visible' }}
-                >
-                  <Cpu className="h-4 w-4 md:h-5 md:w-5" />
-                  <span>Intel Platinum</span>
                   {/* 10% OFF Badge */}
-                  <div className="absolute -top-3 md:-top-4 -right-3 md:-right-4 z-50 pointer-events-none">
-                    <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[8px] md:text-[10px] font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full uppercase shadow-lg shadow-green-500/50 whitespace-nowrap">
+                  <div className="absolute -top-3 md:-top-4 -right-2 md:-right-3 z-50 pointer-events-none">
+                    <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[7px] md:text-[9px] font-bold px-1.5 md:px-2 py-0.5 rounded-full uppercase shadow-lg shadow-green-500/50 whitespace-nowrap">
                       10% OFF
                     </span>
                   </div>
@@ -686,56 +682,38 @@ export default function PricingCards() {
               </>
             ) : (
               <>
-                {/* India/Germany: Intel Button (Left - Main with 10% OFF) */}
+                {/* India/Germany: Intel Button (Left - Main) */}
                 <motion.button
                   onClick={() => setSelectedProcessor('intel')}
-                  className={`relative px-6 md:px-8 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 overflow-visible ${
+                  className={`relative px-5 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 ${
                     selectedProcessor === 'intel' 
-                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/30' 
-                      : 'text-gray-400 hover:text-white'
+                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/40' 
+                      : 'text-gray-400 hover:text-gray-200 hover:bg-slate-700/50'
                   }`}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: selectedProcessor === 'intel' ? 1 : 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  style={{ overflow: 'visible' }}
                 >
                   <Cpu className="h-4 w-4 md:h-5 md:w-5" />
                   <span>Intel Platinum</span>
-                  {/* 10% OFF Badge for India & Germany */}
-                  <div className="absolute -top-3 md:-top-4 -right-3 md:-right-4 z-50 pointer-events-none">
-                    <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[8px] md:text-[10px] font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full uppercase shadow-lg shadow-green-500/50 whitespace-nowrap">
-                      10% OFF
-                    </span>
-                  </div>
                 </motion.button>
                 
                 {/* India/Germany: AMD Button (Right - Coming Soon) */}
                 <motion.button
-                  className="relative px-6 md:px-8 py-2 md:py-3 rounded-lg md:rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 text-gray-500 cursor-not-allowed opacity-60"
+                  className="relative px-5 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 text-gray-500 cursor-not-allowed opacity-50"
                 >
                   <Zap className="h-4 w-4 md:h-5 md:w-5" />
                   <span>AMD EPYC</span>
-                  <span className="absolute -top-1.5 md:-top-2 -right-1.5 md:-right-2 bg-amber-500 text-white text-[7px] md:text-[8px] font-bold px-1.5 md:px-2 py-0.5 rounded-full uppercase">
+                  <span className="absolute -top-1.5 md:-top-2 -right-1 md:-right-2 bg-amber-500 text-white text-[6px] md:text-[8px] font-bold px-1.5 md:px-2 py-0.5 rounded-full uppercase">
                     Soon
                   </span>
                 </motion.button>
               </>
             )}
           </div>
-          {/* Limited Offer Text - For all Intel plans */}
-          {selectedProcessor === 'intel' && (
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-emerald-400 text-[10px] md:text-xs font-medium tracking-wide flex items-center gap-1.5 md:gap-2"
-            >
-              <span className="inline-block w-1.5 h-1.5 md:w-2 md:h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-              Limited Offer • 30 Days Only
-            </motion.p>
-          )}
         </motion.div>
-        {/* Intel Platinum Section - Only show when Intel is selected AND available */}
+        {/* Intel Platinum Section - Show when Intel is selected */}
         <AnimatePresence mode="wait">
-        {selectedProcessor === 'intel' && (currentLoc.code !== 'UAE' && currentLoc.code !== 'AE') && (
+        {selectedProcessor === 'intel' && (
         <motion.div
           key="intel-section"
           initial={{ opacity: 0, y: 30 }}
@@ -786,14 +764,7 @@ export default function PricingCards() {
                     </div>
                   )}
                   
-                  {/* 10% OFF Badge for Intel plans - Top Right */}
-                  {hasDiscount(plan.location, 'intel') && (
-                    <div className="absolute -top-3 right-4 z-20">
-                      <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap shadow-lg shadow-green-500/40">
-                        10% OFF
-                      </span>
-                    </div>
-                  )}
+          {/* 10% OFF Badge for Intel plans - REMOVED */}
                   
                   {/* Stable Glow Effect - No animation, just smooth transition */}
                   <div className="absolute -inset-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-0">
@@ -827,18 +798,9 @@ export default function PricingCards() {
                     {/* Name */}
                     <h3 className="text-lg font-bold text-center text-white mb-2 uppercase tracking-wide relative z-10 group-hover:text-cyan-300 transition-colors">{plan.name}</h3>
 
-                    {/* Price */}
+                    {/* Price - No discount */}
                     <div className="text-center mb-4 relative z-10">
-                      {hasDiscount(plan.location, 'intel') ? (
-                        <>
-                          <div className="flex items-center justify-center gap-2 mb-1">
-                            <span className="text-gray-500 text-sm line-through">{symbol}{convertPrice(plan.price / 278)}</span>
-                          </div>
-                          <span className="text-4xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">{symbol}{convertPrice((plan.price * 0.9) / 278)}</span>
-                        </>
-                      ) : (
-                        <span className="text-4xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">{symbol}{convertPrice(plan.price / 278)}</span>
-                      )}
+                      <span className="text-4xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">{symbol}{convertPrice(plan.price / 278)}</span>
                       <p className="text-gray-500 text-xs mt-1">per month</p>
                     </div>
 
@@ -869,7 +831,7 @@ export default function PricingCards() {
                       whileHover={{ scale: 1.02 }} 
                       whileTap={{ scale: 0.98 }}
                     >
-                      {isPlanAvailable(plan.location, 'intel') ? 'Order Now' : 'Pre-Order Now'}
+                      Order Now
                     </motion.button>
                   </motion.div>
                 </motion.div>
@@ -962,9 +924,13 @@ export default function PricingCards() {
                     {/* Name */}
                     <h3 className="text-lg font-bold text-center text-white mb-2 uppercase tracking-wide relative z-10 group-hover:text-red-300 transition-colors">{plan.name}</h3>
 
-                    {/* Price - No discount for AMD EPYC */}
+                    {/* Price - No discount for AMD EPYC - Actually 10% OFF */}
                     <div className="text-center mb-4 relative z-10">
-                      <span className="text-4xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{symbol}{convertPrice(plan.price / 278)}</span>
+                      <div className="flex items-center justify-center gap-2 mb-1">
+                        <span className="text-gray-500 text-sm line-through">{symbol}{convertPrice(plan.price / 278)}</span>
+                        <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">10% OFF</span>
+                      </div>
+                      <span className="text-4xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{symbol}{convertPrice((plan.price * 0.9) / 278)}</span>
                       <p className="text-gray-500 text-xs mt-1">per month</p>
                     </div>
 
@@ -995,7 +961,7 @@ export default function PricingCards() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      Pre-Order Now
+                      Order Now
                     </motion.button>
                   </motion.div>
                 </motion.div>
