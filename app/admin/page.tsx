@@ -581,21 +581,16 @@ export default function AdminPage() {
           </button>
           <button onClick={() => { setActiveTab('orders'); fetchData() }}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'orders' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
-            <ShoppingCart className="h-5 w-5" /> Orders
-            {orders.filter(o => o.status === 'pending').length > 0 && (
-              <span className="bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">{orders.filter(o => o.status === 'pending').length}</span>
+            <ShoppingCart className="h-5 w-5" /> Orders & Servers
+            {(orders.filter(o => o.status === 'pending').length > 0 || servers.filter(s => s.status !== 'active').length > 0) && (
+              <span className="bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
+                {orders.filter(o => o.status === 'pending').length + servers.filter(s => s.status !== 'active').length}
+              </span>
             )}
           </button>
           <button onClick={() => { setActiveTab('payments'); fetchData() }}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'payments' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
             <CreditCard className="h-5 w-5" /> Payments
-          </button>
-          <button onClick={() => { setActiveTab('servers'); fetchData() }}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'servers' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
-            <Server className="h-5 w-5" /> Servers
-            {servers.filter(s => s.status !== 'active').length > 0 && (
-              <span className="bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full">{servers.filter(s => s.status !== 'active').length}</span>
-            )}
           </button>
           <button onClick={() => { setActiveTab('users'); fetchData() }}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'users' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
@@ -1005,23 +1000,106 @@ export default function AdminPage() {
         )}
 
 
-        {/* Orders Tab */}
+        {/* Orders & Servers Tab */}
         {activeTab === 'orders' && (
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Orders List */}
+            {/* Orders/Servers List */}
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-                {(['all', 'pending', 'approved', 'rejected'] as const).map(status => (
-                  <button key={status} onClick={() => setOrderFilter(status)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${orderFilter === status ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
-                    {status === 'all' ? 'All Orders' : status.charAt(0).toUpperCase() + status.slice(1)}
-                    <span className="ml-2">({status === 'all' ? orders.length : orders.filter(o => o.status === status).length})</span>
-                  </button>
-                ))}
+              {/* Sub-tabs for Orders vs Active Servers */}
+              <div className="flex flex-wrap items-center gap-4 mb-6">
+                <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                  {(['all', 'pending', 'approved', 'rejected'] as const).map(status => (
+                    <button key={status} onClick={() => { setOrderFilter(status); setServerFilter('all') }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${orderFilter === status && serverFilter === 'all' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
+                      {status === 'all' ? 'All Orders' : status.charAt(0).toUpperCase() + status.slice(1)}
+                      <span className="ml-2">({status === 'all' ? orders.length : orders.filter(o => o.status === status).length})</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="h-8 w-px bg-slate-700 hidden sm:block" />
+                <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                  {(['active', 'suspended', 'renewal_required'] as const).map(status => (
+                    <button key={status} onClick={() => { setServerFilter(status); setOrderFilter('all') }}
+                      className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex items-center gap-2 ${serverFilter === status ? 'bg-purple-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
+                      <Server className="h-4 w-4" />
+                      {status === 'renewal_required' ? 'Renewal' : status.charAt(0).toUpperCase() + status.slice(1)}
+                      <span className={`px-1.5 py-0.5 rounded text-xs ${
+                        status === 'active' ? 'bg-green-500/30' : 
+                        status === 'suspended' ? 'bg-red-500/30' : 'bg-amber-500/30'
+                      }`}>
+                        {servers.filter(s => s.status === status).length}
+                      </span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {loading ? (
                 <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 text-cyan-400 animate-spin" /></div>
+              ) : serverFilter !== 'all' ? (
+                /* Show Servers when server filter is active */
+                filteredServers.length === 0 ? (
+                  <div className="text-center py-12 text-gray-500">
+                    <Server className="h-16 w-16 mx-auto mb-4 opacity-30" />
+                    <p>No {serverFilter.replace('_', ' ')} servers found</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {filteredServers.map((server) => {
+                      const relatedOrder = orders.find(o => o.order_id === server.order_id)
+                      return (
+                        <motion.div key={server.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                          className={`bg-slate-900 rounded-xl p-5 border transition-all cursor-pointer ${
+                            selectedServer?.id === server.id ? 'border-purple-500' : 'border-slate-800 hover:border-slate-700'
+                          }`}
+                          onClick={() => { setSelectedServer(server); setSelectedOrder(null) }}>
+                          <div className="flex flex-wrap items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <Server className="h-4 w-4 text-purple-400" />
+                                <span className="text-purple-400 font-mono text-sm">{server.server_id}</span>
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                  server.status === 'active' ? 'bg-green-500/20 text-green-400' :
+                                  server.status === 'suspended' ? 'bg-red-500/20 text-red-400' :
+                                  'bg-amber-500/20 text-amber-400'
+                                }`}>{server.status === 'renewal_required' ? 'Renewal Required' : server.status}</span>
+                              </div>
+                              <h3 className="text-white font-bold">{server.plan_name}</h3>
+                              <p className="text-gray-500 text-sm">{server.plan_ram} • {server.location} • {server.processor}</p>
+                              <p className="text-gray-500 text-sm mt-1">
+                                <User className="h-3 w-3 inline mr-1" />
+                                {server.user_name} ({server.user_email})
+                              </p>
+                              {server.suspension_reason && (
+                                <p className="text-red-400 text-sm mt-2 flex items-center gap-1">
+                                  <AlertCircle className="h-3 w-3" />
+                                  {server.suspension_reason}
+                                </p>
+                              )}
+                              {relatedOrder && (
+                                <p className="text-gray-600 text-xs mt-2">
+                                  Order: {relatedOrder.order_id} • Paid: {formatOrderPrice(relatedOrder.plan_price, relatedOrder.plan_currency)}
+                                </p>
+                              )}
+                            </div>
+                            
+                            <div className="text-right">
+                              <div className="flex items-center gap-1 justify-end text-purple-400 text-sm mb-1">
+                                <Calendar className="h-3 w-3" />
+                                <span className="font-semibold">{getDaysSince(server.created_at)} days</span>
+                              </div>
+                              {server.expires_at && (
+                                <p className={`text-xs ${new Date(server.expires_at) < new Date() ? 'text-red-400' : 'text-green-400'}`}>
+                                  Expires: {formatDate(server.expires_at)}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )
+                    })}
+                  </div>
+                )
               ) : filteredOrders.length === 0 ? (
                 <div className="text-center py-12 text-gray-500">
                   <ShoppingCart className="h-16 w-16 mx-auto mb-4 opacity-30" />
@@ -1029,62 +1107,86 @@ export default function AdminPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {filteredOrders.map((order) => (
-                    <motion.div key={order.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                      className={`bg-slate-900 rounded-xl p-5 border transition-all cursor-pointer ${
-                        selectedOrder?.id === order.id ? 'border-cyan-500' : 'border-slate-800 hover:border-slate-700'
-                      }`}
-                      onClick={() => setSelectedOrder(order)}>
-                      <div className="flex flex-wrap items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-cyan-400 font-mono text-sm">{order.order_id}</span>
-                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                              order.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
-                              order.status === 'approved' ? 'bg-green-500/20 text-green-400' :
-                              'bg-red-500/20 text-red-400'
-                            }`}>{order.status}</span>
-                          </div>
-                          <h3 className="text-white font-bold">{order.plan_name}</h3>
-                          <p className="text-gray-500 text-sm">{order.plan_ram} • {order.location} • {order.processor}</p>
-                          <p className="text-gray-500 text-sm mt-1">
-                            <User className="h-3 w-3 inline mr-1" />
-                            {order.user_name} ({order.user_email})
-                          </p>
-                          
-                          {/* Transaction ID */}
-                          {order.transaction_id && (
-                            <div className="mt-2 flex items-center gap-2">
-                              <CreditCard className="h-3 w-3 text-purple-400" />
-                              <span className="text-purple-400 text-sm font-mono">TXN: {order.transaction_id}</span>
+                  {filteredOrders.map((order) => {
+                    const relatedServer = servers.find(s => s.order_id === order.order_id)
+                    return (
+                      <motion.div key={order.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                        className={`bg-slate-900 rounded-xl p-5 border transition-all cursor-pointer ${
+                          selectedOrder?.id === order.id ? 'border-cyan-500' : 'border-slate-800 hover:border-slate-700'
+                        }`}
+                        onClick={() => { setSelectedOrder(order); setSelectedServer(relatedServer || null) }}>
+                        <div className="flex flex-wrap items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex flex-wrap items-center gap-2 mb-2">
+                              <span className="text-cyan-400 font-mono text-sm">{order.order_id}</span>
+                              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                order.status === 'pending' ? 'bg-yellow-500/20 text-yellow-400' :
+                                order.status === 'approved' ? 'bg-green-500/20 text-green-400' :
+                                'bg-red-500/20 text-red-400'
+                              }`}>{order.status}</span>
+                              {/* Show server status for approved orders */}
+                              {order.status === 'approved' && relatedServer && (
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1 ${
+                                  relatedServer.status === 'active' ? 'bg-purple-500/20 text-purple-400' :
+                                  relatedServer.status === 'suspended' ? 'bg-red-500/20 text-red-400' :
+                                  'bg-amber-500/20 text-amber-400'
+                                }`}>
+                                  <Server className="h-3 w-3" />
+                                  {relatedServer.status === 'renewal_required' ? 'Renewal' : relatedServer.status}
+                                </span>
+                              )}
                             </div>
-                          )}
+                            <h3 className="text-white font-bold">{order.plan_name}</h3>
+                            <p className="text-gray-500 text-sm">{order.plan_ram} • {order.location} • {order.processor}</p>
+                            <p className="text-gray-500 text-sm mt-1">
+                              <User className="h-3 w-3 inline mr-1" />
+                              {order.user_name} ({order.user_email})
+                            </p>
+                            
+                            {/* Transaction ID */}
+                            {order.transaction_id && (
+                              <div className="mt-2 flex items-center gap-2">
+                                <CreditCard className="h-3 w-3 text-purple-400" />
+                                <span className="text-purple-400 text-sm font-mono">TXN: {order.transaction_id}</span>
+                              </div>
+                            )}
+                            
+                            {/* Server info for approved orders */}
+                            {order.status === 'approved' && relatedServer && (
+                              <div className="mt-2 flex items-center gap-2 text-purple-400 text-xs">
+                                <Server className="h-3 w-3" />
+                                <span>{relatedServer.server_id}</span>
+                                <span>•</span>
+                                <span>{getDaysSince(relatedServer.created_at)} days active</span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="text-right">
+                            <p className="text-cyan-400 font-bold text-xl">{formatOrderPrice(order.plan_price, order.plan_currency)}</p>
+                            <p className="text-gray-500 text-xs">{order.payment_method}</p>
+                            <p className="text-gray-500 text-xs">{formatDate(order.created_at)}</p>
+                          </div>
                         </div>
                         
-                        <div className="text-right">
-                          <p className="text-cyan-400 font-bold text-xl">{formatOrderPrice(order.plan_price, order.plan_currency)}</p>
-                          <p className="text-gray-500 text-xs">{order.payment_method}</p>
-                          <p className="text-gray-500 text-xs">{formatDate(order.created_at)}</p>
-                        </div>
-                      </div>
-                      
-                      {/* Payment Proof Screenshot */}
-                      {order.screenshot_url && (
-                        <div className="mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
-                          <p className="text-gray-400 text-xs mb-2 flex items-center gap-1">
-                            <ImageIcon className="h-3 w-3" /> Payment Proof
-                          </p>
-                          <a href={order.screenshot_url} target="_blank" rel="noopener noreferrer">
-                            <img 
-                              src={order.screenshot_url} 
-                              alt="Payment Screenshot" 
-                              className="max-h-32 rounded-lg hover:opacity-80 transition-opacity cursor-pointer"
-                            />
-                          </a>
-                        </div>
-                      )}
-                    </motion.div>
-                  ))}
+                        {/* Payment Proof Screenshot */}
+                        {order.screenshot_url && (
+                          <div className="mt-4 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                            <p className="text-gray-400 text-xs mb-2 flex items-center gap-1">
+                              <ImageIcon className="h-3 w-3" /> Payment Proof
+                            </p>
+                            <a href={order.screenshot_url} target="_blank" rel="noopener noreferrer">
+                              <img 
+                                src={order.screenshot_url} 
+                                alt="Payment Screenshot" 
+                                className="max-h-32 rounded-lg hover:opacity-80 transition-opacity cursor-pointer"
+                              />
+                            </a>
+                          </div>
+                        )}
+                      </motion.div>
+                    )
+                  })}
                 </div>
               )}
             </div>
@@ -1197,6 +1299,222 @@ export default function AdminPage() {
                         </button>
                       </div>
                     </div>
+                  </div>
+                </motion.div>
+              )}
+              
+              {/* Approved Order - Server Management Panel */}
+              {selectedOrder && selectedOrder.status === 'approved' && selectedServer && (
+                <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="lg:w-[400px]">
+                  <div className="bg-slate-900 rounded-xl p-6 border border-purple-500/30 sticky top-24">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                        <Server className="h-5 w-5 text-purple-400" />
+                        Manage Server
+                      </h3>
+                      <button onClick={() => { setSelectedOrder(null); setSelectedServer(null) }} className="p-2 hover:bg-slate-800 rounded-lg"><X className="h-5 w-5" /></button>
+                    </div>
+
+                    {/* Order & Server Info */}
+                    <div className="bg-slate-800/50 rounded-lg p-4 mb-6">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-cyan-400 font-mono text-xs">{selectedOrder.order_id}</span>
+                        <span className="text-gray-500">→</span>
+                        <span className="text-purple-400 font-mono text-xs">{selectedServer.server_id}</span>
+                      </div>
+                      <p className="text-white font-bold">{selectedServer.plan_name}</p>
+                      <p className="text-gray-400 text-sm">{selectedServer.plan_ram} • {selectedServer.location}</p>
+                      <p className="text-gray-500 text-xs mt-1">{selectedServer.user_name} ({selectedServer.user_email})</p>
+                      
+                      <div className="mt-3 pt-3 border-t border-slate-700 flex items-center justify-between">
+                        <span className="text-gray-400 text-xs">Server Status</span>
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                          selectedServer.status === 'active' ? 'bg-green-500/20 text-green-400' :
+                          selectedServer.status === 'suspended' ? 'bg-red-500/20 text-red-400' :
+                          'bg-amber-500/20 text-amber-400'
+                        }`}>{selectedServer.status === 'renewal_required' ? 'Renewal Required' : selectedServer.status}</span>
+                      </div>
+                      
+                      <div className="mt-3 pt-3 border-t border-slate-700">
+                        <p className="text-gray-400 text-xs mb-1">Panel Link</p>
+                        <a href={selectedServer.panel_link} target="_blank" rel="noopener noreferrer" className="text-cyan-400 text-sm hover:underline truncate block">{selectedServer.panel_link}</a>
+                      </div>
+                      
+                      <div className="mt-3 pt-3 border-t border-slate-700 grid grid-cols-2 gap-3">
+                        <div>
+                          <p className="text-gray-400 text-xs mb-1">Days Active</p>
+                          <p className="text-purple-400 font-semibold">{getDaysSince(selectedServer.created_at)} days</p>
+                        </div>
+                        <div>
+                          <p className="text-gray-400 text-xs mb-1">Paid</p>
+                          <p className="text-cyan-400 font-semibold">{formatOrderPrice(selectedOrder.plan_price, selectedOrder.plan_currency)}</p>
+                        </div>
+                      </div>
+                      
+                      {selectedServer.expires_at && (
+                        <div className="mt-3 pt-3 border-t border-slate-700">
+                          <p className="text-gray-400 text-xs mb-1">Expires</p>
+                          <p className={`text-sm font-medium ${new Date(selectedServer.expires_at) < new Date() ? 'text-red-400' : 'text-green-400'}`}>
+                            {formatDate(selectedServer.expires_at)}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {selectedServer.suspension_reason && (
+                        <div className="mt-3 pt-3 border-t border-slate-700">
+                          <p className="text-red-400 text-sm flex items-center gap-1">
+                            <AlertCircle className="h-3 w-3" />
+                            {selectedServer.suspension_reason}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Actions based on server status */}
+                    {selectedServer.status === 'active' && (
+                      <div className="space-y-4">
+                        <h4 className="text-amber-400 font-semibold flex items-center gap-2">
+                          <Ban className="h-4 w-4" /> Server Actions
+                        </h4>
+                        
+                        <button 
+                          onClick={async () => {
+                            setProcessingServer(true)
+                            await markServerForRenewal(selectedServer.server_id)
+                            setNotification({ type: 'success', message: 'Server marked for renewal' })
+                            fetchData()
+                            setSelectedOrder(null)
+                            setSelectedServer(null)
+                            setProcessingServer(false)
+                          }}
+                          disabled={processingServer}
+                          className="w-full bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                          <RefreshCw className="h-4 w-4" />
+                          Mark for Renewal
+                        </button>
+                        
+                        <button 
+                          onClick={async () => {
+                            setProcessingServer(true)
+                            await suspendServer(selectedServer.server_id, 'Server suspended by admin')
+                            setNotification({ type: 'success', message: 'Server suspended' })
+                            fetchData()
+                            setSelectedOrder(null)
+                            setSelectedServer(null)
+                            setProcessingServer(false)
+                          }}
+                          disabled={processingServer}
+                          className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                          <Ban className="h-4 w-4" />
+                          Suspend Server
+                        </button>
+                      </div>
+                    )}
+
+                    {(selectedServer.status === 'suspended' || selectedServer.status === 'renewal_required') && (
+                      <div className="space-y-4">
+                        <h4 className="text-green-400 font-semibold flex items-center gap-2">
+                          <Play className="h-4 w-4" /> Reactivate Server
+                        </h4>
+                        <button 
+                          onClick={async () => {
+                            setProcessingServer(true)
+                            await reactivateServer(selectedServer.server_id)
+                            setNotification({ type: 'success', message: 'Server reactivated!' })
+                            fetchData()
+                            setSelectedOrder(null)
+                            setSelectedServer(null)
+                            setProcessingServer(false)
+                          }}
+                          disabled={processingServer}
+                          className="w-full bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2">
+                          {processingServer ? <Loader2 className="h-5 w-5 animate-spin" /> : <Play className="h-5 w-5" />}
+                          Reactivate (+1 Month)
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Delete Server */}
+                    <div className="border-t border-slate-700 pt-4 mt-4">
+                      <button 
+                        onClick={async () => {
+                          if (confirm('Delete this server permanently?')) {
+                            setProcessingServer(true)
+                            await deleteServer(selectedServer.server_id)
+                            setNotification({ type: 'success', message: 'Server deleted' })
+                            fetchData()
+                            setSelectedOrder(null)
+                            setSelectedServer(null)
+                            setProcessingServer(false)
+                          }
+                        }}
+                        disabled={processingServer}
+                        className="w-full bg-red-900/50 hover:bg-red-900 border border-red-500/30 disabled:opacity-50 text-red-400 font-semibold py-2 rounded-xl flex items-center justify-center gap-2 text-sm">
+                        <Trash2 className="h-4 w-4" />
+                        Delete Server
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+              
+              {/* Approved Order without Server (edge case) */}
+              {selectedOrder && selectedOrder.status === 'approved' && !selectedServer && (
+                <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="lg:w-[400px]">
+                  <div className="bg-slate-900 rounded-xl p-6 border border-yellow-500/30 sticky top-24">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-bold text-white">Order Details</h3>
+                      <button onClick={() => setSelectedOrder(null)} className="p-2 hover:bg-slate-800 rounded-lg"><X className="h-5 w-5" /></button>
+                    </div>
+                    
+                    <div className="bg-slate-800/50 rounded-lg p-4 mb-6">
+                      <p className="text-cyan-400 font-mono text-sm mb-1">{selectedOrder.order_id}</p>
+                      <p className="text-white font-bold">{selectedOrder.plan_name}</p>
+                      <p className="text-gray-400 text-sm">{selectedOrder.user_name}</p>
+                      <p className="text-gray-500 text-xs">{selectedOrder.user_email}</p>
+                      <p className="text-cyan-400 font-bold mt-2">{formatOrderPrice(selectedOrder.plan_price, selectedOrder.plan_currency)}</p>
+                    </div>
+                    
+                    <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 text-yellow-400 text-sm">
+                      <p className="font-semibold flex items-center gap-2"><AlertCircle className="h-4 w-4" /> No Server Found</p>
+                      <p className="text-yellow-300/80 mt-1 text-xs">This order was approved but no server entry exists. This might be an old order.</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+              
+              {/* Rejected Order Details */}
+              {selectedOrder && selectedOrder.status === 'rejected' && (
+                <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="lg:w-[400px]">
+                  <div className="bg-slate-900 rounded-xl p-6 border border-red-500/30 sticky top-24">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-xl font-bold text-white">Rejected Order</h3>
+                      <button onClick={() => setSelectedOrder(null)} className="p-2 hover:bg-slate-800 rounded-lg"><X className="h-5 w-5" /></button>
+                    </div>
+                    
+                    <div className="bg-slate-800/50 rounded-lg p-4 mb-6">
+                      <p className="text-cyan-400 font-mono text-sm mb-1">{selectedOrder.order_id}</p>
+                      <p className="text-white font-bold">{selectedOrder.plan_name}</p>
+                      <p className="text-gray-400 text-sm">{selectedOrder.user_name}</p>
+                      <p className="text-gray-500 text-xs">{selectedOrder.user_email}</p>
+                      <p className="text-cyan-400 font-bold mt-2">{formatOrderPrice(selectedOrder.plan_price, selectedOrder.plan_currency)}</p>
+                      
+                      {selectedOrder.admin_notes && (
+                        <div className="mt-3 pt-3 border-t border-slate-700">
+                          <p className="text-gray-400 text-xs mb-1">Rejection Reason</p>
+                          <p className="text-red-400 text-sm">{selectedOrder.admin_notes}</p>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {selectedOrder.screenshot_url && (
+                      <div className="bg-slate-800/50 rounded-lg p-3">
+                        <p className="text-gray-400 text-xs mb-2">Payment Screenshot</p>
+                        <a href={selectedOrder.screenshot_url} target="_blank" rel="noopener noreferrer">
+                          <img src={selectedOrder.screenshot_url} alt="Payment" className="w-full max-h-48 object-contain rounded-lg" />
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )}

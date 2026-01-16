@@ -443,25 +443,60 @@ export async function sendTicketMessage(ticketId: string, senderType: 'customer'
   return data
 }
 
-// Upload image to Supabase Storage
+// Upload file to Supabase Storage (images + documents)
 export async function uploadTicketImage(file: File, ticketId: string): Promise<string | null> {
-  const fileExt = file.name.split('.').pop()
-  const fileName = `${ticketId}/${Date.now()}.${fileExt}`
-  
-  const { error } = await supabase.storage
-    .from('ticket-images')
-    .upload(fileName, file)
-  
-  if (error) {
-    console.error('Upload error:', error)
+  try {
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'file'
+    const fileName = `${ticketId}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
+    
+    // Determine content type
+    const contentType = file.type || 'application/octet-stream'
+    
+    const { error: uploadError } = await supabase.storage
+      .from('ticket-images')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false,
+        contentType: contentType
+      })
+    
+    if (uploadError) {
+      console.error('Upload error:', uploadError)
+      // If bucket doesn't exist, try order-screenshots bucket as fallback
+      if (uploadError.message?.includes('not found') || uploadError.message?.includes('Bucket')) {
+        console.log('Trying fallback bucket: order-screenshots')
+        const fallbackFileName = `ticket-images/${fileName}`
+        const { error: fallbackError } = await supabase.storage
+          .from('order-screenshots')
+          .upload(fallbackFileName, file, {
+            cacheControl: '3600',
+            upsert: false,
+            contentType: contentType
+          })
+        
+        if (fallbackError) {
+          console.error('Fallback upload error:', fallbackError)
+          return null
+        }
+        
+        const { data: fallbackData } = supabase.storage
+          .from('order-screenshots')
+          .getPublicUrl(fallbackFileName)
+        
+        return fallbackData.publicUrl
+      }
+      return null
+    }
+    
+    const { data } = supabase.storage
+      .from('ticket-images')
+      .getPublicUrl(fileName)
+    
+    return data.publicUrl
+  } catch (err) {
+    console.error('Upload exception:', err)
     return null
   }
-  
-  const { data } = supabase.storage
-    .from('ticket-images')
-    .getPublicUrl(fileName)
-  
-  return data.publicUrl
 }
 
 // Update ticket status
