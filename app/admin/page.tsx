@@ -153,7 +153,7 @@ export default function AdminPage() {
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
 
   const [planForm, setPlanForm] = useState({
-    name: '', icon: 'Star', ram: '', performance: '', location: 'UAE',
+    name: '', icon: 'Star', ram: '', performance: '', location: 'UAE', processor: 'intel',
     price: 0, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600',
     features: ['24/7 Support', 'DDoS Protection', 'Instant Setup'],
     popular: false, sort_order: 1, active: true,
@@ -253,7 +253,7 @@ export default function AdminPage() {
   // Plan handlers
   const resetPlanForm = () => {
     setPlanForm({
-      name: '', icon: 'Star', ram: '', performance: '', location: locations[0]?.code || 'UAE',
+      name: '', icon: 'Star', ram: '', performance: '', location: locations[0]?.code || 'UAE', processor: 'intel',
       price: 0, currency: 'PKR', color_from: 'blue-400', color_to: 'cyan-600',
       features: ['24/7 Support', 'DDoS Protection', 'Instant Setup'],
       popular: false, sort_order: plans.length + 1, active: true,
@@ -264,7 +264,7 @@ export default function AdminPage() {
     setEditingPlan(plan)
     setPlanForm({
       name: plan.name, icon: plan.icon, ram: plan.ram, performance: plan.performance,
-      location: plan.location, price: plan.price, currency: plan.currency,
+      location: plan.location, processor: (plan as any).processor || 'intel', price: plan.price, currency: plan.currency,
       color_from: plan.color_from, color_to: plan.color_to,
       features: plan.features || [], popular: plan.popular,
       sort_order: plan.sort_order, active: plan.active,
@@ -643,7 +643,7 @@ export default function AdminPage() {
                               <span className="text-xs bg-slate-800 px-2 py-0.5 rounded text-gray-400">{plan.location}</span>
                               {plan.popular && <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">Popular</span>}
                             </div>
-                            <p className="text-gray-500 text-sm">{plan.ram} • {plan.performance} • Rs {plan.price} PKR</p>
+                            <p className="text-gray-500 text-sm">{plan.ram} • {plan.performance} • {(plan as any).processor || 'Intel'} • Rs {plan.price} PKR</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -686,6 +686,14 @@ export default function AdminPage() {
                           <select value={planForm.location} onChange={(e) => setPlanForm({ ...planForm, location: e.target.value })}
                             className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-cyan-500">
                             {locations.map(loc => <option key={loc.id} value={loc.code}>{loc.flag} {loc.name}</option>)}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm text-gray-400 mb-1">Processor</label>
+                          <select value={planForm.processor} onChange={(e) => setPlanForm({ ...planForm, processor: e.target.value })}
+                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 focus:outline-none focus:border-cyan-500">
+                            <option value="intel">Intel Platinum</option>
+                            <option value="amd">AMD EPYC</option>
                           </select>
                         </div>
                       </div>

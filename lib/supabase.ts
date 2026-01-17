@@ -13,6 +13,7 @@ export interface HostingPlan {
   ram: string
   performance: string
   location: string
+  processor?: string
   price: number
   currency: string
   color_from: string

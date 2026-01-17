@@ -764,6 +764,13 @@ export default function PricingCards() {
                     </div>
                   )}
                   
+                  {/* Out of Stock Badge for UAE Intel */}
+                  {(selectedLocation === 'UAE' || currentLoc.code === 'UAE') && (
+                    <div className="absolute -top-3 right-4 z-20">
+                      <span className="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">Out of Stock</span>
+                    </div>
+                  )}
+                  
           {/* 10% OFF Badge for Intel plans - REMOVED */}
                   
                   {/* Stable Glow Effect - No animation, just smooth transition */}
@@ -772,8 +779,14 @@ export default function PricingCards() {
                   </div>
                   
                   <motion.div 
-                    className={`relative bg-slate-900/95 rounded-2xl p-6 border-2 border-slate-700/60 transition-all duration-200 flex flex-col overflow-hidden z-10 ${plan.popular ? 'border-cyan-500/50' : ''}`}
-                    whileHover={{ 
+                    className={`relative bg-slate-900/95 rounded-2xl p-6 border-2 border-slate-700/60 transition-all duration-200 flex flex-col overflow-hidden z-10 ${
+                      plan.popular ? 'border-cyan-500/50' : ''
+                    } ${
+                      selectedLocation === 'UAE' || currentLoc.code === 'UAE' 
+                        ? 'opacity-60 blur-[1px] grayscale' 
+                        : ''
+                    }`}
+                    whileHover={selectedLocation === 'UAE' || currentLoc.code === 'UAE' ? {} : { 
                       y: -8, 
                       scale: 1.02,
                       boxShadow: '0 20px 40px -12px rgba(6, 182, 212, 0.4)',
@@ -827,11 +840,16 @@ export default function PricingCards() {
                     {/* Button */}
                     <motion.button 
                       onClick={() => handleOrderClick(plan, 'intel')}
-                      className="w-full py-3 rounded-xl font-semibold text-white text-sm text-center block transition-all duration-300 bg-blue-600 hover:bg-blue-500 relative z-10"
-                      whileHover={{ scale: 1.02 }} 
-                      whileTap={{ scale: 0.98 }}
+                      disabled={selectedLocation === 'UAE' || currentLoc.code === 'UAE'}
+                      className={`w-full py-3 rounded-xl font-semibold text-sm text-center block transition-all duration-300 relative z-10 ${
+                        selectedLocation === 'UAE' || currentLoc.code === 'UAE'
+                          ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                          : 'text-white bg-blue-600 hover:bg-blue-500'
+                      }`}
+                      whileHover={selectedLocation === 'UAE' || currentLoc.code === 'UAE' ? {} : { scale: 1.02 }} 
+                      whileTap={selectedLocation === 'UAE' || currentLoc.code === 'UAE' ? {} : { scale: 0.98 }}
                     >
-                      Order Now
+                      {selectedLocation === 'UAE' || currentLoc.code === 'UAE' ? 'Out of Stock' : 'Order Now'}
                     </motion.button>
                   </motion.div>
                 </motion.div>

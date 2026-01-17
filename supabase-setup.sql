@@ -25,6 +25,7 @@ CREATE TABLE hosting_plans (
   ram TEXT NOT NULL,
   performance TEXT NOT NULL,
   location TEXT DEFAULT 'UAE',
+  processor TEXT DEFAULT 'intel',
   price INTEGER NOT NULL,
   currency TEXT DEFAULT 'PKR',
   color_from TEXT DEFAULT 'blue-400',
