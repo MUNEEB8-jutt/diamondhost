@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from 'next'
-import { Orbitron, Inter } from 'next/font/google'
+import { Inter, Orbitron, Playfair_Display, Poppins } from 'next/font/google'
 import './globals.css'
 import { CurrencyProvider } from '@/lib/CurrencyContext'
 import { AuthProvider } from '@/lib/AuthContext'
+import { ThemeProvider } from '@/lib/ThemeContext'
+import { DiscountProvider } from '@/lib/DiscountContext'
 import LoadingOverlay from './components/LoadingOverlay'
 import AuthModal from './components/AuthModal'
 
@@ -15,6 +17,18 @@ const orbitron = Orbitron({
 const inter = Inter({ 
   subsets: ['latin'],
   variable: '--font-inter'
+})
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  variable: '--font-poppins',
+  weight: ['400', '500', '600', '700'],
+})
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  weight: ['600', '700'],
 })
 
 export const viewport: Viewport = {
@@ -308,7 +322,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="normal" suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="Xdq-rWVqZilANxxJr2c55PYCcNdzr-ZLNa-G_FOtbhU" />
         <link rel="icon" href="/favicon.png" type="image/png" sizes="512x512" />
@@ -334,14 +348,18 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       </head>
-      <body className={`${orbitron.variable} ${inter.variable} font-sans`}>
-        <CurrencyProvider>
-          <AuthProvider>
-            <LoadingOverlay />
-            <AuthModal />
-            {children}
-          </AuthProvider>
-        </CurrencyProvider>
+      <body className={`${orbitron.variable} ${inter.variable} ${poppins.variable} ${playfairDisplay.variable} font-sans`}>
+        <ThemeProvider>
+          <DiscountProvider>
+            <CurrencyProvider>
+              <AuthProvider>
+                <LoadingOverlay />
+                <AuthModal />
+                {children}
+              </AuthProvider>
+            </CurrencyProvider>
+          </DiscountProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

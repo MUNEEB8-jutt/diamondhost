@@ -3,11 +3,12 @@
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
 import { 
-  Server, Eye, EyeOff, ExternalLink, Clock, CheckCircle, 
+  Server, Eye, EyeOff, ExternalLink, CheckCircle, 
   Loader2, AlertCircle, Copy, Check, Mail, Key, Link as LinkIcon,
   ArrowLeft, RefreshCw, Ban
 } from 'lucide-react'
 import { useAuth } from '@/lib/AuthContext'
+import { useTheme } from '@/lib/ThemeContext'
 import { getUserServers, UserServer } from '@/lib/supabase'
 import Link from 'next/link'
 import Navbar from '../components/Navbar'
@@ -15,6 +16,8 @@ import Background from '../components/Background'
 
 export default function ServersPage() {
   const { user, loading: authLoading, setShowAuthModal } = useAuth()
+  const { theme } = useTheme()
+  const festive = theme === 'eid'
   const [servers, setServers] = useState<UserServer[]>([])
   const [loading, setLoading] = useState(true)
   const [revealedPasswords, setRevealedPasswords] = useState<Set<string>>(new Set())
@@ -112,25 +115,27 @@ export default function ServersPage() {
       <>
         <Background />
         <Navbar />
-        <main className="min-h-screen pt-28 pb-16 px-4 relative z-10">
+        <main className="site-shell relative z-10 min-h-screen px-4 pb-16 pt-28">
           <div className="container mx-auto max-w-2xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-blue-500/20 p-8 text-center"
+              className="theme-panel-strong rounded-[28px] p-8 text-center"
             >
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <div className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl ${
+                festive
+                  ? 'bg-gradient-to-br from-[#0f3d2e] via-[#185742] to-[#d4af37] text-[#fff8ea]'
+                  : 'bg-gradient-to-br from-blue-600 to-cyan-600 text-white'
+              }`}>
                 <Server className="h-10 w-10 text-white" />
               </div>
-              <h1 className="text-2xl font-bold text-white mb-3 uppercase">
-                MY GAME SERVERS
-              </h1>
-              <p className="text-gray-400 mb-6">
+              <h1 className="theme-heading text-2xl uppercase">My Game Servers</h1>
+              <p className="theme-copy mb-6 mt-3">
                 Please login to view your game servers
               </p>
               <motion.button
                 onClick={() => setShowAuthModal(true)}
-                className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold px-8 py-3 rounded-xl"
+                className="theme-button-primary !rounded-xl px-8 py-3"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -149,8 +154,8 @@ export default function ServersPage() {
       <>
         <Background />
         <Navbar />
-        <main className="min-h-screen pt-28 pb-16 px-4 relative z-10 flex items-center justify-center">
-          <Loader2 className="h-10 w-10 text-cyan-400 animate-spin" />
+        <main className="site-shell relative z-10 flex min-h-screen items-center justify-center px-4 pb-16 pt-28">
+          <Loader2 className={`h-10 w-10 animate-spin ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`} />
         </main>
       </>
     )
@@ -163,7 +168,7 @@ export default function ServersPage() {
     <>
       <Background />
       <Navbar />
-      <main className="min-h-screen pt-28 pb-16 px-4 relative z-10">
+      <main className="site-shell relative z-10 min-h-screen px-4 pb-16 pt-28">
         <div className="container mx-auto max-w-5xl">
           {/* Header */}
           <motion.div
@@ -172,19 +177,19 @@ export default function ServersPage() {
             className="mb-8"
           >
             <div className="flex items-center gap-4 mb-4">
-              <Link href="/" className="text-gray-400 hover:text-cyan-400 transition-colors">
+              <Link href="/" className="theme-link transition-colors">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
               <div className="h-6 w-px bg-slate-700" />
               <div className="flex items-center gap-3">
-                <Server className="h-6 w-6 text-cyan-400" />
-                <h1 className="text-2xl font-bold uppercase">
-                  <span className="text-white">MY GAME </span>
-                  <span className="text-cyan-400">SERVERS</span>
+                <Server className={`h-6 w-6 ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`} />
+                <h1 className="theme-heading text-2xl uppercase">
+                  <span className="text-white">My Game </span>
+                  <span className={festive ? 'theme-heading-accent' : 'text-cyan-400'}>Servers</span>
                 </h1>
               </div>
             </div>
-            <p className="text-gray-400">Manage your game servers</p>
+            <p className="theme-copy">Manage your game servers</p>
           </motion.div>
 
           {/* No Servers */}
@@ -192,14 +197,14 @@ export default function ServersPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-blue-500/20 p-12 text-center"
+              className="theme-panel-strong rounded-[28px] p-12 text-center"
             >
-              <Server className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-white mb-2">No Servers Available</h2>
-              <p className="text-gray-400 mb-6">You don't have any game servers yet. Purchase a plan to get started!</p>
+              <Server className="mx-auto mb-4 h-16 w-16 text-gray-600" />
+              <h2 className="theme-heading-tight mb-2 text-xl">No Servers Available</h2>
+              <p className="theme-copy mb-6">You don't have any game servers yet. Purchase a plan to get started!</p>
               <Link href="/#plans">
                 <motion.button
-                  className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold px-8 py-3 rounded-xl"
+                  className="theme-button-primary !rounded-xl px-8 py-3"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -216,7 +221,7 @@ export default function ServersPage() {
               animate={{ opacity: 1, y: 0 }}
               className="mb-8"
             >
-              <h2 className="text-lg font-semibold text-green-400 mb-4 flex items-center gap-2">
+              <h2 className={`mb-4 flex items-center gap-2 text-lg font-semibold ${festive ? 'text-[var(--theme-highlight)]' : 'text-green-400'}`}>
                 <CheckCircle className="h-5 w-5" />
                 Active Servers ({activeServers.length})
               </h2>
@@ -226,16 +231,18 @@ export default function ServersPage() {
                     key={server.id}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-gradient-to-br from-slate-900/90 to-slate-800/50 backdrop-blur-xl rounded-2xl border border-green-500/30 p-6 overflow-hidden"
+                    className={`theme-panel-strong overflow-hidden rounded-[28px] p-6 ${
+                      festive ? 'border-[#d4af37]/25' : 'border border-green-500/30'
+                    }`}
                   >
                     {/* Server Header */}
                     <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="text-cyan-400 font-mono text-sm">{server.server_id}</span>
+                          <span className={`font-mono text-sm ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`}>{server.server_id}</span>
                           {getStatusBadge(server.status)}
                         </div>
-                        <h3 className="text-white font-bold text-lg">{server.plan_name}</h3>
+                        <h3 className="theme-heading-tight text-lg">{server.plan_name}</h3>
                         <p className="text-gray-400 text-sm">{server.plan_ram} • {server.location} • {server.processor}</p>
                       </div>
                       <div className="text-right">
@@ -247,16 +254,16 @@ export default function ServersPage() {
                     </div>
 
                     {/* Server Credentials */}
-                    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                      <h4 className="text-white font-semibold mb-4 flex items-center gap-2">
-                        <Key className="h-4 w-4 text-cyan-400" />
+                    <div className="theme-panel-soft rounded-xl p-4">
+                      <h4 className="theme-heading-tight mb-4 flex items-center gap-2 text-base">
+                        <Key className={`h-4 w-4 ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`} />
                         Server Credentials
                       </h4>
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         {/* Panel Link */}
-                        <div className="bg-slate-900/50 rounded-lg p-3">
-                          <p className="text-gray-500 text-xs mb-1 flex items-center gap-1">
+                        <div className="theme-panel-soft rounded-lg p-3">
+                          <p className="theme-copy mb-1 flex items-center gap-1 text-xs">
                             <LinkIcon className="h-3 w-3" />
                             Panel Link
                           </p>
@@ -265,13 +272,13 @@ export default function ServersPage() {
                               href={server.panel_link} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="text-cyan-400 hover:text-cyan-300 text-sm truncate flex-1"
+                              className="theme-link flex-1 truncate text-sm"
                             >
                               {server.panel_link}
                             </a>
                             <motion.button
                               onClick={() => window.open(server.panel_link, '_blank')}
-                              className="p-1.5 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition-colors"
+                              className="theme-panel-soft rounded-lg p-1.5 text-[var(--theme-highlight)] transition-colors"
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
                             >
@@ -281,8 +288,8 @@ export default function ServersPage() {
                         </div>
 
                         {/* Panel Password */}
-                        <div className="bg-slate-900/50 rounded-lg p-3">
-                          <p className="text-gray-500 text-xs mb-1 flex items-center gap-1">
+                        <div className="theme-panel-soft rounded-lg p-3">
+                          <p className="theme-copy mb-1 flex items-center gap-1 text-xs">
                             <Key className="h-3 w-3" />
                             Panel Password
                           </p>
@@ -292,7 +299,7 @@ export default function ServersPage() {
                             </span>
                             <motion.button
                               onClick={() => togglePassword(server.server_id)}
-                              className="p-1.5 bg-slate-700/50 text-gray-400 rounded-lg hover:bg-slate-700 hover:text-white transition-colors"
+                              className="theme-panel-soft rounded-lg p-1.5 text-gray-300 transition-colors hover:text-white"
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
                             >
@@ -300,7 +307,7 @@ export default function ServersPage() {
                             </motion.button>
                             <motion.button
                               onClick={() => copyToClipboard(server.panel_password, `pass-${server.server_id}`)}
-                              className="p-1.5 bg-slate-700/50 text-gray-400 rounded-lg hover:bg-slate-700 hover:text-white transition-colors"
+                              className="theme-panel-soft rounded-lg p-1.5 text-gray-300 transition-colors hover:text-white"
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
                             >
@@ -310,8 +317,8 @@ export default function ServersPage() {
                         </div>
 
                         {/* Panel Gmail */}
-                        <div className="bg-slate-900/50 rounded-lg p-3">
-                          <p className="text-gray-500 text-xs mb-1 flex items-center gap-1">
+                        <div className="theme-panel-soft rounded-lg p-3">
+                          <p className="theme-copy mb-1 flex items-center gap-1 text-xs">
                             <Mail className="h-3 w-3" />
                             Panel Email
                           </p>
@@ -321,7 +328,7 @@ export default function ServersPage() {
                             </span>
                             <motion.button
                               onClick={() => toggleEmail(server.server_id)}
-                              className="p-1.5 bg-slate-700/50 text-gray-400 rounded-lg hover:bg-slate-700 hover:text-white transition-colors"
+                              className="theme-panel-soft rounded-lg p-1.5 text-gray-300 transition-colors hover:text-white"
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
                             >
@@ -329,7 +336,7 @@ export default function ServersPage() {
                             </motion.button>
                             <motion.button
                               onClick={() => copyToClipboard(server.panel_gmail, `email-${server.server_id}`)}
-                              className="p-1.5 bg-slate-700/50 text-gray-400 rounded-lg hover:bg-slate-700 hover:text-white transition-colors"
+                              className="theme-panel-soft rounded-lg p-1.5 text-gray-300 transition-colors hover:text-white"
                               whileHover={{ scale: 1.1 }}
                               whileTap={{ scale: 0.9 }}
                             >
@@ -344,7 +351,7 @@ export default function ServersPage() {
                         href={server.panel_link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-4 w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2"
+                        className={festive ? 'theme-button-primary mt-4 flex w-full items-center justify-center gap-2 !rounded-xl' : 'mt-4 w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2'}
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.99 }}
                       >
@@ -365,7 +372,7 @@ export default function ServersPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <h2 className="text-lg font-semibold text-amber-400 mb-4 flex items-center gap-2">
+              <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-amber-400">
                 <AlertCircle className="h-5 w-5" />
                 Suspended / Renewal Required ({suspendedServers.length})
               </h2>
@@ -373,7 +380,7 @@ export default function ServersPage() {
                 {suspendedServers.map((server) => (
                   <motion.div
                     key={server.id}
-                    className="bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-amber-500/30 p-6"
+                    className="theme-panel rounded-[28px] border border-amber-500/30 p-6"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div>
@@ -405,7 +412,7 @@ export default function ServersPage() {
                       </p>
                       <Link href="/support" className="inline-block mt-3">
                         <motion.button
-                          className="bg-amber-600 hover:bg-amber-500 text-white font-semibold px-6 py-2 rounded-lg text-sm"
+                          className="theme-button-secondary !rounded-lg px-6 py-2 text-sm"
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >

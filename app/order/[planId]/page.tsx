@@ -2,13 +2,16 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { 
   ArrowLeft, ArrowRight, Copy, Check, Upload, X, Loader2, 
   CheckCircle, AlertCircle, Server, Cpu, MapPin, Sparkles
 } from 'lucide-react'
 import { useAuth } from '@/lib/AuthContext'
 import { useCurrency } from '@/lib/CurrencyContext'
+import { useTheme } from '@/lib/ThemeContext'
+import { useDiscounts } from '@/lib/DiscountContext'
+import { formatDiscountBadge } from '@/lib/discount'
 import { 
   PaymentMethod, getPaymentMethods, createOrder, 
   uploadOrderScreenshot, getPlans, getEpycPlans, HostingPlan, EpycPlan 
@@ -19,6 +22,10 @@ import Background from '../../components/Background'
 
 // Combined plan type for order page
 type AnyPlan = HostingPlan | EpycPlan
+
+function inferProcessorType(plan: AnyPlan): 'intel' | 'amd' {
+  return 'color_from' in plan ? 'intel' : 'amd'
+}
 
 // Fallback plans if database is empty
 function getFallbackPlans(): AnyPlan[] {
@@ -68,9 +75,12 @@ function getFallbackPlans(): AnyPlan[] {
 
 export default function OrderPage() {
   const params = useParams()
-  const router = useRouter()
   const { user, loading: authLoading, setShowAuthModal } = useAuth()
   const { currency, convertPrice, symbol } = useCurrency()
+  const { theme } = useTheme()
+  const { getDiscountedPrice } = useDiscounts()
+  const festive = theme === 'eid'
+  const formatPlanPrice = (price: number) => `${symbol}${convertPrice(price / 278)}`
   
   // Step: 1 = Select Payment, 2 = Payment Details, 3 = Success
   const [step, setStep] = useState(1)
@@ -87,19 +97,9 @@ export default function OrderPage() {
   const [screenshot, setScreenshot] = useState<File | null>(null)
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null)
   
-  // Get discount from URL params (0.9 for 10% off, 1 for no discount)
-  const [discount, setDiscount] = useState(1)
   const [processor, setProcessor] = useState<'intel' | 'amd'>('intel')
 
   useEffect(() => {
-    // Parse URL params for discount and processor
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search)
-      const discountParam = urlParams.get('discount')
-      const processorParam = urlParams.get('processor')
-      if (discountParam) setDiscount(parseFloat(discountParam))
-      if (processorParam) setProcessor(processorParam as 'intel' | 'amd')
-    }
     loadData()
   }, [params.planId])
 
@@ -116,6 +116,10 @@ export default function OrderPage() {
       getEpycPlans(),
       getPaymentMethods()
     ])
+    const processorParam =
+      typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('processor')
+        : null
     
     const planId = decodeURIComponent(params.planId as string)
     
@@ -141,6 +145,11 @@ export default function OrderPage() {
     
     if (foundPlan) {
       setPlan(foundPlan)
+      setProcessor(
+        processorParam === 'amd' || processorParam === 'intel'
+          ? processorParam
+          : inferProcessorType(foundPlan),
+      )
     }
     setPaymentMethods(methods)
     setLoading(false)
@@ -184,8 +193,8 @@ export default function OrderPage() {
       const screenshotUrl = await uploadOrderScreenshot(screenshot, `${user.id}-${Date.now()}`)
       
       // Convert price to selected currency for display in admin
-      // Apply 10% discount for AMD EPYC plans
-      const finalPrice = processor === 'amd' ? plan.price * 0.9 : plan.price
+      const pricing = getDiscountedPrice(plan.id, plan.price)
+      const finalPrice = pricing.finalPrice
       const convertedPriceStr = convertPrice(finalPrice / 278)
       const displayPrice = parseFloat(convertedPriceStr.replace(/,/g, ''))
 
@@ -221,10 +230,10 @@ export default function OrderPage() {
       <>
         <Background />
         <Navbar />
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="site-shell flex min-h-screen items-center justify-center">
           <div className="text-center">
-            <Loader2 className="h-12 w-12 text-cyan-400 animate-spin mx-auto mb-4" />
-            <p className="text-gray-400">Loading...</p>
+            <Loader2 className={`mx-auto mb-4 h-12 w-12 animate-spin ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`} />
+            <p className="theme-copy">Loading...</p>
           </div>
         </div>
       </>
@@ -237,18 +246,18 @@ export default function OrderPage() {
       <>
         <Background />
         <Navbar />
-        <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="site-shell flex min-h-screen items-center justify-center px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center bg-slate-900/80 backdrop-blur-xl rounded-2xl p-8 border border-slate-700/50 max-w-md"
+            className="theme-panel-strong max-w-md rounded-[28px] p-8 text-center"
           >
-            <AlertCircle className="h-16 w-16 text-amber-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Login Required</h2>
-            <p className="text-gray-400 mb-6">Please login to place an order</p>
+            <AlertCircle className="mx-auto mb-4 h-16 w-16 text-amber-400" />
+            <h2 className="theme-heading-tight mb-2 text-2xl">Login Required</h2>
+            <p className="theme-copy mb-6">Please login to place an order</p>
             <button
               onClick={() => setShowAuthModal(true)}
-              className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold px-8 py-3 rounded-xl"
+              className="theme-button-primary !rounded-xl px-8 py-3"
             >
               Login / Sign Up
             </button>
@@ -264,18 +273,18 @@ export default function OrderPage() {
       <>
         <Background />
         <Navbar />
-        <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="site-shell flex min-h-screen items-center justify-center px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center bg-slate-900/80 backdrop-blur-xl rounded-2xl p-8 border border-slate-700/50 max-w-md"
+            className="theme-panel-strong max-w-md rounded-[28px] p-8 text-center"
           >
-            <AlertCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Plan Not Found</h2>
-            <p className="text-gray-400 mb-6">The selected plan doesn't exist</p>
+            <AlertCircle className="mx-auto mb-4 h-16 w-16 text-red-400" />
+            <h2 className="theme-heading-tight mb-2 text-2xl">Plan Not Found</h2>
+            <p className="theme-copy mb-6">The selected plan doesn't exist</p>
             <Link
               href="/#plans"
-              className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold px-8 py-3 rounded-xl inline-block"
+              className="theme-button-primary inline-flex !rounded-xl px-8 py-3"
             >
               View Plans
             </Link>
@@ -285,12 +294,14 @@ export default function OrderPage() {
     )
   }
 
+  const planPricing = getDiscountedPrice(plan.id, plan.price)
+
   return (
     <>
       <Background />
       <Navbar />
       
-      <div className="min-h-screen pt-24 pb-12 px-4">
+      <div className="site-shell min-h-screen pt-24 pb-12 px-4">
         <div className="max-w-4xl mx-auto">
           
           {/* Back Button */}
@@ -301,7 +312,7 @@ export default function OrderPage() {
           >
             <Link 
               href="/#plans"
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-cyan-400 transition-colors"
+              className="theme-link inline-flex items-center gap-2 transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Plans</span>
@@ -318,14 +329,20 @@ export default function OrderPage() {
               <div key={s} className="flex items-center">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
                   step >= s 
-                    ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white' 
-                    : 'bg-slate-800 text-gray-500 border border-slate-700'
+                    ? festive
+                      ? 'bg-gradient-to-r from-[#0f3d2e] to-[#d4af37] text-[#fff8ea]'
+                      : 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white'
+                    : 'theme-panel-soft text-gray-500 border border-slate-700'
                 }`}>
                   {step > s ? <Check className="h-5 w-5" /> : s}
                 </div>
                 {s < 3 && (
                   <div className={`w-16 md:w-24 h-1 mx-2 rounded-full transition-all ${
-                    step > s ? 'bg-gradient-to-r from-cyan-500 to-blue-500' : 'bg-slate-700'
+                    step > s
+                      ? festive
+                        ? 'bg-gradient-to-r from-[#0f3d2e] to-[#d4af37]'
+                        : 'bg-gradient-to-r from-cyan-500 to-blue-500'
+                      : 'bg-slate-700'
                   }`} />
                 )}
               </div>
@@ -337,32 +354,42 @@ export default function OrderPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/20 mb-8 shadow-2xl"
+            className="theme-panel-strong mb-8 rounded-[28px] p-6 shadow-2xl"
           >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                <div className={`flex h-14 w-14 items-center justify-center rounded-xl ${
+                  festive
+                    ? 'bg-gradient-to-br from-[#0f3d2e] via-[#185742] to-[#d4af37] text-[#fff8ea]'
+                    : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
+                }`}>
                   <Server className="h-7 w-7 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">{plan.name}</h2>
-                  <div className="flex items-center gap-3 text-gray-400 text-sm mt-1">
+                  <h2 className="theme-heading-tight text-xl">{plan.name}</h2>
+                  <div className="theme-copy mt-1 flex items-center gap-3 text-sm">
                     <span className="flex items-center gap-1"><Cpu className="h-4 w-4" /> {plan.ram}</span>
                     <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> {plan.location}</span>
                   </div>
                 </div>
               </div>
               <div className="text-right">
-                {processor === 'amd' ? (
+                {planPricing.hasDiscount ? (
                   <>
                     <div className="flex items-center justify-end gap-2 mb-1">
-                      <span className="text-gray-500 text-lg line-through">{symbol}{convertPrice(plan.price / 278)}</span>
-                      <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">10% OFF</span>
+                      <span className="text-gray-500 text-lg line-through">{formatPlanPrice(plan.price)}</span>
+                      <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">
+                        {formatDiscountBadge(planPricing.percentage)}
+                      </span>
                     </div>
-                    <p className="text-3xl font-bold text-cyan-400">{symbol}{convertPrice((plan.price * 0.9) / 278)}</p>
+                    <p className={`text-3xl font-bold ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`}>
+                      {formatPlanPrice(planPricing.finalPrice)}
+                    </p>
                   </>
                 ) : (
-                  <p className="text-3xl font-bold text-cyan-400">{symbol}{convertPrice(plan.price / 278)}</p>
+                  <p className={`text-3xl font-bold ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`}>
+                    {formatPlanPrice(plan.price)}
+                  </p>
                 )}
                 <p className="text-gray-500 text-sm">per month</p>
               </div>
@@ -377,11 +404,11 @@ export default function OrderPage() {
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
-                className="bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl rounded-2xl p-8 border border-slate-700/50 shadow-2xl"
+                className="theme-panel rounded-[28px] p-8 shadow-2xl"
               >
                 <div className="flex items-center gap-3 mb-6">
-                  <Sparkles className="h-6 w-6 text-cyan-400" />
-                  <h2 className="text-2xl font-bold text-white">Select Payment Method</h2>
+                  <Sparkles className={`h-6 w-6 ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`} />
+                  <h2 className="theme-heading-tight text-2xl">Select Payment Method</h2>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -391,7 +418,9 @@ export default function OrderPage() {
                       onClick={() => setSelectedMethod(method)}
                       className={`relative p-6 rounded-2xl border-2 transition-all text-center group ${
                         selectedMethod?.id === method.id
-                          ? 'border-cyan-500 bg-cyan-500/10 shadow-lg shadow-cyan-500/20'
+                          ? festive
+                            ? 'border-[#d4af37] bg-[#0f3d2e]/30 shadow-lg shadow-[#d4af37]/20'
+                            : 'border-cyan-500 bg-cyan-500/10 shadow-lg shadow-cyan-500/20'
                           : 'border-slate-700/50 bg-slate-800/30 hover:border-slate-600 hover:bg-slate-800/50'
                       }`}
                       whileHover={{ scale: 1.02, y: -4 }}
@@ -399,7 +428,7 @@ export default function OrderPage() {
                     >
                       {selectedMethod?.id === method.id && (
                         <div className="absolute top-2 right-2">
-                          <Check className="h-5 w-5 text-cyan-400" />
+                          <Check className={`h-5 w-5 ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`} />
                         </div>
                       )}
                       <span className="text-4xl mb-3 block">{method.icon}</span>
@@ -411,7 +440,9 @@ export default function OrderPage() {
                 <motion.button
                   onClick={() => selectedMethod && setStep(2)}
                   disabled={!selectedMethod}
-                  className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg"
+                  className={`w-full py-4 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-lg ${
+                    festive ? 'theme-button-primary !rounded-xl' : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold'
+                  }`}
                   whileHover={{ scale: selectedMethod ? 1.01 : 1 }}
                   whileTap={{ scale: selectedMethod ? 0.99 : 1 }}
                 >
@@ -428,14 +459,14 @@ export default function OrderPage() {
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
-                className="bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl rounded-2xl p-8 border border-slate-700/50 shadow-2xl"
+                className="theme-panel rounded-[28px] p-8 shadow-2xl"
               >
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-8">
                   <span className="text-4xl">{selectedMethod.icon}</span>
                   <div>
-                    <h2 className="text-2xl font-bold text-white">Payment Instructions</h2>
-                    <p className="text-gray-400">Complete your payment using {selectedMethod.name}</p>
+                    <h2 className="theme-heading-tight text-2xl">Payment Instructions</h2>
+                    <p className="theme-copy">Complete your payment using {selectedMethod.name}</p>
                   </div>
                 </div>
 
@@ -450,7 +481,9 @@ export default function OrderPage() {
                         animate={{ scale: 1, opacity: 1 }}
                         className="relative"
                       >
-                        <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 blur-2xl rounded-3xl" />
+                        <div className={`absolute -inset-4 blur-2xl rounded-3xl ${
+                          festive ? 'bg-gradient-to-r from-[#0f3d2e]/30 to-[#d4af37]/30' : 'bg-gradient-to-r from-cyan-500/30 to-blue-500/30'
+                        }`} />
                         <div className="relative bg-white p-4 rounded-2xl shadow-2xl">
                           <img 
                             src={selectedMethod.qr_code_url} 
@@ -458,11 +491,11 @@ export default function OrderPage() {
                             className="w-64 h-64 object-contain"
                           />
                         </div>
-                        <p className="text-center text-gray-400 text-sm mt-4">Scan QR Code to Pay</p>
+                        <p className="theme-copy mt-4 text-center text-sm">Scan QR Code to Pay</p>
                       </motion.div>
                     ) : (
-                      <div className="w-64 h-64 bg-slate-800/50 rounded-2xl flex items-center justify-center border border-slate-700/50">
-                        <p className="text-gray-500 text-center px-4">No QR Code available<br/>Use account details</p>
+                      <div className="theme-panel-soft flex h-64 w-64 items-center justify-center rounded-2xl">
+                        <p className="theme-copy px-4 text-center">No QR Code available<br />Use account details</p>
                       </div>
                     )}
                   </div>
@@ -470,7 +503,7 @@ export default function OrderPage() {
                   {/* Right: Account Details + Instructions */}
                   <div className="space-y-4">
                     {/* Instructions Box */}
-                    <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-xl p-4 border border-amber-500/30">
+                    <div className="rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 to-orange-500/10 p-4">
                       <h4 className="text-amber-400 font-semibold mb-2 flex items-center gap-2">
                         <AlertCircle className="h-5 w-5" />
                         How to Pay
@@ -493,51 +526,59 @@ export default function OrderPage() {
 
                     {/* Account Number */}
                     {selectedMethod.account_number && (
-                      <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
+                      <div className="theme-panel-soft rounded-xl p-4">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-gray-400 text-sm">Account Number</span>
+                          <span className="theme-copy text-sm">Account Number</span>
                           <button
                             onClick={() => handleCopy(selectedMethod.account_number)}
-                            className="text-cyan-400 hover:text-cyan-300 flex items-center gap-1 text-sm transition-colors"
+                            className="theme-link flex items-center gap-1 text-sm transition-colors"
                           >
                             {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                             {copied ? 'Copied!' : 'Copy'}
                           </button>
                         </div>
-                        <p className="text-white font-mono text-xl">{selectedMethod.account_number}</p>
+                        <p className="text-xl font-mono text-white">{selectedMethod.account_number}</p>
                       </div>
                     )}
 
                     {/* Account Title */}
-                    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700/50">
-                      <span className="text-gray-400 text-sm block mb-2">Account Title</span>
-                      <p className="text-white font-semibold text-lg">{selectedMethod.account_title}</p>
+                    <div className="theme-panel-soft rounded-xl p-4">
+                      <span className="theme-copy mb-2 block text-sm">Account Title</span>
+                      <p className="text-lg font-semibold text-white">{selectedMethod.account_title}</p>
                     </div>
 
                     {/* Amount */}
-                    <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl p-4 border border-cyan-500/30">
-                      <span className="text-gray-400 text-sm block mb-2">Amount to Pay</span>
-                      {processor === 'amd' ? (
+                    <div className={`rounded-xl p-4 border ${
+                      festive ? 'border-[#d4af37]/30 bg-gradient-to-r from-[#0f3d2e]/30 to-[#d4af37]/10' : 'bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border-cyan-500/30'
+                    }`}>
+                      <span className="theme-copy mb-2 block text-sm">Amount to Pay</span>
+                      {planPricing.hasDiscount ? (
                         <>
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-gray-500 text-lg line-through">{symbol}{convertPrice(plan.price / 278)}</span>
-                            <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">10% OFF</span>
+                            <span className="text-gray-500 text-lg line-through">{formatPlanPrice(plan.price)}</span>
+                            <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">
+                              {formatDiscountBadge(planPricing.percentage)}
+                            </span>
                           </div>
-                          <p className="text-cyan-400 font-bold text-2xl">{symbol}{convertPrice((plan.price * 0.9) / 278)}</p>
+                          <p className={`text-2xl font-bold ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`}>
+                            {formatPlanPrice(planPricing.finalPrice)}
+                          </p>
                         </>
                       ) : (
-                        <p className="text-cyan-400 font-bold text-2xl">{symbol}{convertPrice(plan.price / 278)}</p>
+                        <p className={`text-2xl font-bold ${festive ? 'text-[var(--theme-highlight)]' : 'text-cyan-400'}`}>
+                          {formatPlanPrice(plan.price)}
+                        </p>
                       )}
                     </div>
                   </div>
                 </div>
 
                 {/* Divider */}
-                <div className="border-t border-slate-700/50 my-8" />
+                <div className="theme-divider my-8" />
 
                 {/* Transaction Details Form */}
                 <div className="space-y-6">
-                  <h3 className="text-lg font-semibold text-white">Payment Confirmation</h3>
+                  <h3 className="theme-heading-tight text-lg">Payment Confirmation</h3>
 
                   {error && (
                     <motion.div
@@ -552,7 +593,7 @@ export default function OrderPage() {
 
                   {/* Transaction ID */}
                   <div>
-                    <label className="text-gray-400 text-sm mb-2 block">
+                    <label className="theme-copy mb-2 block text-sm">
                       Transaction ID <span className="text-red-400">*</span>
                     </label>
                     <input
@@ -560,15 +601,13 @@ export default function OrderPage() {
                       value={transactionId}
                       onChange={(e) => setTransactionId(e.target.value)}
                       placeholder="Enter your transaction ID"
-                      className="w-full bg-slate-800/50 border border-slate-600/50 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
+                      className="theme-input"
                     />
                   </div>
 
                   {/* Screenshot Upload */}
                   <div>
-                    <label className="text-gray-400 text-sm mb-2 block">
-                      Payment Screenshot <span className="text-red-400">*</span>
-                    </label>
+                    <p className="theme-copy mb-2 text-sm">Payment Screenshot <span className="text-red-400">*</span></p>
                     {screenshotPreview ? (
                       <div className="relative">
                         <img 
@@ -584,9 +623,9 @@ export default function OrderPage() {
                         </button>
                       </div>
                     ) : (
-                      <label className="flex flex-col items-center justify-center w-full h-40 bg-slate-800/50 border-2 border-dashed border-slate-600/50 rounded-xl cursor-pointer hover:border-cyan-500/50 transition-colors group">
-                        <Upload className="h-10 w-10 text-gray-500 group-hover:text-cyan-400 mb-2 transition-colors" />
-                        <span className="text-gray-500 group-hover:text-gray-400 transition-colors">Click to upload screenshot</span>
+                      <label className="theme-panel-soft flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-600/50 transition-colors group hover:border-[var(--theme-highlight)]/50">
+                        <Upload className={`mb-2 h-10 w-10 transition-colors ${festive ? 'text-[var(--theme-highlight)] group-hover:text-[var(--theme-gold)]' : 'text-gray-500 group-hover:text-cyan-400'}`} />
+                        <span className="theme-copy transition-colors">Click to upload screenshot</span>
                         <span className="text-gray-600 text-xs mt-1">Max 5MB</span>
                         <input
                           type="file"
@@ -603,7 +642,7 @@ export default function OrderPage() {
                 <div className="flex gap-4 mt-8">
                   <motion.button
                     onClick={() => setStep(1)}
-                    className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-4 rounded-xl transition-all flex items-center justify-center gap-2"
+                    className="theme-button-secondary flex-1 !rounded-xl py-4"
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
                   >
@@ -613,7 +652,9 @@ export default function OrderPage() {
                   <motion.button
                     onClick={handleSubmit}
                     disabled={submitting}
-                    className="flex-[2] bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    className={`flex-[2] py-4 rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 ${
+                      festive ? 'theme-button-primary !rounded-xl' : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold'
+                    }`}
                     whileHover={{ scale: submitting ? 1 : 1.01 }}
                     whileTap={{ scale: submitting ? 1 : 0.99 }}
                   >
@@ -639,7 +680,7 @@ export default function OrderPage() {
                 key="step3"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl rounded-2xl p-12 border border-green-500/20 shadow-2xl text-center"
+                className="theme-panel-strong rounded-[28px] p-12 text-center shadow-2xl"
               >
                 {/* Success Animation */}
                 <motion.div
@@ -648,8 +689,10 @@ export default function OrderPage() {
                   transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
                   className="relative w-28 h-28 mx-auto mb-8"
                 >
-                  <div className="absolute inset-0 bg-green-500/20 rounded-full blur-2xl" />
-                  <div className="relative w-full h-full bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                  <div className={`absolute inset-0 rounded-full blur-2xl ${festive ? 'bg-[rgba(212,175,55,0.22)]' : 'bg-green-500/20'}`} />
+                  <div className={`relative flex h-full w-full items-center justify-center rounded-full ${
+                    festive ? 'bg-gradient-to-br from-[#0f3d2e] via-[#185742] to-[#d4af37]' : 'bg-gradient-to-br from-green-500 to-emerald-600'
+                  }`}>
                     <CheckCircle className="h-14 w-14 text-white" />
                   </div>
                 </motion.div>
@@ -658,7 +701,7 @@ export default function OrderPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-3xl font-bold text-white mb-4"
+                  className="theme-heading text-3xl mb-4"
                 >
                   Order Submitted Successfully!
                 </motion.h2>
@@ -667,9 +710,9 @@ export default function OrderPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="text-gray-400 text-lg mb-8 max-w-md mx-auto"
+                  className="theme-copy mb-8 max-w-md mx-auto text-lg"
                 >
-                  In the next <span className="text-cyan-400 font-semibold">2-3 hours</span>, your server will be set up and added to the <span className="text-cyan-400 font-semibold">My Servers</span> section.
+                  In the next <span className={festive ? 'text-[var(--theme-highlight)] font-semibold' : 'text-cyan-400 font-semibold'}>2-3 hours</span>, your server will be set up and added to the <span className={festive ? 'text-[var(--theme-highlight)] font-semibold' : 'text-cyan-400 font-semibold'}>My Servers</span> section.
                 </motion.p>
 
                 <motion.div
@@ -680,14 +723,14 @@ export default function OrderPage() {
                 >
                   <Link
                     href="/servers"
-                    className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold px-8 py-4 rounded-xl transition-all inline-flex items-center justify-center gap-2"
+                    className="theme-button-primary inline-flex items-center justify-center gap-2 !rounded-xl px-8 py-4"
                   >
                     <Server className="h-5 w-5" />
                     My Servers
                   </Link>
                   <Link
                     href="/"
-                    className="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-8 py-4 rounded-xl transition-all inline-flex items-center justify-center gap-2"
+                    className="theme-button-secondary inline-flex items-center justify-center gap-2 !rounded-xl px-8 py-4"
                   >
                     Back to Home
                   </Link>

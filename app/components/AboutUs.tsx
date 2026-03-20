@@ -1,9 +1,11 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Diamond, Shield, Zap, Globe, Users, Heart, Rocket, Server, Headphones } from 'lucide-react'
-import Reviews from './Reviews'
+import { Globe, Headphones, Heart, MoonStar, Rocket, Server, Shield, Sparkles, Users, Zap } from 'lucide-react'
+import { useTheme } from '@/lib/ThemeContext'
+import { FestiveRibbon } from './FestiveDecor'
 import PaymentMethods from './PaymentMethods'
+import Reviews from './Reviews'
 
 const stats = [
   { icon: Users, value: '500+', label: 'Happy Gamers' },
@@ -15,186 +17,170 @@ const stats = [
 const values = [
   {
     icon: Shield,
-    title: 'RELIABILITY',
-    description: 'Your server stays online with our enterprise-grade infrastructure and DDoS protection.',
+    title: 'Reliability',
+    description: 'Your server stays online with enterprise-grade infrastructure, smart monitoring, and dependable protection.',
   },
   {
     icon: Zap,
-    title: 'PERFORMANCE',
-    description: 'AMD EPYC & Intel Platinum processors ensure lag-free gaming experience.',
+    title: 'Performance',
+    description: 'Fast AMD EPYC and Intel Platinum resources keep gameplay smooth during events, communities, and peak hours.',
   },
   {
     icon: Heart,
-    title: 'CUSTOMER FIRST',
-    description: 'We prioritize your needs with responsive support and flexible plans.',
+    title: 'Customer First',
+    description: 'Every plan, support flow, and setup step is designed to keep your hosting journey simple and premium.',
   },
   {
     icon: Rocket,
-    title: 'INNOVATION',
-    description: 'Constantly upgrading our systems to deliver cutting-edge hosting solutions.',
+    title: 'Innovation',
+    description: 'We keep polishing the platform so your world looks modern, feels fast, and scales with confidence.',
   },
 ]
 
 export default function AboutUs() {
+  const { theme } = useTheme()
+  const festive = theme === 'eid'
+
   return (
     <>
-      {/* Hero Section */}
-      <section className="py-20 px-4 relative z-10">
+      <section className="relative z-10 px-4 py-20 md:py-24">
         <div className="container mx-auto">
-          {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="mx-auto max-w-3xl text-center"
           >
-            <motion.span
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-1.5 text-blue-400 text-sm mb-6"
-            >
-              <Diamond className="h-4 w-4" />
-              <span>About Diamond Host</span>
-            </motion.span>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              <span 
-                className="block text-white uppercase mb-2"
-                style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.1em', display: 'inline-block' }}
-              >
-                PREMIUM HOSTING,
+            {festive ? (
+              <FestiveRibbon className="mb-6" label="Ramadan Nights • Diamond Host Sale" />
+            ) : (
+              <span className="theme-badge mb-6 text-sm">
+                <Sparkles className="h-4 w-4" />
+                About DiamondHost
               </span>
-              <br />
-              <span 
-                className="uppercase inline-block"
-                style={{ 
-                  fontFamily: "'Russo One', sans-serif", 
-                  letterSpacing: '0.1em',
-                  background: 'linear-gradient(180deg, #67e8f9 0%, #3b82f6 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.5))'
-                }}
-              >
-                EXCEPTIONAL EXPERIENCE
-              </span>
-            </h1>
-            <p className="text-gray-400 max-w-3xl mx-auto text-lg leading-relaxed">
-              Diamond Host was founded with a simple mission: to provide gamers with the most reliable, 
-              high-performance Minecraft server hosting at affordable prices. We believe every player 
-              deserves a lag-free, seamless gaming experience.
+            )}
+
+            <h2 className="theme-heading text-4xl md:text-6xl">
+              {festive ? (
+                <>
+                  Crafted For <span className="theme-heading-accent">Festive Nights</span>
+                  <br />
+                  And Big Communities
+                </>
+              ) : (
+                <>
+                  Premium Hosting,
+                  <br />
+                  <span className="theme-heading-accent">Exceptional Experience</span>
+                </>
+              )}
+            </h2>
+
+            <p className="theme-copy mx-auto mt-6 max-w-2xl text-base leading-8 md:text-lg">
+              Diamond Host was built to give gamers dependable performance without the usual setup stress. In Eid mode, that same promise now feels warmer, richer, and more memorable while the underlying experience stays just as strong.
             </p>
           </motion.div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16"
-          >
+          <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 + index * 0.1 }}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: index * 0.08 }}
                 viewport={{ once: true }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="bg-gradient-to-br from-slate-900/90 to-slate-800/50 backdrop-blur-xl rounded-2xl p-6 border border-blue-500/20 text-center group"
+                className="theme-panel theme-card-hover rounded-[28px] p-5 text-center md:p-6"
               >
-                <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <stat.icon className="h-7 w-7 text-white" />
-                </div>
-                <p 
-                  className="text-3xl md:text-4xl font-bold text-white mb-1 uppercase"
-                  style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.05em' }}
+                <div
+                  className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ${
+                    festive
+                      ? 'bg-gradient-to-br from-[#0f3d2e] to-[#d4af37] text-[#fff8ea]'
+                      : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
+                  }`}
                 >
-                  {stat.value}
-                </p>
-                <p className="text-gray-500 text-sm">{stat.label}</p>
+                  <stat.icon className="h-6 w-6" />
+                </div>
+                <p className="theme-heading-tight text-3xl md:text-4xl">{stat.value}</p>
+                <p className="theme-copy mt-2 text-sm uppercase tracking-[0.24em]">{stat.label}</p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
 
-          {/* Our Values */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <div className="text-center mb-12">
-              <motion.span
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/30 rounded-full px-4 py-1.5 text-cyan-400 text-sm mb-4"
-              >
-                <Heart className="h-4 w-4" />
-                <span>What We Stand For</span>
-              </motion.span>
-              <h2 className="text-3xl md:text-4xl font-bold">
-                <span 
-                  className="text-white uppercase inline-block"
-                  style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.1em' }}
-                >
-                  OUR CORE{' '}
-                </span>
-                <span 
-                  className="uppercase inline-block"
-                  style={{ 
-                    fontFamily: "'Russo One', sans-serif", 
-                    letterSpacing: '0.1em',
-                    background: 'linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    filter: 'drop-shadow(0 0 20px rgba(6, 182, 212, 0.5))'
-                  }}
-                >
-                  VALUES
-                </span>
-              </h2>
-            </div>
+          <div className="mt-18 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+            <motion.div
+              initial={{ opacity: 0, x: -24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.55 }}
+              viewport={{ once: true }}
+              className="theme-panel-strong overflow-hidden rounded-[32px] p-7 md:p-9"
+            >
+              <div className={`mb-6 inline-flex rounded-full border px-4 py-2 text-xs uppercase tracking-[0.3em] ${festive ? 'border-[#d4af37]/30 bg-[#d4af37]/10 text-[#f7e7ce]' : 'border-cyan-500/20 bg-cyan-500/10 text-cyan-200'}`}>
+                {festive ? <MoonStar className="mr-2 h-4 w-4" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                Why We Stand Out
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              <h3 className="theme-heading-tight text-3xl md:text-4xl">
+                {festive ? 'An Elegant Hosting Experience, End To End' : 'Hosting That Feels Premium Everywhere'}
+              </h3>
+
+              <p className="theme-copy mt-5 text-base leading-8">
+                From high-performance plans to support that stays responsive, Diamond Host focuses on making every touchpoint feel polished. The Eid design extends that same premium feeling with crescent accents, lantern glow, rich emerald layers, and refined typography.
+              </p>
+
+              <div className="theme-divider my-7" />
+
+              <div className="space-y-3">
+                {[
+                  'Elegant festive visuals without changing hosting logic',
+                  'Consistent premium surfaces, glow, and mobile responsiveness',
+                  'A design system that still respects performance',
+                ].map((item) => (
+                  <div key={item} className="theme-panel-soft flex items-center gap-3 rounded-2xl px-4 py-3">
+                    <span className={`flex h-10 w-10 items-center justify-center rounded-full ${festive ? 'bg-[#d4af37]/14 text-[#f7e7ce]' : 'bg-cyan-500/10 text-cyan-300'}`}>
+                      <Sparkles className="h-4 w-4" />
+                    </span>
+                    <p className="theme-copy text-sm leading-7">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.55, delay: 0.08 }}
+              viewport={{ once: true }}
+              className="grid gap-5 md:grid-cols-2"
+            >
               {values.map((value, index) => (
                 <motion.div
                   key={value.title}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.45, delay: index * 0.08 }}
                   viewport={{ once: true }}
-                  whileHover={{ y: -5 }}
-                  className="bg-gradient-to-br from-slate-900/80 to-slate-800/50 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50 hover:border-blue-500/30 transition-all group"
+                  className="theme-panel theme-card-hover rounded-[30px] p-6"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600/20 to-cyan-600/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0 group-hover:from-blue-600 group-hover:to-cyan-600 transition-all">
-                      <value.icon className="h-6 w-6 text-blue-400 group-hover:text-white transition-colors" />
-                    </div>
-                    <div>
-                      <h3 
-                        className="text-xl font-bold text-white mb-2 uppercase"
-                        style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.05em' }}
-                      >
-                        {value.title}
-                      </h3>
-                      <p className="text-gray-400 text-sm leading-relaxed">{value.description}</p>
-                    </div>
+                  <div
+                    className={`mb-5 flex h-14 w-14 items-center justify-center rounded-2xl ${
+                      festive
+                        ? 'bg-gradient-to-br from-[#0f3d2e] to-[#d4af37] text-[#fff8ea]'
+                        : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
+                    }`}
+                  >
+                    <value.icon className="h-6 w-6" />
                   </div>
+                  <h3 className="theme-heading-tight text-2xl">{value.title}</h3>
+                  <p className="theme-copy mt-3 text-sm leading-7">{value.description}</p>
                 </motion.div>
               ))}
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Reviews Section */}
       <Reviews />
-
-      {/* Payment Methods Section */}
       <PaymentMethods />
     </>
   )

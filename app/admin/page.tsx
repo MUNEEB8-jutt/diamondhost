@@ -6,10 +6,11 @@ import {
   Diamond, Lock, LogOut, Plus, Edit2, Trash2, Save, X, 
   Eye, EyeOff, Loader2, Check, AlertCircle, Package,
   Globe, MessageSquare, Send, Clock, User, Image as ImageIcon,
-  ShoppingCart, CheckCircle, XCircle, CreditCard, Server, RefreshCw, Ban, Play, Users, Calendar
+  ShoppingCart, CheckCircle, XCircle, CreditCard, Server, RefreshCw, Ban, Play, Users, Calendar, Percent
 } from 'lucide-react'
 import { 
   getAllPlans, createPlan, updatePlan, deletePlan, HostingPlan,
+  getAllEpycPlans, EpycPlan,
   getAllLocations, createLocation, updateLocation, deleteLocation, Location,
   getAllTickets, getTicketMessages, sendTicketMessage, updateTicketStatus, uploadTicketImage,
   SupportTicket, TicketMessage,
@@ -18,6 +19,19 @@ import {
   getAllServers, suspendServer, markServerForRenewal, reactivateServer, deleteServer, createServerFromOrder, UserServer,
   getAllUsers, banUser, unbanUser, getServersByUserId, getOrdersByUserId, AdminUser
 } from '@/lib/supabase'
+import { useTheme } from '@/lib/ThemeContext'
+import type { SiteThemeMode } from '@/lib/theme'
+import { useDiscounts } from '@/lib/DiscountContext'
+import {
+  applyDiscountPercentage,
+  cloneSiteDiscountConfig,
+  DEFAULT_SITE_DISCOUNT_CONFIG,
+  DEFAULT_PLAN_DISCOUNT_RULE,
+  DiscountPlanMode,
+  formatDiscountBadge,
+  normalizeDiscountPercentage,
+  resolvePlanDiscountPercentage,
+} from '@/lib/discount'
 
 // No client-side secret - verification happens on server
 
@@ -88,19 +102,31 @@ function getColorValue(color: string): string {
 
 
 export default function AdminPage() {
+  const { theme, updatedAt: themeUpdatedAt, saveTheme } = useTheme()
+  const {
+    discountConfig,
+    updatedAt: discountUpdatedAt,
+    saveDiscounts,
+  } = useDiscounts()
   const [authenticated, setAuthenticated] = useState(false)
   const [secretCode, setSecretCode] = useState('')
+  const [adminToken, setAdminToken] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
-  const [activeTab, setActiveTab] = useState<'plans' | 'locations' | 'tickets' | 'orders' | 'payments' | 'servers' | 'users'>('plans')
+  const [activeTab, setActiveTab] = useState<'plans' | 'discounts' | 'locations' | 'tickets' | 'orders' | 'payments' | 'servers' | 'users'>('plans')
   
   // Plans state
   const [plans, setPlans] = useState<HostingPlan[]>([])
+  const [epycPlans, setEpycPlans] = useState<EpycPlan[]>([])
   const [locations, setLocations] = useState<Location[]>([])
   const [selectedLocation, setSelectedLocation] = useState<string>('all')
   const [loading, setLoading] = useState(false)
   const [editingPlan, setEditingPlan] = useState<HostingPlan | null>(null)
   const [isCreatingPlan, setIsCreatingPlan] = useState(false)
+  const [discountLocationFilter, setDiscountLocationFilter] = useState<string>('all')
+  const [discountDraft, setDiscountDraft] = useState(() =>
+    cloneSiteDiscountConfig(DEFAULT_SITE_DISCOUNT_CONFIG),
+  )
   
   // Location state
   const [editingLocation, setEditingLocation] = useState<Location | null>(null)
@@ -149,6 +175,8 @@ export default function AdminPage() {
   const [loadingUserData, setLoadingUserData] = useState(false)
   
   const [saving, setSaving] = useState(false)
+  const [themeSaving, setThemeSaving] = useState(false)
+  const [discountSaving, setDiscountSaving] = useState(false)
   const [loggingIn, setLoggingIn] = useState(false)
   const [notification, setNotification] = useState<{ type: 'success' | 'error', message: string } | null>(null)
 
@@ -170,6 +198,7 @@ export default function AdminPage() {
       const parsed = JSON.parse(session)
       if (parsed.expires_at > Date.now()) {
         setAuthenticated(true)
+        setAdminToken(typeof parsed.token === 'string' ? parsed.token : '')
         fetchData()
       } else {
         localStorage.removeItem('admin_session')
@@ -183,6 +212,10 @@ export default function AdminPage() {
       return () => clearTimeout(timer)
     }
   }, [notification])
+
+  useEffect(() => {
+    setDiscountDraft(cloneSiteDiscountConfig(discountConfig))
+  }, [discountConfig])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -201,10 +234,11 @@ export default function AdminPage() {
 
   const fetchData = async () => {
     setLoading(true)
-    const [plansData, locationsData, ticketsData, ordersData, paymentsData, serversData, usersData] = await Promise.all([
-      getAllPlans(), getAllLocations(), getAllTickets(), getAllOrders(), getAllPaymentMethods(), getAllServers(), getAllUsers()
+    const [plansData, epycPlansData, locationsData, ticketsData, ordersData, paymentsData, serversData, usersData] = await Promise.all([
+      getAllPlans(), getAllEpycPlans(), getAllLocations(), getAllTickets(), getAllOrders(), getAllPaymentMethods(), getAllServers(), getAllUsers()
     ])
     setPlans(plansData)
+    setEpycPlans(epycPlansData)
     setLocations(locationsData.length > 0 ? locationsData : fallbackLocations)
     setTickets(ticketsData)
     setOrders(ordersData)
@@ -232,6 +266,7 @@ export default function AdminPage() {
         const session = { authenticated: true, token: data.token, expires_at: data.expires_at }
         localStorage.setItem('admin_session', JSON.stringify(session))
         setAuthenticated(true)
+        setAdminToken(data.token)
         fetchData()
       } else {
         setError(data.error || 'Invalid secret code')
@@ -246,7 +281,121 @@ export default function AdminPage() {
   const handleLogout = () => {
     localStorage.removeItem('admin_session')
     setAuthenticated(false)
+    setAdminToken('')
     setSecretCode('')
+  }
+
+  const handleThemeSwitch = async (mode: SiteThemeMode) => {
+    if (!adminToken) {
+      setNotification({ type: 'error', message: 'Admin session expired. Please login again.' })
+      return
+    }
+
+    setThemeSaving(true)
+
+    try {
+      await saveTheme(mode, adminToken)
+      setNotification({
+        type: 'success',
+        message: mode === 'eid' ? 'Website switched to Eid GUI.' : 'Website switched to Normal GUI.',
+      })
+    } catch (err) {
+      setNotification({
+        type: 'error',
+        message: err instanceof Error ? err.message : 'Failed to update website theme.',
+      })
+    } finally {
+      setThemeSaving(false)
+    }
+  }
+
+  const handleGlobalDiscountToggle = (enabled: boolean) => {
+    setDiscountDraft(current => ({
+      ...current,
+      global: {
+        ...current.global,
+        enabled,
+      },
+    }))
+  }
+
+  const handleGlobalDiscountPercentageChange = (value: string) => {
+    setDiscountDraft(current => ({
+      ...current,
+      global: {
+        ...current.global,
+        percentage: normalizeDiscountPercentage(value),
+      },
+    }))
+  }
+
+  const handlePlanDiscountModeChange = (planId: string, mode: DiscountPlanMode) => {
+    setDiscountDraft(current => {
+      const currentRule = current.plans[planId] || DEFAULT_PLAN_DISCOUNT_RULE
+
+      return {
+        ...current,
+        plans: {
+          ...current.plans,
+          [planId]: {
+            mode,
+            percentage:
+              mode === 'custom'
+                ? currentRule.percentage || current.global.percentage || 10
+                : mode === 'none'
+                  ? 0
+                  : currentRule.percentage,
+          },
+        },
+      }
+    })
+  }
+
+  const handlePlanDiscountPercentageChange = (planId: string, value: string) => {
+    setDiscountDraft(current => ({
+      ...current,
+      plans: {
+        ...current.plans,
+        [planId]: {
+          mode: 'custom',
+          percentage: normalizeDiscountPercentage(value),
+        },
+      },
+    }))
+  }
+
+  const handleResetPlanDiscount = (planId: string) => {
+    setDiscountDraft(current => {
+      const nextPlans = { ...current.plans }
+      delete nextPlans[planId]
+
+      return {
+        ...current,
+        plans: nextPlans,
+      }
+    })
+  }
+
+  const handleSaveDiscountSettings = async () => {
+    if (!adminToken) {
+      setNotification({ type: 'error', message: 'Admin session expired. Please login again.' })
+      return
+    }
+
+    setDiscountSaving(true)
+
+    try {
+      const savedConfig = await saveDiscounts(discountDraft, adminToken)
+      setDiscountDraft(cloneSiteDiscountConfig(savedConfig))
+      setNotification({ type: 'success', message: 'Discount settings updated!' })
+    } catch (err) {
+      setNotification({
+        type: 'error',
+        message: err instanceof Error ? err.message : 'Failed to save discount settings.',
+      })
+    } finally {
+      setDiscountSaving(false)
+    }
   }
 
 
@@ -392,6 +541,31 @@ export default function AdminPage() {
   const filteredTickets = ticketFilter === 'all' ? tickets : tickets.filter(t => t.status === ticketFilter)
   const filteredOrders = orderFilter === 'all' ? orders : orders.filter(o => o.status === orderFilter)
   const filteredServers = serverFilter === 'all' ? servers : servers.filter(s => s.status === serverFilter)
+  const discountPlans = [
+    ...plans.map(plan => ({
+      ...plan,
+      processorLabel: (plan as any).processor === 'amd' ? 'AMD EPYC' : 'Intel Platinum',
+    })),
+    ...epycPlans.map(plan => ({
+      ...plan,
+      processorLabel: 'AMD EPYC',
+    })),
+  ].sort((firstPlan, secondPlan) => {
+    if (firstPlan.location !== secondPlan.location) {
+      return firstPlan.location.localeCompare(secondPlan.location)
+    }
+
+    if (firstPlan.sort_order !== secondPlan.sort_order) {
+      return firstPlan.sort_order - secondPlan.sort_order
+    }
+
+    return firstPlan.name.localeCompare(secondPlan.name)
+  })
+  const filteredDiscountPlans =
+    discountLocationFilter === 'all'
+      ? discountPlans
+      : discountPlans.filter(plan => plan.location === discountLocationFilter)
+  const discountDirty = JSON.stringify(discountDraft) !== JSON.stringify(discountConfig)
 
   const formatTime = (dateStr: string) => new Date(dateStr).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
   const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
@@ -556,7 +730,7 @@ export default function AdminPage() {
             <Diamond className="h-8 w-8 text-cyan-400" />
             <div>
               <h1 className="text-xl font-bold text-cyan-400">Diamond Host Admin</h1>
-              <p className="text-xs text-gray-500">Manage plans, locations & tickets</p>
+              <p className="text-xs text-gray-500">Manage plans, discounts, locations & tickets</p>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -574,6 +748,10 @@ export default function AdminPage() {
           <button onClick={() => setActiveTab('plans')}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'plans' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
             <Package className="h-5 w-5" /> Plans
+          </button>
+          <button onClick={() => setActiveTab('discounts')}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'discounts' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
+            <Percent className="h-5 w-5" /> Discounts
           </button>
           <button onClick={() => setActiveTab('locations')}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${activeTab === 'locations' ? 'bg-cyan-500 text-white' : 'bg-slate-800 text-gray-400 hover:bg-slate-700'}`}>
@@ -605,6 +783,296 @@ export default function AdminPage() {
             )}
           </button>
         </div>
+
+        <div className="mb-8 rounded-2xl border border-amber-500/20 bg-slate-900/70 p-5 backdrop-blur-xl">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-white">Website Theme</h2>
+              <p className="text-sm text-gray-400">Switch the public website between the normal GUI and the festive Eid GUI.</p>
+              <p className="text-xs text-gray-500 mt-2">
+                Current: <span className="text-amber-300">{theme === 'eid' ? 'Eid GUI' : 'Normal GUI'}</span>
+                {themeUpdatedAt ? ` - updated ${new Date(themeUpdatedAt).toLocaleString()}` : ''}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">Saved using existing Supabase storage only. No new tables or buckets required.</p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={() => handleThemeSwitch('normal')}
+                disabled={themeSaving || theme === 'normal'}
+                className={`px-5 py-3 rounded-xl font-medium transition-all ${
+                  theme === 'normal'
+                    ? 'bg-cyan-500 text-white'
+                    : 'bg-slate-800 text-gray-300 hover:bg-slate-700'
+                } disabled:opacity-60`}
+              >
+                {themeSaving ? 'Saving...' : 'Normal GUI'}
+              </button>
+              <button
+                onClick={() => handleThemeSwitch('eid')}
+                disabled={themeSaving || theme === 'eid'}
+                className={`px-5 py-3 rounded-xl font-medium transition-all ${
+                  theme === 'eid'
+                    ? 'bg-amber-500 text-slate-950'
+                    : 'bg-slate-800 text-gray-300 hover:bg-slate-700'
+                } disabled:opacity-60`}
+              >
+                {themeSaving ? 'Saving...' : 'Eid GUI'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Discounts Tab */}
+        {activeTab === 'discounts' && (
+          <div className="space-y-6">
+            <div className="grid gap-6 xl:grid-cols-[minmax(0,1.25fr),minmax(320px,0.75fr)]">
+              <div className="rounded-2xl border border-amber-500/20 bg-slate-900/80 p-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-400">
+                    <Percent className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-white">Discount Manager</h2>
+                    <p className="mt-1 text-sm text-gray-400">
+                      Set one discount for all plans, then override any single plan separately when needed.
+                    </p>
+                    <p className="mt-2 text-xs text-gray-500">
+                      Uses existing Supabase storage only. No new tables or buckets required.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-6 grid gap-4 lg:grid-cols-[220px,160px,1fr]">
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">Global Status</p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleGlobalDiscountToggle(true)}
+                        className={`flex-1 rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
+                          discountDraft.global.enabled
+                            ? 'bg-amber-500 text-slate-950'
+                            : 'bg-slate-800 text-gray-300 hover:bg-slate-700'
+                        }`}
+                      >
+                        Enabled
+                      </button>
+                      <button
+                        onClick={() => handleGlobalDiscountToggle(false)}
+                        className={`flex-1 rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
+                          !discountDraft.global.enabled
+                            ? 'bg-slate-200 text-slate-950'
+                            : 'bg-slate-800 text-gray-300 hover:bg-slate-700'
+                        }`}
+                      >
+                        Disabled
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">
+                      Global %
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      step={1}
+                      value={discountDraft.global.percentage}
+                      onChange={(e) => handleGlobalDiscountPercentageChange(e.target.value)}
+                      className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/70 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gray-500">Live Summary</p>
+                    <p className="mt-3 text-sm text-gray-300">
+                      {discountDraft.global.enabled
+                        ? `All plans currently inherit ${discountDraft.global.percentage}% off unless a plan override is set.`
+                        : 'Global discounts are disabled right now. Only plans with custom overrides will show discounts.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6">
+                <h3 className="text-lg font-semibold text-white">Save Changes</h3>
+                <p className="mt-2 text-sm text-gray-400">
+                  Review your draft below, then save once. Every pricing card and order screen will use the same settings.
+                </p>
+                <p className="mt-4 text-xs text-gray-500">
+                  Last saved:
+                  <span className="ml-2 text-gray-300">
+                    {discountUpdatedAt ? new Date(discountUpdatedAt).toLocaleString() : 'Not saved yet'}
+                  </span>
+                </p>
+                <div className="mt-6 flex flex-col gap-3">
+                  <button
+                    onClick={handleSaveDiscountSettings}
+                    disabled={discountSaving || !discountDirty}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 px-5 py-3 font-semibold text-slate-950 transition-all hover:bg-amber-400 disabled:opacity-60"
+                  >
+                    {discountSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                    {discountSaving ? 'Saving...' : discountDirty ? 'Save Discount Settings' : 'No Unsaved Changes'}
+                  </button>
+                  <button
+                    onClick={() => setDiscountDraft(cloneSiteDiscountConfig(discountConfig))}
+                    disabled={discountSaving || !discountDirty}
+                    className="rounded-xl border border-slate-700 px-5 py-3 text-sm font-medium text-gray-300 transition-all hover:bg-slate-800 disabled:opacity-60"
+                  >
+                    Revert Draft
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="mr-2 text-sm text-gray-400">Filter by location:</span>
+              <button
+                onClick={() => setDiscountLocationFilter('all')}
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                  discountLocationFilter === 'all'
+                    ? 'bg-amber-500 text-slate-950'
+                    : 'bg-slate-800 text-gray-400 hover:bg-slate-700'
+                }`}
+              >
+                All
+              </button>
+              {locations.filter(l => l.active).map(loc => (
+                <button
+                  key={loc.id}
+                  onClick={() => setDiscountLocationFilter(loc.code)}
+                  className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
+                    discountLocationFilter === loc.code
+                      ? 'bg-amber-500 text-slate-950'
+                      : 'bg-slate-800 text-gray-400 hover:bg-slate-700'
+                  }`}
+                >
+                  <span>{loc.flag}</span>
+                  {loc.name}
+                </button>
+              ))}
+            </div>
+
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
+              </div>
+            ) : filteredDiscountPlans.length === 0 ? (
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/80 px-6 py-12 text-center text-gray-500">
+                No plans found for the current filter.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredDiscountPlans.map((plan, index) => {
+                  const planRule = discountDraft.plans[plan.id] || DEFAULT_PLAN_DISCOUNT_RULE
+                  const effectiveDiscount = resolvePlanDiscountPercentage(discountDraft, plan.id)
+                  const finalPrice = applyDiscountPercentage(plan.price, effectiveDiscount)
+                  const hasOverride = Boolean(discountDraft.plans[plan.id])
+                  const discountSourceLabel =
+                    planRule.mode === 'custom'
+                      ? 'Custom plan discount'
+                      : planRule.mode === 'none'
+                        ? 'Disabled for this plan'
+                        : discountDraft.global.enabled
+                          ? 'Using global discount'
+                          : 'No discount active'
+
+                  return (
+                    <motion.div
+                      key={plan.id}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                      className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5"
+                    >
+                      <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+                        <div className="flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="text-lg font-semibold text-white">{plan.name}</h3>
+                            <span className="rounded-full bg-slate-800 px-2.5 py-1 text-xs text-gray-300">{plan.location}</span>
+                            <span className="rounded-full bg-slate-800 px-2.5 py-1 text-xs text-cyan-300">{plan.processorLabel}</span>
+                            {effectiveDiscount > 0 ? (
+                              <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-semibold text-emerald-300">
+                                {formatDiscountBadge(effectiveDiscount)}
+                              </span>
+                            ) : (
+                              <span className="rounded-full bg-slate-800 px-2.5 py-1 text-xs text-gray-500">
+                                No Discount
+                              </span>
+                            )}
+                          </div>
+                          <p className="mt-2 text-sm text-gray-400">
+                            {plan.ram} • {plan.performance} • Base price Rs {plan.price.toLocaleString()} PKR
+                          </p>
+                          <p className="mt-3 text-sm text-gray-500">
+                            Effective price:
+                            <span className="ml-2 font-semibold text-white">
+                              Rs {finalPrice.toLocaleString()} PKR
+                            </span>
+                            {effectiveDiscount > 0 && (
+                              <span className="ml-2 text-gray-600 line-through">
+                                Rs {plan.price.toLocaleString()} PKR
+                              </span>
+                            )}
+                          </p>
+                          <p className="mt-1 text-xs uppercase tracking-[0.22em] text-gray-600">
+                            {discountSourceLabel}
+                          </p>
+                        </div>
+
+                        <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[520px]">
+                          <div>
+                            <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.22em] text-gray-500">
+                              Rule
+                            </label>
+                            <select
+                              value={planRule.mode}
+                              onChange={(e) => handlePlanDiscountModeChange(plan.id, e.target.value as DiscountPlanMode)}
+                              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white focus:border-amber-500 focus:outline-none"
+                            >
+                              <option value="inherit">Use Global</option>
+                              <option value="custom">Custom %</option>
+                              <option value="none">No Discount</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.22em] text-gray-500">
+                              Percent
+                            </label>
+                            <input
+                              type="number"
+                              min={0}
+                              max={100}
+                              step={1}
+                              value={planRule.mode === 'custom' ? planRule.percentage : 0}
+                              onChange={(e) => handlePlanDiscountPercentageChange(plan.id, e.target.value)}
+                              disabled={planRule.mode !== 'custom'}
+                              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-sm text-white focus:border-amber-500 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                            />
+                          </div>
+
+                          <div className="flex items-end">
+                            <button
+                              onClick={() => handleResetPlanDiscount(plan.id)}
+                              disabled={!hasOverride}
+                              className="w-full rounded-xl border border-slate-700 px-4 py-3 text-sm font-medium text-gray-300 transition-all hover:bg-slate-800 disabled:opacity-50"
+                            >
+                              Clear Override
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
 
         {/* Plans Tab */}

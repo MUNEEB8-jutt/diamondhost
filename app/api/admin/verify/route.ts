@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-// This runs on server only - secret key is never exposed to client
-const ADMIN_SECRET = process.env.ADMIN_SECRET || '#D!I*A@M$O&N%Dtaxi'
+import { createAdminSessionToken, matchAdminSecret } from '@/lib/adminAuth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,15 +8,17 @@ export async function POST(request: NextRequest) {
     if (!secretCode) {
       return NextResponse.json({ success: false, error: 'Secret code required' }, { status: 400 })
     }
-    
-    if (secretCode === ADMIN_SECRET) {
-      // Generate a simple session token
-      const sessionToken = Buffer.from(`admin_${Date.now()}_${Math.random().toString(36)}`).toString('base64')
+
+    const matchedSecret = matchAdminSecret(secretCode)
+
+    if (matchedSecret) {
+      const expiresAt = Date.now() + 24 * 60 * 60 * 1000
+      const sessionToken = createAdminSessionToken(matchedSecret, expiresAt)
       
       return NextResponse.json({ 
         success: true, 
         token: sessionToken,
-        expires_at: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
+        expires_at: expiresAt
       })
     } else {
       return NextResponse.json({ success: false, error: 'Invalid secret code' }, { status: 401 })

@@ -1,12 +1,16 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Loader2, Cpu, Zap, Users, Star, Youtube, ChevronDown, ChevronUp } from 'lucide-react'
+import { Check, Loader2, Cpu, Zap, Star, ChevronDown, MoonStar, Sparkles } from 'lucide-react'
 import { useEffect, useState, useRef } from 'react'
 import { getPlans, getLocations, getPlansByLocation, getEpycPlansByLocation, HostingPlan, Location, EpycPlan } from '@/lib/supabase'
 import { useCurrency } from '@/lib/CurrencyContext'
 import { useAuth } from '@/lib/AuthContext'
+import { useTheme } from '@/lib/ThemeContext'
+import { useDiscounts } from '@/lib/DiscountContext'
+import { applyDiscountPercentage, formatDiscountBadge } from '@/lib/discount'
 import { useRouter } from 'next/navigation'
+import { FestiveRibbon } from './FestiveDecor'
 
 // Fallback data - UAE in center (index 1)
 const fallbackLocations: Location[] = [
@@ -474,8 +478,22 @@ export default function PricingCards() {
   const { convertPrice, symbol } = useCurrency()
   const { user, setShowAuthModal } = useAuth()
   const router = useRouter()
+  const { theme } = useTheme()
+  const { getPlanDiscountPercentage } = useDiscounts()
+  const festive = theme === 'eid'
 
   const selectedLocation = locations[selectedLocationIndex]?.code || 'UAE'
+  const formatPlanPrice = (price: number) => `${symbol}${convertPrice(price / 278)}`
+  const getPlanPricing = (plan: { id: string; price: number }) => {
+    const discountPercentage = getPlanDiscountPercentage(plan.id)
+    const discountedPrice = applyDiscountPercentage(plan.price, discountPercentage)
+
+    return {
+      discountPercentage,
+      discountedPrice,
+      hasDiscount: discountPercentage > 0,
+    }
+  }
   
   // Ref for processor toggle section to scroll to
   const processorSectionRef = useRef<HTMLDivElement>(null)
@@ -493,21 +511,13 @@ export default function PricingCards() {
     return false
   }
   
-  // Check if plan has 10% discount - Only AMD EPYC plans
-  const hasDiscount = (location: string, processor: 'intel' | 'amd') => {
-    return processor === 'amd'
-  }
-  
   // Handle Order Click - Redirect to order page
   const handleOrderClick = (plan: { id: string; name: string; price: number; ram: string; location?: string }, processor: 'intel' | 'amd') => {
     if (!user) {
       setShowAuthModal(true)
       return
     }
-    // Pass discount info in URL if applicable
-    const planLocation = plan.location || selectedLocation
-    const discount = hasDiscount(planLocation, processor) ? '0.9' : '1'
-    router.push(`/order/${plan.id}?discount=${discount}&processor=${processor}`)
+    router.push(`/order/${plan.id}?processor=${processor}`)
   }
 
   useEffect(() => {
@@ -608,8 +618,51 @@ export default function PricingCards() {
   const currentLoc = locations[selectedLocationIndex] || fallbackLocations[0]
 
   return (
-    <section id="plans" className="py-16 px-4 relative overflow-hidden">
+    <section id="plans" className="relative z-10 overflow-hidden px-4 py-20 md:py-24">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 islamic-pattern opacity-[0.06]" />
+        <div className="absolute left-[-6%] top-10 h-72 w-72 rounded-full bg-[var(--theme-glow)] blur-[130px]" />
+        <div className="absolute bottom-0 right-[-6%] h-80 w-80 rounded-full bg-[color:var(--theme-button-shadow)] blur-[150px]" />
+      </div>
+
       <div className="container mx-auto relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 26 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55 }}
+          viewport={{ once: true }}
+          className="mx-auto mb-12 max-w-4xl text-center"
+        >
+          {festive ? (
+            <FestiveRibbon className="mb-6" label="Ramadan and Eid Sale Plans" />
+          ) : (
+            <span className="theme-badge mb-6 text-sm">
+              <Sparkles className="h-4 w-4" />
+              Premium Game Hosting Plans
+            </span>
+          )}
+
+          <h2 className="theme-heading text-4xl md:text-6xl">
+            {festive ? (
+              <>
+                Choose Your
+                <br />
+                <span className="theme-heading-accent">Diamond Host Plan</span>
+              </>
+            ) : (
+              <>
+                Choose The Plan
+                <br />
+                <span className="theme-heading-accent">That Fits Your Community</span>
+              </>
+            )}
+          </h2>
+
+          <p className="theme-copy mx-auto mt-6 max-w-2xl text-base leading-8 md:text-lg">
+            Browse locations, switch processor types, and order the server that matches your performance goals. The experience is now wrapped in a richer festive presentation without changing the purchase flow.
+          </p>
+        </motion.div>
+
         {/* 3D VR Style Location Carousel */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }} 
@@ -632,12 +685,14 @@ export default function PricingCards() {
           whileInView={{ opacity: 1, y: 0 }} 
           transition={{ duration: 0.5, delay: 0.1 }} 
           viewport={{ once: true }}
-          className="flex flex-col justify-center items-center gap-2 mb-8"
+          className="mb-8 flex flex-col items-center justify-center gap-2"
         >
           {/* Label */}
-          <p className="text-gray-400 text-xs md:text-sm uppercase tracking-widest mb-2">Select Processor</p>
+          <p className="theme-copy mb-2 text-xs uppercase tracking-[0.34em] md:text-sm">
+            {festive ? 'Select Hosting Engine' : 'Select Processor'}
+          </p>
           
-          <div className="inline-flex bg-slate-800/80 backdrop-blur-xl p-1 rounded-2xl border border-slate-600/50 shadow-xl shadow-black/20 overflow-visible">
+          <div className="theme-panel inline-flex overflow-visible rounded-2xl p-1.5 shadow-xl shadow-black/20">
             {/* For UAE: Intel (left) | AMD (right) */}
             {/* For India/Germany: Intel (left) | AMD (right, coming soon) */}
             
@@ -648,8 +703,10 @@ export default function PricingCards() {
                   onClick={() => setSelectedProcessor('intel')}
                   className={`relative px-5 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 ${
                     selectedProcessor === 'intel' 
-                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/40' 
-                      : 'text-gray-400 hover:text-gray-200 hover:bg-slate-700/50'
+                      ? festive
+                        ? 'bg-gradient-to-r from-[#0f3d2e] to-[#d4af37] text-[#fff8ea] shadow-lg shadow-[#d4af37]/30'
+                        : 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/40'
+                      : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
                   }`}
                   whileHover={{ scale: selectedProcessor === 'intel' ? 1 : 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -658,13 +715,15 @@ export default function PricingCards() {
                   <span>Intel Platinum</span>
                 </motion.button>
                 
-                {/* UAE: AMD Button (Right) with 10% OFF */}
+                {/* UAE: AMD Button (Right) */}
                 <motion.button
                   onClick={() => setSelectedProcessor('amd')}
                   className={`relative px-5 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 overflow-visible ${
                     selectedProcessor === 'amd' 
-                      ? 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/40' 
-                      : 'text-gray-400 hover:text-gray-200 hover:bg-slate-700/50'
+                      ? festive
+                        ? 'bg-gradient-to-r from-[#1a4f3f] to-[#f59e0b] text-[#fff8ea] shadow-lg shadow-[#f59e0b]/30'
+                        : 'bg-gradient-to-r from-red-600 to-orange-600 text-white shadow-lg shadow-red-500/40'
+                      : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
                   }`}
                   whileHover={{ scale: selectedProcessor === 'amd' ? 1 : 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -672,12 +731,6 @@ export default function PricingCards() {
                 >
                   <Zap className="h-4 w-4 md:h-5 md:w-5" />
                   <span>AMD EPYC</span>
-                  {/* 10% OFF Badge */}
-                  <div className="absolute -top-3 md:-top-4 -right-2 md:-right-3 z-50 pointer-events-none">
-                    <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-[7px] md:text-[9px] font-bold px-1.5 md:px-2 py-0.5 rounded-full uppercase shadow-lg shadow-green-500/50 whitespace-nowrap">
-                      10% OFF
-                    </span>
-                  </div>
                 </motion.button>
               </>
             ) : (
@@ -687,8 +740,10 @@ export default function PricingCards() {
                   onClick={() => setSelectedProcessor('intel')}
                   className={`relative px-5 md:px-8 py-2.5 md:py-3 rounded-xl font-semibold text-xs md:text-sm transition-all duration-300 flex items-center gap-1.5 md:gap-2 ${
                     selectedProcessor === 'intel' 
-                      ? 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/40' 
-                      : 'text-gray-400 hover:text-gray-200 hover:bg-slate-700/50'
+                      ? festive
+                        ? 'bg-gradient-to-r from-[#0f3d2e] to-[#d4af37] text-[#fff8ea] shadow-lg shadow-[#d4af37]/30'
+                        : 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-lg shadow-blue-500/40'
+                      : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
                   }`}
                   whileHover={{ scale: selectedProcessor === 'intel' ? 1 : 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -724,14 +779,28 @@ export default function PricingCards() {
         {/* Intel Platinum Header */}
         <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }} className="text-center mb-12">
           <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 rounded-full px-4 py-1 text-blue-400 text-sm mb-4">
-            <Cpu className="h-4 w-4" />
-            <span>Optimized Performance</span>
+            className={`inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm mb-4 ${
+              festive
+                ? 'border border-[#d4af37]/30 bg-[#0f3d2e]/60 text-[#f7e7ce]'
+                : 'bg-blue-500/10 border border-blue-500/30 text-blue-400'
+            }`}>
+            {festive ? <MoonStar className="h-4 w-4" /> : <Cpu className="h-4 w-4" />}
+            <span>{festive ? 'Festive Performance Collection' : 'Optimized Performance'}</span>
           </motion.div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-            <span className="text-blue-400">Intel</span> Platinum Plans
+          <h2 className="theme-heading text-4xl md:text-5xl mb-4">
+            {festive ? (
+              <>
+                <span className="theme-heading-accent">Premium</span> Intel Plans
+              </>
+            ) : (
+              <>
+                <span className="text-blue-400">Intel</span> Platinum Plans
+              </>
+            )}
           </h2>
-          <p className="text-gray-400 uppercase tracking-[0.3em] text-xs">Quality Wise, No Compromise</p>
+          <p className="theme-copy uppercase tracking-[0.3em] text-xs">
+            {festive ? 'Elegant performance for festive communities' : 'Quality Wise, No Compromise'}
+          </p>
         </motion.div>
 
         {/* Intel Platinum Plans Grid */}
@@ -760,7 +829,9 @@ export default function PricingCards() {
                 >
                   {plan.popular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                      <span className="bg-cyan-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">Best Value</span>
+                      <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap ${
+                        festive ? 'bg-[#d4af37] text-[#11271e]' : 'bg-cyan-500 text-white'
+                      }`}>Best Value</span>
                     </div>
                   )}
                   
@@ -775,12 +846,16 @@ export default function PricingCards() {
                   
                   {/* Stable Glow Effect - No animation, just smooth transition */}
                   <div className="absolute -inset-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-0">
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-blue-500/30 to-cyan-500/30 blur-2xl rounded-3xl" />
+                    <div className={`absolute inset-0 blur-2xl rounded-3xl ${
+                      festive
+                        ? 'bg-gradient-to-r from-[#0f3d2e]/40 via-[#d4af37]/25 to-[#f7e7ce]/25'
+                        : 'bg-gradient-to-r from-cyan-500/30 via-blue-500/30 to-cyan-500/30'
+                    }`} />
                   </div>
                   
                   <motion.div 
-                    className={`relative bg-slate-900/95 rounded-2xl p-6 border-2 border-slate-700/60 transition-all duration-200 flex flex-col overflow-hidden z-10 ${
-                      plan.popular ? 'border-cyan-500/50' : ''
+                    className={`theme-panel-strong relative rounded-[28px] p-6 border transition-all duration-200 flex flex-col overflow-hidden z-10 ${
+                      plan.popular ? (festive ? 'border-[#d4af37]/50' : 'border-cyan-500/50') : ''
                     } ${
                       selectedLocation === 'UAE' || currentLoc.code === 'UAE' 
                         ? 'opacity-60 blur-[1px] grayscale' 
@@ -789,18 +864,28 @@ export default function PricingCards() {
                     whileHover={selectedLocation === 'UAE' || currentLoc.code === 'UAE' ? {} : { 
                       y: -8, 
                       scale: 1.02,
-                      boxShadow: '0 20px 40px -12px rgba(6, 182, 212, 0.4)',
-                      borderColor: 'rgba(6, 182, 212, 0.8)',
+                      boxShadow: festive
+                        ? '0 24px 55px -18px rgba(212, 175, 55, 0.45)'
+                        : '0 20px 40px -12px rgba(6, 182, 212, 0.4)',
+                      borderColor: festive ? 'rgba(212, 175, 55, 0.8)' : 'rgba(6, 182, 212, 0.8)',
                       transition: { duration: 0.15 } 
                     }}
                   >
                     {/* Glow effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/10 group-hover:to-blue-500/10 transition-all duration-200 rounded-2xl" />
+                    <div className={`absolute inset-0 transition-all duration-200 rounded-[28px] ${
+                      festive
+                        ? 'bg-gradient-to-br from-[#0f3d2e]/0 to-[#d4af37]/0 group-hover:from-[#0f3d2e]/10 group-hover:to-[#d4af37]/10'
+                        : 'bg-gradient-to-br from-cyan-500/0 to-blue-500/0 group-hover:from-cyan-500/10 group-hover:to-blue-500/10'
+                    }`} />
                     
                     {/* Icon - AMD style but blue */}
                     <div className="flex justify-center mb-3 relative z-10">
                       <motion.div 
-                        className="w-16 h-16 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center shadow-lg shadow-blue-500/30"
+                        className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-lg ${
+                          festive
+                            ? 'bg-gradient-to-br from-[#0f3d2e] via-[#185742] to-[#d4af37] text-[#fff8ea] shadow-[#d4af37]/25'
+                            : 'bg-gradient-to-br from-blue-600 to-cyan-600 text-white shadow-blue-500/30'
+                        }`}
                         whileHover={{ scale: 1.15, rotate: 5 }}
                         transition={{ type: 'spring', stiffness: 300 }}
                       >
@@ -809,30 +894,51 @@ export default function PricingCards() {
                     </div>
 
                     {/* Name */}
-                    <h3 className="text-lg font-bold text-center text-white mb-2 uppercase tracking-wide relative z-10 group-hover:text-cyan-300 transition-colors">{plan.name}</h3>
+                    <h3 className={`text-lg font-bold text-center text-white mb-2 uppercase tracking-wide relative z-10 transition-colors ${
+                      festive ? 'group-hover:text-[#f7e7ce]' : 'group-hover:text-cyan-300'
+                    }`}>{plan.name}</h3>
 
-                    {/* Price - No discount */}
-                    <div className="text-center mb-4 relative z-10">
-                      <span className="text-4xl font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors">{symbol}{convertPrice(plan.price / 278)}</span>
-                      <p className="text-gray-500 text-xs mt-1">per month</p>
-                    </div>
+                    {(() => {
+                      const pricing = getPlanPricing(plan)
+
+                      return (
+                        <div className="text-center mb-4 relative z-10">
+                          {pricing.hasDiscount && (
+                            <div className="mb-1 flex items-center justify-center gap-2">
+                              <span className="text-sm text-gray-500 line-through">
+                                {formatPlanPrice(plan.price)}
+                              </span>
+                              <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                                {formatDiscountBadge(pricing.discountPercentage)}
+                              </span>
+                            </div>
+                          )}
+                          <span className={`text-4xl font-bold transition-colors ${
+                            festive ? 'text-[var(--theme-highlight)] group-hover:text-[var(--theme-gold)]' : 'text-cyan-400 group-hover:text-cyan-300'
+                          }`}>
+                            {formatPlanPrice(pricing.discountedPrice)}
+                          </span>
+                          <p className="text-gray-500 text-xs mt-1">per month</p>
+                        </div>
+                      )
+                    })()}
 
                     {/* Features */}
                     <div className="flex-1 space-y-2 mb-4 relative z-10">
                       <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+                        <Check className={`h-4 w-4 flex-shrink-0 ${festive ? 'text-[var(--theme-gold)]' : 'text-green-400'}`} />
                         <span className="text-gray-300 text-sm">{plan.ram}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+                        <Check className={`h-4 w-4 flex-shrink-0 ${festive ? 'text-[var(--theme-gold)]' : 'text-green-400'}`} />
                         <span className="text-gray-300 text-sm">{plan.performance} CPU Power</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+                        <Check className={`h-4 w-4 flex-shrink-0 ${festive ? 'text-[var(--theme-gold)]' : 'text-green-400'}`} />
                         <span className="text-gray-300 text-sm">Intel Platinum CPU</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+                        <Check className={`h-4 w-4 flex-shrink-0 ${festive ? 'text-[var(--theme-gold)]' : 'text-green-400'}`} />
                         <span className="text-gray-300 text-sm">24/7 Support</span>
                       </div>
                     </div>
@@ -844,7 +950,9 @@ export default function PricingCards() {
                       className={`w-full py-3 rounded-xl font-semibold text-sm text-center block transition-all duration-300 relative z-10 ${
                         selectedLocation === 'UAE' || currentLoc.code === 'UAE'
                           ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                          : 'text-white bg-blue-600 hover:bg-blue-500'
+                          : festive
+                            ? 'theme-button-primary !rounded-xl'
+                            : 'text-white bg-blue-600 hover:bg-blue-500'
                       }`}
                       whileHover={selectedLocation === 'UAE' || currentLoc.code === 'UAE' ? {} : { scale: 1.02 }} 
                       whileTap={selectedLocation === 'UAE' || currentLoc.code === 'UAE' ? {} : { scale: 0.98 }}
@@ -875,15 +983,21 @@ export default function PricingCards() {
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 rounded-full px-4 py-1 text-red-400 text-sm mb-4"
+              className={`inline-flex items-center gap-2 rounded-full px-4 py-1 text-sm mb-4 ${
+                festive
+                  ? 'border border-[#d4af37]/30 bg-[#0f3d2e]/60 text-[#f7e7ce]'
+                  : 'bg-red-500/10 border border-red-500/30 text-red-400'
+              }`}
             >
               <Zap className="h-4 w-4" />
-              <span>Premium Performance</span>
+              <span>{festive ? 'Lantern Glow Performance' : 'Premium Performance'}</span>
             </motion.div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-              AMD <span className="text-red-500">EPYC</span> Plans
+            <h2 className="theme-heading text-4xl md:text-5xl mb-4">
+              AMD <span className={festive ? 'theme-heading-accent' : 'text-red-500'}>EPYC</span> Plans
             </h2>
-            <p className="text-gray-400 uppercase tracking-[0.3em] text-xs">Maximum Power, Ultimate Performance</p>
+            <p className="theme-copy uppercase tracking-[0.3em] text-xs">
+              {festive ? 'Premium servers with a festive glow' : 'Maximum Power, Ultimate Performance'}
+            </p>
           </div>
 
           {/* AMD EPYC Plans Grid */}
@@ -906,32 +1020,48 @@ export default function PricingCards() {
                 >
                   {plan.popular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20">
-                      <span className="bg-red-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap">Best Value</span>
+                      <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider whitespace-nowrap ${
+                        festive ? 'bg-[#d4af37] text-[#11271e]' : 'bg-red-500 text-white'
+                      }`}>Best Value</span>
                     </div>
                   )}
                   
                   {/* Stable Glow Effect - No animation */}
                   <div className="absolute -inset-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-0">
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-500/30 via-orange-500/30 to-red-500/30 blur-2xl rounded-3xl" />
+                    <div className={`absolute inset-0 blur-2xl rounded-3xl ${
+                      festive
+                        ? 'bg-gradient-to-r from-[#0f3d2e]/40 via-[#d4af37]/25 to-[#f59e0b]/25'
+                        : 'bg-gradient-to-r from-red-500/30 via-orange-500/30 to-red-500/30'
+                    }`} />
                   </div>
                   
                   <motion.div
-                    className={`relative bg-gradient-to-br from-slate-900 to-slate-950 rounded-2xl p-6 border-2 ${plan.popular ? 'border-red-500/50' : 'border-red-900/30'} transition-all duration-200 flex flex-col overflow-hidden z-10`}
+                    className={`theme-panel-strong relative rounded-[28px] p-6 border ${plan.popular ? (festive ? 'border-[#d4af37]/50' : 'border-red-500/50') : festive ? 'border-[#d4af37]/20' : 'border-red-900/30'} transition-all duration-200 flex flex-col overflow-hidden z-10`}
                     whileHover={{ 
                       y: -8, 
                       scale: 1.02,
-                      boxShadow: '0 20px 40px -12px rgba(239, 68, 68, 0.4)',
-                      borderColor: 'rgba(239, 68, 68, 0.8)',
+                      boxShadow: festive
+                        ? '0 24px 55px -18px rgba(212, 175, 55, 0.45)'
+                        : '0 20px 40px -12px rgba(239, 68, 68, 0.4)',
+                      borderColor: festive ? 'rgba(212, 175, 55, 0.8)' : 'rgba(239, 68, 68, 0.8)',
                       transition: { duration: 0.15 } 
                     }}
                   >
                     {/* Glow effect on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/0 to-orange-500/0 group-hover:from-red-500/10 group-hover:to-orange-500/10 transition-all duration-200 rounded-2xl" />
+                    <div className={`absolute inset-0 transition-all duration-200 rounded-[28px] ${
+                      festive
+                        ? 'bg-gradient-to-br from-[#0f3d2e]/0 to-[#d4af37]/0 group-hover:from-[#0f3d2e]/10 group-hover:to-[#d4af37]/10'
+                        : 'bg-gradient-to-br from-red-500/0 to-orange-500/0 group-hover:from-red-500/10 group-hover:to-orange-500/10'
+                    }`} />
 
                     {/* Icon */}
                     <div className="flex justify-center mb-3 relative z-10">
                       <motion.div
-                        className="w-16 h-16 rounded-xl bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center shadow-lg shadow-red-500/30"
+                        className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-lg ${
+                          festive
+                            ? 'bg-gradient-to-br from-[#0f3d2e] via-[#185742] to-[#d4af37] text-[#fff8ea] shadow-[#d4af37]/25'
+                            : 'bg-gradient-to-br from-red-600 to-red-800 text-white shadow-red-500/30'
+                        }`}
                         whileHover={{ scale: 1.15, rotate: 5 }}
                         transition={{ type: 'spring', stiffness: 300 }}
                       >
@@ -940,34 +1070,51 @@ export default function PricingCards() {
                     </div>
 
                     {/* Name */}
-                    <h3 className="text-lg font-bold text-center text-white mb-2 uppercase tracking-wide relative z-10 group-hover:text-red-300 transition-colors">{plan.name}</h3>
+                    <h3 className={`text-lg font-bold text-center text-white mb-2 uppercase tracking-wide relative z-10 transition-colors ${
+                      festive ? 'group-hover:text-[#f7e7ce]' : 'group-hover:text-red-300'
+                    }`}>{plan.name}</h3>
 
-                    {/* Price - No discount for AMD EPYC - Actually 10% OFF */}
-                    <div className="text-center mb-4 relative z-10">
-                      <div className="flex items-center justify-center gap-2 mb-1">
-                        <span className="text-gray-500 text-sm line-through">{symbol}{convertPrice(plan.price / 278)}</span>
-                        <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">10% OFF</span>
-                      </div>
-                      <span className="text-4xl font-bold text-red-400 group-hover:text-red-300 transition-colors">{symbol}{convertPrice((plan.price * 0.9) / 278)}</span>
-                      <p className="text-gray-500 text-xs mt-1">per month</p>
-                    </div>
+                    {(() => {
+                      const pricing = getPlanPricing(plan)
+
+                      return (
+                        <div className="text-center mb-4 relative z-10">
+                          {pricing.hasDiscount && (
+                            <div className="mb-1 flex items-center justify-center gap-2">
+                              <span className="text-sm text-gray-500 line-through">
+                                {formatPlanPrice(plan.price)}
+                              </span>
+                              <span className="rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-bold text-white">
+                                {formatDiscountBadge(pricing.discountPercentage)}
+                              </span>
+                            </div>
+                          )}
+                          <span className={`text-4xl font-bold transition-colors ${
+                            festive ? 'text-[var(--theme-highlight)] group-hover:text-[var(--theme-gold)]' : 'text-red-400 group-hover:text-red-300'
+                          }`}>
+                            {formatPlanPrice(pricing.discountedPrice)}
+                          </span>
+                          <p className="text-gray-500 text-xs mt-1">per month</p>
+                        </div>
+                      )
+                    })()}
 
                     {/* Features */}
                     <div className="flex-1 space-y-2 mb-4 relative z-10">
                       <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-red-400 flex-shrink-0" />
+                        <Check className={`h-4 w-4 flex-shrink-0 ${festive ? 'text-[var(--theme-gold)]' : 'text-red-400'}`} />
                         <span className="text-gray-300 text-sm">{plan.ram}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-red-400 flex-shrink-0" />
+                        <Check className={`h-4 w-4 flex-shrink-0 ${festive ? 'text-[var(--theme-gold)]' : 'text-red-400'}`} />
                         <span className="text-gray-300 text-sm">{plan.performance} CPU Power</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-red-400 flex-shrink-0" />
+                        <Check className={`h-4 w-4 flex-shrink-0 ${festive ? 'text-[var(--theme-gold)]' : 'text-red-400'}`} />
                         <span className="text-gray-300 text-sm">AMD EPYC CPU</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-red-400 flex-shrink-0" />
+                        <Check className={`h-4 w-4 flex-shrink-0 ${festive ? 'text-[var(--theme-gold)]' : 'text-red-400'}`} />
                         <span className="text-gray-300 text-sm">24/7 Support</span>
                       </div>
                     </div>
@@ -975,7 +1122,9 @@ export default function PricingCards() {
                     {/* Button */}
                     <motion.button
                       onClick={() => handleOrderClick(plan, 'amd')}
-                      className="w-full py-3 rounded-xl font-semibold text-white text-sm text-center block transition-all duration-300 bg-red-600 hover:bg-red-500 relative z-10"
+                      className={`w-full py-3 rounded-xl font-semibold text-sm text-center block transition-all duration-300 relative z-10 ${
+                        festive ? 'theme-button-primary !rounded-xl' : 'text-white bg-red-600 hover:bg-red-500'
+                      }`}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
@@ -992,23 +1141,23 @@ export default function PricingCards() {
 
         {/* CTA */}
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} viewport={{ once: true }} className="text-center mt-16">
-          <p className="text-gray-400 mb-4">Need a custom solution?</p>
+          <p className="theme-copy mb-4">Need a custom solution?</p>
           <motion.a href="https://discord.gg/tKDRWYNcuE" target="_blank" rel="noopener noreferrer"
-            className="border border-cyan-500/30 hover:border-cyan-400/50 hover:bg-cyan-500/10 text-cyan-400 font-semibold py-3 px-8 rounded-xl transition-all duration-300 inline-block"
+            className={festive ? 'theme-button-secondary !rounded-xl inline-flex' : 'border border-cyan-500/30 hover:border-cyan-400/50 hover:bg-cyan-500/10 text-cyan-400 font-semibold py-3 px-8 rounded-xl transition-all duration-300 inline-block'}
             whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             Contact Us
           </motion.a>
         </motion.div>
 
         {/* Become a Partner Section */}
-        <PartnerSection />
+        <PartnerSection festive={festive} />
       </div>
     </section>
   )
 }
 
 // Partner Section Component - Premium YouTube Creator Program
-function PartnerSection() {
+function PartnerSection({ festive }: { festive: boolean }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const partnerTiers = [
@@ -1066,24 +1215,30 @@ function PartnerSection() {
     >
       {/* Background Glow */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-red-500/10 rounded-full blur-[120px]" />
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full blur-[120px] ${
+          festive ? 'bg-[rgba(212,175,55,0.12)]' : 'bg-red-500/10'
+        }`} />
       </div>
 
       {/* Header */}
       <div className="text-center mb-12 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 rounded-full px-5 py-2 text-red-400 text-sm mb-6"
-        >
-          <YouTubeIcon size={18} />
-          <span className="font-medium">Content Creator Program</span>
-        </motion.div>
-        <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+        {festive ? (
+          <FestiveRibbon className="mb-6" label="Creator Program Under Lantern Lights" />
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 rounded-full px-5 py-2 text-red-400 text-sm mb-6"
+          >
+            <YouTubeIcon size={18} />
+            <span className="font-medium">Content Creator Program</span>
+          </motion.div>
+        )}
+        <h2 className="theme-heading text-4xl md:text-5xl mb-4">
           Become a <span className="text-red-500">YouTube</span> Partner
         </h2>
-        <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+        <p className="theme-copy max-w-2xl mx-auto text-lg">
           Get <span className="text-red-400 font-semibold">FREE</span> premium servers based on your subscriber count!
         </p>
       </div>
@@ -1100,10 +1255,14 @@ function PartnerSection() {
             className="group relative"
           >
             {/* Glow Effect */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-red-600 to-red-500 rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition-all duration-500" />
+            <div className={`absolute -inset-1 rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition-all duration-500 ${
+              festive ? 'bg-gradient-to-r from-[#0f3d2e] to-[#d4af37]' : 'bg-gradient-to-r from-red-600 to-red-500'
+            }`} />
             
             <motion.div 
-              className="relative bg-gradient-to-b from-slate-900 to-slate-950 rounded-2xl p-8 border border-red-500/20 hover:border-red-500/50 transition-all duration-300 overflow-hidden"
+              className={`theme-panel relative rounded-2xl p-8 border transition-all duration-300 overflow-hidden ${
+                festive ? 'border-[#d4af37]/20 hover:border-[#d4af37]/45' : 'border-red-500/20 hover:border-red-500/50'
+              }`}
               whileHover={{ y: -8, scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 300 }}
             >
@@ -1151,7 +1310,9 @@ function PartnerSection() {
       >
         <motion.button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full bg-gradient-to-r from-slate-900 to-slate-950 backdrop-blur-xl rounded-2xl p-6 border border-red-500/20 hover:border-red-500/40 transition-all duration-300 flex items-center justify-between"
+          className={`w-full rounded-2xl p-6 border transition-all duration-300 flex items-center justify-between ${
+            festive ? 'theme-panel-strong border-[#d4af37]/20 hover:border-[#d4af37]/45' : 'bg-gradient-to-r from-slate-900 to-slate-950 backdrop-blur-xl border border-red-500/20 hover:border-red-500/40'
+          }`}
           whileHover={{ scale: 1.01 }}
           whileTap={{ scale: 0.99 }}
         >
@@ -1182,7 +1343,9 @@ function PartnerSection() {
               transition={{ duration: 0.3 }}
               className="overflow-hidden"
             >
-              <div className="bg-slate-900/80 backdrop-blur-xl rounded-b-2xl p-8 border border-t-0 border-red-500/20 -mt-2">
+              <div className={`rounded-b-2xl p-8 border border-t-0 -mt-2 ${
+                festive ? 'theme-panel border-[#d4af37]/20' : 'bg-slate-900/80 backdrop-blur-xl border-red-500/20'
+              }`}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {requirements.map((req, idx) => (
                     <motion.div
@@ -1228,8 +1391,10 @@ function PartnerSection() {
           href="https://discord.gg/tKDRWYNcuE"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-bold py-4 px-12 rounded-xl transition-all duration-300 shadow-lg shadow-red-500/30 text-lg"
-          whileHover={{ scale: 1.05, boxShadow: '0 25px 50px -12px rgba(239, 68, 68, 0.5)' }}
+          className={festive
+            ? 'theme-button-primary inline-flex items-center gap-3 !rounded-xl px-12 text-lg'
+            : 'inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-bold py-4 px-12 rounded-xl transition-all duration-300 shadow-lg shadow-red-500/30 text-lg'}
+          whileHover={{ scale: 1.05, boxShadow: festive ? '0 25px 50px -12px rgba(212, 175, 55, 0.45)' : '0 25px 50px -12px rgba(239, 68, 68, 0.5)' }}
           whileTap={{ scale: 0.95 }}
         >
           <YouTubeIcon size={24} />

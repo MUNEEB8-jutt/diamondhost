@@ -1,154 +1,137 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { CreditCard, Wallet } from 'lucide-react'
+import {
+  Banknote,
+  Bitcoin,
+  CreditCard,
+  Landmark,
+  Smartphone,
+  Wallet,
+} from 'lucide-react'
+import { useTheme } from '@/lib/ThemeContext'
+import { FestiveRibbon } from './FestiveDecor'
 
 const paymentMethods = [
   {
     name: 'JazzCash',
-    icon: '📲',
-    color: 'from-red-500 to-red-600',
+    icon: Smartphone,
     description: 'Mobile Wallet',
   },
   {
     name: 'Easypaisa',
-    icon: '💳',
-    color: 'from-green-500 to-emerald-600',
+    icon: Wallet,
     description: 'Mobile Wallet',
   },
   {
     name: 'SadaPay',
-    icon: '💜',
-    color: 'from-purple-500 to-violet-600',
+    icon: CreditCard,
     description: 'Digital Bank',
   },
   {
     name: 'Bank Transfer',
-    icon: '🏛️',
-    color: 'from-blue-500 to-blue-600',
+    icon: Landmark,
     description: 'All Banks',
   },
   {
     name: 'PayPal',
-    icon: '🅿️',
-    color: 'from-blue-600 to-indigo-600',
+    icon: Banknote,
     description: 'International',
   },
   {
     name: 'Crypto',
-    icon: '🪙',
-    color: 'from-orange-500 to-amber-500',
+    icon: Bitcoin,
     description: 'BTC, ETH, USDT',
   },
   {
     name: 'UPI',
-    icon: '🇮🇳',
-    color: 'from-indigo-500 to-purple-600',
+    icon: CreditCard,
     description: 'Indian Payments',
   },
 ]
 
 export default function PaymentMethods() {
+  const { theme } = useTheme()
+  const festive = theme === 'eid'
+
   return (
-    <section id="payments" className="py-20 px-4 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[#070b14]" />
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
+    <section id="payments" className="relative overflow-hidden px-4 py-20 md:py-24">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 islamic-pattern opacity-[0.06]" />
+        <div className="absolute left-[8%] top-10 h-56 w-56 rounded-full bg-[var(--theme-glow)] blur-[110px]" />
+        <div className="absolute bottom-0 right-[8%] h-64 w-64 rounded-full bg-[color:var(--theme-button-shadow)] blur-[120px]" />
       </div>
 
       <div className="container mx-auto relative z-10">
-        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="mx-auto max-w-3xl text-center"
         >
-          <motion.span
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full px-4 py-1.5 text-cyan-400 text-sm mb-4"
-          >
-            <Wallet className="h-4 w-4" />
-            <span>Easy Payments</span>
-          </motion.span>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            <span 
-              className="text-white uppercase inline-block"
-              style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.1em' }}
-            >
-              PAYMENT{' '}
+          {festive ? (
+            <FestiveRibbon className="mb-6" label="Easy Payments For Eid Rush" />
+          ) : (
+            <span className="theme-badge mb-6 text-sm">
+              <Wallet className="h-4 w-4" />
+              Payment Methods
             </span>
-            <span 
-              className="uppercase inline-block"
-              style={{ 
-                fontFamily: "'Russo One', sans-serif", 
-                letterSpacing: '0.1em',
-                background: 'linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                filter: 'drop-shadow(0 0 20px rgba(6, 182, 212, 0.5))'
-              }}
-            >
-              METHODS
-            </span>
+          )}
+
+          <h2 className="theme-heading text-4xl md:text-5xl">
+            Flexible Payments,
+            <br />
+            <span className="theme-heading-accent">Fast Checkout Experience</span>
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto">
-            Multiple payment options for your convenience
+
+          <p className="theme-copy mx-auto mt-6 max-w-2xl text-base leading-8 md:text-lg">
+            Multiple payment options keep ordering simple for local and international customers, while the festive theme keeps the whole experience polished and premium.
           </p>
         </motion.div>
 
-        {/* Payment Methods Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto"
-        >
+        <div className="mt-12 flex flex-wrap justify-center gap-4">
           {paymentMethods.map((method, index) => (
             <motion.div
               key={method.name}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
+              initial={{ opacity: 0, y: 22, scale: 0.96 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.4, delay: index * 0.06 }}
               viewport={{ once: true }}
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="group relative"
+              whileHover={{ y: -6 }}
+              className="theme-panel theme-card-hover min-w-[220px] rounded-[28px] px-5 py-5"
             >
-              <div className="bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 hover:border-blue-500/30 rounded-2xl px-6 py-4 flex items-center gap-4 transition-all duration-300">
-                {/* Icon */}
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${method.color} flex items-center justify-center text-xl shadow-lg`}>
-                  {method.icon}
+              <div className="flex items-center gap-4">
+                <div
+                  className={`flex h-14 w-14 items-center justify-center rounded-2xl ${
+                    festive
+                      ? 'bg-gradient-to-br from-[#0f3d2e] via-[#185742] to-[#d4af37] text-[#fff8ea]'
+                      : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
+                  }`}
+                >
+                  <method.icon className="h-6 w-6" />
                 </div>
-                
-                {/* Info */}
+
                 <div>
-                  <p className="text-white font-semibold uppercase" style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.05em' }}>{method.name}</p>
-                  <p className="text-gray-500 text-xs">{method.description}</p>
+                  <p className="theme-heading-tight text-lg">{method.name}</p>
+                  <p className="theme-copy text-sm">{method.description}</p>
                 </div>
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Trust Badge */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          initial={{ opacity: 0, y: 22 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, delay: 0.18 }}
           viewport={{ once: true }}
-          className="text-center mt-10"
+          className="mt-10 text-center"
         >
-          <div className="inline-flex items-center gap-2 text-gray-500 text-sm">
-            <CreditCard className="h-4 w-4" />
-            <span>Secure & Instant Payments</span>
-            <span className="text-green-400">•</span>
-            <span>100% Safe</span>
+          <div className="theme-panel-soft inline-flex flex-wrap items-center justify-center gap-3 rounded-full px-5 py-3 text-sm">
+            <span className="theme-copy">Secure and instant payments</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--theme-highlight)]" />
+            <span className="theme-copy">Smooth checkout for Ramadan and Eid offers</span>
           </div>
         </motion.div>
       </div>

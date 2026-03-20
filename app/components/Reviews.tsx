@@ -1,48 +1,52 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useTheme } from '@/lib/ThemeContext'
+import { FestiveRibbon } from './FestiveDecor'
 
 const reviews = [
   {
     name: 'Ahmed Khan',
     role: 'Server Owner',
     rating: 5,
-    text: 'Best hosting service I have ever used! The performance is incredible and support team is always helpful. My players love the low ping!',
+    text: 'Best hosting service I have ever used. The performance is incredible and the support team is always helpful.',
     avatar: 'AK',
   },
   {
     name: 'Sarah Gaming',
     role: 'Content Creator',
     rating: 5,
-    text: 'Diamond Host made setting up my Minecraft server so easy. The instant setup feature is amazing and the prices are very reasonable.',
+    text: 'Diamond Host made setting up my Minecraft server very easy and the instant setup flow feels smooth.',
     avatar: 'SG',
   },
   {
     name: 'Ali Raza',
     role: 'Community Manager',
     rating: 5,
-    text: 'We switched from another provider and the difference is night and day. Zero lag, great uptime, and the DDoS protection actually works!',
+    text: 'We switched from another provider and the difference is huge. Great uptime, low lag, and dependable support.',
     avatar: 'AR',
   },
   {
     name: 'Gaming Pro',
     role: 'Esports Team',
     rating: 5,
-    text: 'Our team relies on Diamond Host for all our practice servers. The AMD EPYC performance is unmatched. Highly recommended!',
+    text: 'Our team relies on Diamond Host for practice servers. The hardware feels strong and reliable.',
     avatar: 'GP',
   },
   {
     name: 'Minecraft Master',
     role: 'Server Network',
     rating: 5,
-    text: 'Running multiple servers with Diamond Host. Their panel is intuitive and the support response time is incredible. 10/10 service!',
+    text: 'Running multiple servers here has been smooth. The panel is simple and the support response time is excellent.',
     avatar: 'MM',
   },
 ]
 
 export default function Reviews() {
+  const { theme } = useTheme()
+  const festive = theme === 'eid'
   const [currentIndex, setCurrentIndex] = useState(0)
   const [direction, setDirection] = useState(0)
 
@@ -51,110 +55,95 @@ export default function Reviews() {
       setDirection(1)
       setCurrentIndex((prev) => (prev + 1) % reviews.length)
     }, 5000)
+
     return () => clearInterval(timer)
   }, [])
 
   const navigate = (dir: number) => {
     setDirection(dir)
     setCurrentIndex((prev) => {
-      if (dir === 1) return (prev + 1) % reviews.length
+      if (dir === 1) {
+        return (prev + 1) % reviews.length
+      }
+
       return prev === 0 ? reviews.length - 1 : prev - 1
     })
   }
 
   const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 300 : -300,
+    enter: (dir: number) => ({
+      x: dir > 0 ? 260 : -260,
       opacity: 0,
-      scale: 0.9,
+      scale: 0.94,
     }),
     center: {
       x: 0,
       opacity: 1,
       scale: 1,
     },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 300 : -300,
+    exit: (dir: number) => ({
+      x: dir < 0 ? 260 : -260,
       opacity: 0,
-      scale: 0.9,
+      scale: 0.94,
     }),
   }
 
   return (
-    <section id="reviews" className="py-20 px-4 relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[150px]" />
+    <section id="reviews" className="relative overflow-hidden px-4 py-20 md:py-24">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 islamic-pattern opacity-[0.05]" />
+        <div className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--theme-glow)] blur-[160px]" />
       </div>
 
       <div className="container mx-auto relative z-10">
-        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="mx-auto max-w-3xl text-center"
         >
-          <motion.span
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-full px-4 py-1.5 text-yellow-400 text-sm mb-4"
-          >
-            <Star className="h-4 w-4 fill-yellow-400" />
-            <span>Customer Reviews</span>
-          </motion.span>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span 
-              className="text-white uppercase inline-block"
-              style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.1em' }}
-            >
-              WHAT GAMERS{' '}
+          {festive ? (
+            <FestiveRibbon className="mb-6" label="Hosted Memories, Shared Joy" />
+          ) : (
+            <span className="theme-badge mb-6 text-sm">
+              <Star className="h-4 w-4 fill-current" />
+              Customer Reviews
             </span>
-            <span 
-              className="uppercase inline-block"
-              style={{ 
-                fontFamily: "'Russo One', sans-serif", 
-                letterSpacing: '0.1em',
-                background: 'linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                filter: 'drop-shadow(0 0 20px rgba(251, 191, 36, 0.5))'
-              }}
-            >
-              SAY
-            </span>
+          )}
+
+          <h2 className="theme-heading text-4xl md:text-5xl">
+            Trusted By Communities
+            <br />
+            <span className="theme-heading-accent">Who Actually Play Here</span>
           </h2>
-          <p className="text-gray-400 max-w-xl mx-auto">
-            Join hundreds of satisfied gamers who trust Diamond Host
+
+          <p className="theme-copy mx-auto mt-6 max-w-2xl text-base leading-8 md:text-lg">
+            The festive redesign adds warmth and atmosphere, but the real confidence still comes from people who rely on Diamond Host every day.
           </p>
         </motion.div>
 
-        {/* Review Slider */}
-        <div className="max-w-4xl mx-auto">
+        <div className="mx-auto mt-12 max-w-5xl">
           <div className="relative">
-            {/* Navigation Buttons */}
             <motion.button
               onClick={() => navigate(-1)}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 z-20 w-12 h-12 bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:border-cyan-500/50 transition-all"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              className="theme-panel-soft absolute left-0 top-1/2 z-20 flex h-12 w-12 -translate-x-2 -translate-y-1/2 items-center justify-center rounded-full text-[var(--theme-text)] md:-translate-x-8"
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.96 }}
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="h-5 w-5" />
             </motion.button>
 
             <motion.button
               onClick={() => navigate(1)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 z-20 w-12 h-12 bg-slate-800/80 backdrop-blur-sm border border-slate-700/50 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:border-cyan-500/50 transition-all"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              className="theme-panel-soft absolute right-0 top-1/2 z-20 flex h-12 w-12 translate-x-2 -translate-y-1/2 items-center justify-center rounded-full text-[var(--theme-text)] md:translate-x-8"
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.96 }}
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="h-5 w-5" />
             </motion.button>
 
-            {/* Review Card */}
-            <div className="overflow-hidden px-4">
+            <div className="overflow-hidden px-3 md:px-8">
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={currentIndex}
@@ -163,52 +152,51 @@ export default function Reviews() {
                   initial="enter"
                   animate="center"
                   exit="exit"
-                  transition={{ duration: 0.4, ease: 'easeInOut' }}
-                  className="bg-gradient-to-br from-slate-900/90 to-slate-800/50 backdrop-blur-xl rounded-3xl p-8 md:p-10 border border-slate-700/50 relative"
+                  transition={{ duration: 0.42, ease: 'easeInOut' }}
+                  className="theme-panel-strong relative overflow-hidden rounded-[34px] p-8 md:p-10"
                 >
-                  {/* Quote Icon */}
-                  <Quote className="absolute top-6 right-6 h-12 w-12 text-cyan-500/20" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(247,231,206,0.1),transparent_25%),radial-gradient(circle_at_bottom_left,rgba(212,175,55,0.08),transparent_30%)]" />
+                  <Quote className="absolute right-6 top-6 h-14 w-14 text-[var(--theme-highlight)]/20" />
 
-                  {/* Stars */}
-                  <div className="flex gap-1 mb-6">
-                    {[...Array(reviews[currentIndex].rating)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                      >
-                        <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" />
-                      </motion.div>
-                    ))}
-                  </div>
-
-                  {/* Review Text */}
-                  <p className="text-gray-300 text-lg md:text-xl leading-relaxed mb-8">
-                    "{reviews[currentIndex].text}"
-                  </p>
-
-                  {/* Author */}
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
-                      {reviews[currentIndex].avatar}
+                  <div className="relative z-10">
+                    <div className="mb-6 flex gap-1">
+                      {Array.from({ length: reviews[currentIndex].rating }).map((_, i) => (
+                        <motion.div
+                          key={i}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.06 }}
+                        >
+                          <Star className="h-5 w-5 fill-[var(--theme-gold)] text-[var(--theme-gold)]" />
+                        </motion.div>
+                      ))}
                     </div>
-                    <div>
-                      <p 
-                        className="text-white font-bold text-lg uppercase"
-                        style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.05em' }}
+
+                    <p className="theme-heading-tight text-2xl leading-relaxed md:text-3xl">
+                      "{reviews[currentIndex].text}"
+                    </p>
+
+                    <div className="mt-8 flex items-center gap-4">
+                      <div
+                        className={`flex h-14 w-14 items-center justify-center rounded-full text-sm font-semibold ${
+                          festive
+                            ? 'bg-gradient-to-br from-[#0f3d2e] via-[#185742] to-[#d4af37] text-[#fff8ea]'
+                            : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
+                        }`}
                       >
-                        {reviews[currentIndex].name}
-                      </p>
-                      <p className="text-cyan-400 text-sm">{reviews[currentIndex].role}</p>
+                        {reviews[currentIndex].avatar}
+                      </div>
+                      <div>
+                        <p className="theme-heading-tight text-lg">{reviews[currentIndex].name}</p>
+                        <p className="theme-copy text-sm">{reviews[currentIndex].role}</p>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            {/* Dots */}
-            <div className="flex justify-center gap-2 mt-8">
+            <div className="mt-8 flex justify-center gap-2">
               {reviews.map((_, index) => (
                 <motion.button
                   key={index}
@@ -216,10 +204,12 @@ export default function Reviews() {
                     setDirection(index > currentIndex ? 1 : -1)
                     setCurrentIndex(index)
                   }}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    index === currentIndex ? 'w-8 bg-cyan-400' : 'w-2 bg-slate-600 hover:bg-slate-500'
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentIndex
+                      ? 'w-10 bg-[var(--theme-gold)]'
+                      : 'w-2.5 bg-white/20 hover:bg-white/35'
                   }`}
-                  whileHover={{ scale: 1.2 }}
+                  whileHover={{ scale: 1.15 }}
                 />
               ))}
             </div>

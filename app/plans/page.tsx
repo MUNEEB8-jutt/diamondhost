@@ -7,7 +7,7 @@ import Background from '../components/Background'
 
 export default function PlansPage() {
   return (
-    <main className="min-h-screen bg-slate-950 relative">
+    <main className="site-shell relative">
       <Background />
       <div className="relative z-10">
         <Navbar />

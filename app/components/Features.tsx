@@ -1,271 +1,219 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Server, Zap, Shield, Globe, Cpu, HardDrive, Clock, Headphones } from 'lucide-react'
+import {
+  Clock,
+  Cpu,
+  Globe,
+  Headphones,
+  MoonStar,
+  Shield,
+  Sparkles,
+  Star,
+  Zap,
+} from 'lucide-react'
+import { useTheme } from '@/lib/ThemeContext'
+import { CrescentMoon, FestiveRibbon, Lantern, MosqueSilhouette } from './FestiveDecor'
 
 const features = [
   {
     icon: Cpu,
     title: 'AMD EPYC Powered',
     subtitle: 'Premium Performance',
-    description: 'All servers powered by AMD EPYC processors for ultimate performance.',
-    color: 'from-red-500 to-orange-500',
+    description: 'All servers are powered by modern hardware for fast response times and stable gameplay.',
   },
   {
     icon: Shield,
     title: 'DDoS Protection',
-    subtitle: 'Online, Always',
-    description: 'Advanced security to keep your server safe from attacks.',
-    color: 'from-green-500 to-emerald-500',
+    subtitle: 'Always Guarded',
+    description: 'Advanced protection helps keep your server online and your community uninterrupted.',
   },
   {
     icon: Zap,
-    title: 'Lag Is No More',
-    subtitle: 'Smooth Gameplay',
-    description: 'Latest hardware for zero lag on your Minecraft server.',
-    color: 'from-yellow-500 to-orange-500',
+    title: 'Smooth Gameplay',
+    subtitle: 'Low Lag Experience',
+    description: 'Optimized resources keep world loading, combat, and events feeling fluid.',
   },
   {
     icon: Globe,
     title: 'Multiple Locations',
-    subtitle: 'UAE • India • Germany',
-    description: 'Choose from 3 global locations for best gaming experience.',
-    color: 'from-purple-500 to-pink-500',
+    subtitle: 'UAE, India, Germany',
+    description: 'Choose the region that gives your players the best connection and stability.',
   },
   {
     icon: Clock,
     title: 'Instant Setup',
-    subtitle: '60 Seconds',
-    description: 'Your server is ready in under a minute after purchase.',
-    color: 'from-blue-500 to-cyan-500',
+    subtitle: 'Ready In Minutes',
+    description: 'Your server is provisioned quickly so you can start building and inviting players fast.',
   },
   {
     icon: Headphones,
     title: '24/7 Support',
-    subtitle: 'Always Available',
-    description: 'Expert support team ready to help you anytime.',
-    color: 'from-indigo-500 to-purple-500',
+    subtitle: 'Real Help Anytime',
+    description: 'The support team stays available whenever you need assistance with hosting.',
   },
 ]
 
-const GamingText = ({ children, className = '', glow = false }: { children: React.ReactNode, className?: string, glow?: boolean }) => (
-  <span 
-    className={`uppercase ${className}`}
-    style={{
-      fontFamily: "'Russo One', var(--font-orbitron), sans-serif",
-      fontWeight: 700,
-      letterSpacing: '0.1em',
-      display: 'inline-block',
-      ...(glow ? { filter: 'drop-shadow(0 0 20px currentColor)' } : {})
-    }}
-  >
-    {children}
-  </span>
-)
+const stats = [
+  { value: '99.9%', label: 'Uptime' },
+  { value: '24/7', label: 'Support' },
+  { value: '<20ms', label: 'Latency' },
+  { value: '500+', label: 'Happy Users' },
+]
 
 export default function Features() {
+  const { theme } = useTheme()
+  const festive = theme === 'eid'
+
   return (
-    <section id="features" className="py-24 px-4 relative z-10 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-1/2 -right-1/4 w-[800px] h-[800px] opacity-5"
-        >
-          <div className="w-full h-full border border-cyan-500 rounded-full" />
-          <div className="absolute inset-10 border border-cyan-500 rounded-full" />
-          <div className="absolute inset-20 border border-cyan-500 rounded-full" />
-        </motion.div>
+    <section id="features" className="relative z-10 overflow-hidden px-4 py-24 md:py-28">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 islamic-pattern opacity-[0.08]" />
+        <div className="absolute left-[-10%] top-16 h-72 w-72 rounded-full bg-[var(--theme-glow)] blur-[120px]" />
+        <div className="absolute bottom-6 right-[-8%] h-80 w-80 rounded-full bg-[color:var(--theme-button-shadow)] blur-[140px]" />
+        {festive ? (
+          <>
+            <CrescentMoon className="absolute right-[10%] top-10 h-28 w-28 opacity-80 md:h-36 md:w-36" />
+            <Lantern className="absolute left-[8%] top-10 hidden opacity-70 md:block" delay={0.4} />
+            <Lantern className="absolute right-[8%] top-20 hidden opacity-70 lg:block" delay={1.2} />
+            <MosqueSilhouette className="absolute bottom-0 left-0 right-0 h-32 opacity-35" />
+          </>
+        ) : (
+          <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-cyan-500/8 to-transparent" />
+        )}
       </div>
 
       <div className="container mx-auto relative">
-        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 26 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="mx-auto max-w-3xl text-center"
         >
-          <motion.span
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-block bg-cyan-500/10 border border-cyan-500/30 rounded-full px-4 py-1 text-cyan-400 text-sm mb-4"
-          >
-            Why Choose Us
-          </motion.span>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <GamingText className="text-white">POWERFUL </GamingText>
-            <GamingText className="text-cyan-400" glow>FEATURES</GamingText>
+          {festive ? (
+            <FestiveRibbon className="mb-6" label="Ramadan Ready Infrastructure" />
+          ) : (
+            <span className="theme-badge mb-6 text-sm">
+              <Sparkles className="h-4 w-4" />
+              Why Choose Diamond Host
+            </span>
+          )}
+
+          <h2 className="theme-heading text-4xl md:text-6xl">
+            {festive ? (
+              <>
+                Celebrate Eid With
+                <br />
+                <span className="theme-heading-accent">Powerful Hosting Features</span>
+              </>
+            ) : (
+              <>
+                Powerful Features,
+                <br />
+                <span className="theme-heading-accent">Built To Perform</span>
+              </>
+            )}
           </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            Everything you need for the perfect Minecraft server experience
+
+          <p className="theme-copy mx-auto mt-6 max-w-2xl text-base leading-8 md:text-lg">
+            Every layer of the experience is designed to feel premium, from fast deployment and low latency to elegant festive visuals that turn the whole hosting journey into something special.
           </p>
         </motion.div>
 
-        <div className="flex flex-col lg:flex-row items-start gap-16">
-          {/* Left - Server Illustration */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -28 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.55 }}
             viewport={{ once: true }}
-            className="flex-1 relative hidden lg:flex justify-center items-center"
+            className="theme-panel-strong relative overflow-hidden rounded-[34px] p-7 md:p-9"
           >
-            <div className="relative">
-              {/* Glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 blur-3xl rounded-full scale-150" />
-              
-              {/* Data Center SVG */}
-              <motion.div
-                animate={{ y: [0, -15, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                className="relative z-10"
-              >
-                <div className="w-[350px] h-[400px] relative">
-                  <svg viewBox="0 0 240 280" className="w-full h-full drop-shadow-2xl">
-                    <rect x="40" y="20" width="160" height="240" rx="10" fill="#0f172a" stroke="#1e40af" strokeWidth="2"/>
-                    <rect x="40" y="20" width="160" height="30" rx="10" fill="#1e293b"/>
-                    <text x="120" y="40" textAnchor="middle" fill="#60a5fa" fontSize="12" fontWeight="bold" fontStyle="italic">DIAMOND HOST</text>
-                    {[0, 1, 2, 3].map((i) => (
-                      <g key={i}>
-                        <rect x="50" y={60 + i * 50} width="140" height="42" rx="4" fill="#1e293b" stroke="#334155" strokeWidth="1"/>
-                        <circle cx="65" cy={81 + i * 50} r="5" fill="#22c55e">
-                          <animate attributeName="opacity" values="1;0.4;1" dur={`${1.5 + i * 0.2}s`} repeatCount="indefinite"/>
-                        </circle>
-                        <circle cx="82" cy={81 + i * 50} r="5" fill="#3b82f6">
-                          <animate attributeName="opacity" values="0.4;1;0.4" dur={`${1.2 + i * 0.3}s`} repeatCount="indefinite"/>
-                        </circle>
-                        <circle cx="99" cy={81 + i * 50} r="5" fill="#f59e0b">
-                          <animate attributeName="opacity" values="1;0.6;1" dur={`${2 + i * 0.1}s`} repeatCount="indefinite"/>
-                        </circle>
-                        <g fill="#475569">
-                          {[0,1,2,3,4].map(j => (
-                            <rect key={j} x="115" y={68 + i * 50 + j * 6} width="65" height="2" rx="1"/>
-                          ))}
-                        </g>
-                      </g>
-                    ))}
-                  </svg>
-                </div>
-              </motion.div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(247,231,206,0.12),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(212,175,55,0.12),transparent_32%)]" />
+            <div className="relative z-10">
+              <span className="theme-badge text-xs uppercase tracking-[0.28em]">
+                {festive ? <MoonStar className="h-4 w-4" /> : <Star className="h-4 w-4" />}
+                {festive ? 'Eid Inspired Experience' : 'Premium Hosting Stack'}
+              </span>
 
-              {/* Floating Icons */}
-              <motion.div
-                animate={{ y: [0, -20, 0], rotate: [0, 10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-8 right-0"
-              >
-                <div className="bg-gradient-to-br from-red-500 to-orange-500 p-4 rounded-2xl shadow-xl shadow-red-500/30">
-                  <Cpu className="h-10 w-10 text-white" />
-                </div>
-              </motion.div>
+              <h3 className="theme-heading-tight mt-6 text-3xl md:text-4xl">
+                {festive ? 'Elegant visuals outside, serious performance inside.' : 'Hosting that feels polished at every step.'}
+              </h3>
 
-              <motion.div
-                animate={{ y: [0, 15, 0], rotate: [0, -10, 0] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                className="absolute bottom-10 -left-8"
-              >
-                <div className="bg-gradient-to-br from-blue-500 to-cyan-500 p-4 rounded-2xl shadow-xl shadow-blue-500/30">
-                  <HardDrive className="h-10 w-10 text-white" />
-                </div>
-              </motion.div>
+              <p className="theme-copy mt-5 text-base leading-8">
+                We kept the website structure and business logic intact, then elevated the presentation with richer surfaces, premium typography, glow accents, and a smooth festive atmosphere across your browsing experience.
+              </p>
 
-              <motion.div
-                animate={{ y: [0, -12, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute top-1/2 -right-12"
-              >
-                <div className="bg-gradient-to-br from-green-500 to-emerald-500 p-3 rounded-xl shadow-xl shadow-green-500/30">
-                  <Shield className="h-8 w-8 text-white" />
-                </div>
-              </motion.div>
+              <div className="theme-divider my-7" />
+
+              <div className="grid gap-3">
+                {[
+                  'Emerald and gold surfaces with subtle glass depth',
+                  'Crescent, lantern, and star-inspired festive accents',
+                  'Responsive layouts that stay clean across mobile and desktop',
+                ].map((item) => (
+                  <div key={item} className="theme-panel-soft flex items-center gap-3 rounded-2xl px-4 py-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(247,231,206,0.12)] text-[var(--theme-highlight)]">
+                      <Sparkles className="h-4 w-4" />
+                    </span>
+                    <p className="theme-copy text-sm leading-7">{item}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </motion.div>
 
-          {/* Right - Feature Cards */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
+            initial={{ opacity: 0, x: 28 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.55, delay: 0.08 }}
             viewport={{ once: true }}
-            className="flex-1"
+            className="grid gap-5 md:grid-cols-2"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {features.map((feature, index) => {
-                const IconComponent = feature.icon
-                return (
-                  <motion.div
-                    key={feature.title}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                    className="group"
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.45, delay: index * 0.08 }}
+                viewport={{ once: true }}
+                className="theme-panel theme-card-hover rounded-[30px] p-6"
+              >
+                <div className="mb-5 flex items-start justify-between gap-4">
+                  <div
+                    className={`flex h-14 w-14 items-center justify-center rounded-2xl ${
+                      festive
+                        ? 'bg-gradient-to-br from-[#0f3d2e] via-[#185742] to-[#d4af37] text-[#fff8ea]'
+                        : 'bg-gradient-to-br from-cyan-500 to-blue-600 text-white'
+                    }`}
                   >
-                    <div className="bg-slate-900/70 backdrop-blur-sm rounded-2xl p-5 border border-slate-700/50 hover:border-cyan-500/30 transition-all duration-300 h-full">
-                      <div className="flex items-start gap-4">
-                        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} p-0.5 flex-shrink-0`}>
-                          <div className="w-full h-full bg-slate-900 rounded-xl flex items-center justify-center group-hover:bg-transparent transition-colors">
-                            <IconComponent className="h-5 w-5 text-white" />
-                          </div>
-                        </div>
-                        <div>
-                          <h3 className="text-base font-bold text-white mb-0.5 uppercase" style={{ fontFamily: "'Russo One', sans-serif", letterSpacing: '0.05em' }}>{feature.title}</h3>
-                          <p className="text-cyan-400 text-xs mb-2">{feature.subtitle}</p>
-                          <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )
-              })}
-            </div>
+                    <feature.icon className="h-6 w-6" />
+                  </div>
+                  <span className="theme-pill text-[11px] uppercase tracking-[0.28em]">{feature.subtitle}</span>
+                </div>
+
+                <h3 className="theme-heading-tight text-2xl">{feature.title}</h3>
+                <p className="theme-copy mt-3 text-sm leading-7">{feature.description}</p>
+              </motion.div>
+            ))}
           </motion.div>
         </div>
 
-        {/* Bottom Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6"
-        >
-          {[
-            { value: '99.9%', label: 'Uptime', icon: Server },
-            { value: '24/7', label: 'Support', icon: Headphones },
-            { value: '<20ms', label: 'Latency', icon: Zap },
-            { value: '500+', label: 'Happy Users', icon: Globe },
-          ].map((stat, index) => (
+        <div className="mt-16 grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+          {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 + index * 0.1 }}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: index * 0.08 }}
               viewport={{ once: true }}
-              className="text-center bg-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:border-cyan-500/30 transition-all group"
+              className="theme-panel rounded-[28px] p-5 text-center md:p-6"
             >
-              <stat.icon className="h-8 w-8 text-cyan-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
-              <p 
-                className="text-3xl md:text-4xl font-bold mb-1 uppercase"
-                style={{
-                  fontFamily: "'Russo One', sans-serif",
-                  letterSpacing: '0.05em',
-                  background: 'linear-gradient(180deg, #ffffff 0%, #67e8f9 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                {stat.value}
-              </p>
-              <p className="text-gray-500 text-sm">{stat.label}</p>
+              <p className="theme-heading-tight text-3xl md:text-4xl">{stat.value}</p>
+              <p className="theme-copy mt-2 text-xs uppercase tracking-[0.26em] md:text-sm">{stat.label}</p>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   )

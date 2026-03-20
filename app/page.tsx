@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <>
       <LoadingScreen isLoading={isLoading} />
-      <main className="min-h-screen bg-slate-950 relative">
+      <main className="site-shell relative">
         <Background />
         <div className="relative z-10">
           <Navbar />

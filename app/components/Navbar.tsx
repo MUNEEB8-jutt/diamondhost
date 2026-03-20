@@ -1,107 +1,27 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, MessageCircle, Home, Package, Zap, Loader2, Server, User, LogOut } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { useCurrency } from '@/lib/CurrencyContext'
-import { useAuth } from '@/lib/AuthContext'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+  Home,
+  Loader2,
+  LogOut,
+  Menu,
+  MessageCircle,
+  MoonStar,
+  Package,
+  Server,
+  User,
+  X,
+  Zap,
+} from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-
-const DiamondLogo = () => (
-  <svg viewBox="0 0 50 50" className="w-10 h-10">
-    <defs>
-      <linearGradient id="diamondGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#60a5fa"/>
-        <stop offset="50%" stopColor="#3b82f6"/>
-        <stop offset="100%" stopColor="#06b6d4"/>
-      </linearGradient>
-      <linearGradient id="diamondShine" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#93c5fd"/>
-        <stop offset="100%" stopColor="#3b82f6"/>
-      </linearGradient>
-      <filter id="glow">
-        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-        <feMerge>
-          <feMergeNode in="coloredBlur"/>
-          <feMergeNode in="SourceGraphic"/>
-        </feMerge>
-      </filter>
-    </defs>
-    <polygon points="25,3 45,18 45,35 25,47 5,35 5,18" fill="url(#diamondGrad)" filter="url(#glow)"/>
-    <polygon points="25,3 45,18 25,25 5,18" fill="url(#diamondShine)" opacity="0.95"/>
-    <polygon points="25,25 45,18 45,35 25,47" fill="#2563eb" opacity="0.8"/>
-    <polygon points="25,25 5,18 5,35 25,47" fill="#1d4ed8" opacity="0.7"/>
-    <polygon points="25,10 32,18 25,25 18,18" fill="#bfdbfe" opacity="0.6"/>
-    <circle cx="20" cy="12" r="1.5" fill="white" opacity="0.8"/>
-  </svg>
-)
-
-// SVG Flag Components - Circular style (bigger)
-const USFlag = () => (
-  <svg viewBox="0 0 100 100" className="w-7 h-7 rounded-full shadow-sm flex-shrink-0">
-    <defs>
-      <clipPath id="usCircle">
-        <circle cx="50" cy="50" r="48" />
-      </clipPath>
-    </defs>
-    <g clipPath="url(#usCircle)">
-      <rect width="100" height="100" fill="#B22234"/>
-      <rect y="7.7" width="100" height="7.7" fill="white"/>
-      <rect y="23.1" width="100" height="7.7" fill="white"/>
-      <rect y="38.5" width="100" height="7.7" fill="white"/>
-      <rect y="53.8" width="100" height="7.7" fill="white"/>
-      <rect y="69.2" width="100" height="7.7" fill="white"/>
-      <rect y="84.6" width="100" height="7.7" fill="white"/>
-      <rect width="40" height="53.8" fill="#3C3B6E"/>
-    </g>
-    <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
-  </svg>
-)
-
-const INFlag = () => (
-  <svg viewBox="0 0 100 100" className="w-7 h-7 rounded-full shadow-sm flex-shrink-0">
-    <defs>
-      <clipPath id="inCircle">
-        <circle cx="50" cy="50" r="48" />
-      </clipPath>
-    </defs>
-    <g clipPath="url(#inCircle)">
-      <rect width="100" height="33.33" fill="#FF9933"/>
-      <rect y="33.33" width="100" height="33.33" fill="white"/>
-      <rect y="66.66" width="100" height="33.34" fill="#138808"/>
-      <circle cx="50" cy="50" r="10" fill="none" stroke="#000080" strokeWidth="1.5"/>
-      <circle cx="50" cy="50" r="3" fill="#000080"/>
-    </g>
-    <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
-  </svg>
-)
-
-const PKFlag = () => (
-  <svg viewBox="0 0 100 100" className="w-7 h-7 rounded-full shadow-sm flex-shrink-0">
-    <defs>
-      <clipPath id="pkCircle">
-        <circle cx="50" cy="50" r="48" />
-      </clipPath>
-    </defs>
-    <g clipPath="url(#pkCircle)">
-      <rect width="100" height="100" fill="#01411C"/>
-      <rect width="25" height="100" fill="white"/>
-      <circle cx="58" cy="50" r="16" fill="white"/>
-      <circle cx="63" cy="50" r="13" fill="#01411C"/>
-      <path d="M72 35 L75 44 L84 44 L77 50 L80 59 L72 53 L64 59 L67 50 L60 44 L69 44 Z" fill="white"/>
-    </g>
-    <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
-  </svg>
-)
+import { useEffect, useState } from 'react'
+import { useAuth } from '@/lib/AuthContext'
+import { useCurrency } from '@/lib/CurrencyContext'
+import { useTheme } from '@/lib/ThemeContext'
 
 type CurrencyCode = 'USD' | 'INR' | 'PKR'
-
-const currencies = [
-  { code: 'PKR' as CurrencyCode, symbol: 'Rs', Flag: PKFlag },
-  { code: 'USD' as CurrencyCode, symbol: '$', Flag: USFlag },
-  { code: 'INR' as CurrencyCode, symbol: '₹', Flag: INFlag },
-]
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
@@ -111,6 +31,64 @@ const navItems = [
   { href: '/support', label: 'Support', icon: MessageCircle },
 ]
 
+const currencies = [
+  { code: 'PKR' as CurrencyCode, label: 'PKR', emoji: 'PK' },
+  { code: 'USD' as CurrencyCode, label: 'USD', emoji: 'US' },
+  { code: 'INR' as CurrencyCode, label: 'INR', emoji: 'IN' },
+]
+
+function FlagChip({ code }: { code: string }) {
+  const palette =
+    code === 'PK'
+      ? ['#115e3b', '#f8fafc']
+      : code === 'IN'
+        ? ['#f97316', '#f8fafc', '#16a34a']
+        : ['#1d4ed8', '#ef4444', '#f8fafc']
+
+  return (
+    <span className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-white/20">
+      <span
+        className="absolute inset-0"
+        style={{
+          background:
+            palette.length === 2
+              ? `linear-gradient(90deg, ${palette[1]} 0 28%, ${palette[0]} 28% 100%)`
+              : `linear-gradient(180deg, ${palette[0]} 0 33%, ${palette[1]} 33% 66%, ${palette[2]} 66% 100%)`,
+        }}
+      />
+      <span className="relative text-[10px] font-semibold tracking-[0.16em] text-slate-900">{code}</span>
+    </span>
+  )
+}
+
+function DiamondLogo({ festive }: { festive: boolean }) {
+  return (
+    <div className="relative">
+      <svg viewBox="0 0 56 56" className="h-11 w-11 drop-shadow-[0_12px_26px_rgba(0,0,0,0.22)]">
+        <defs>
+          <linearGradient id="logoPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={festive ? '#0F3D2E' : '#38bdf8'} />
+            <stop offset="100%" stopColor={festive ? '#D4AF37' : '#2563eb'} />
+          </linearGradient>
+          <linearGradient id="logoSecondary" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={festive ? '#f7e7ce' : '#bfdbfe'} />
+            <stop offset="100%" stopColor={festive ? '#d4af37' : '#67e8f9'} />
+          </linearGradient>
+        </defs>
+        <polygon points="28,4 49,18 49,38 28,52 7,38 7,18" fill="url(#logoPrimary)" />
+        <polygon points="28,4 49,18 28,24 7,18" fill="url(#logoSecondary)" opacity="0.92" />
+        <polygon points="28,24 49,18 49,38 28,52" fill={festive ? '#8f6b18' : '#2563eb'} opacity="0.76" />
+        <polygon points="28,24 7,18 7,38 28,52" fill={festive ? '#0a2c21' : '#1d4ed8'} opacity="0.72" />
+      </svg>
+      {festive && (
+        <span className="absolute -right-1 -top-1 rounded-full border border-[#f7e7ce]/70 bg-[#06140f] p-1 text-[#f7e7ce] shadow-[0_8px_20px_rgba(212,175,55,0.22)]">
+          <MoonStar className="h-3 w-3" />
+        </span>
+      )}
+    </div>
+  )
+}
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [currencyOpen, setCurrencyOpen] = useState(false)
@@ -119,11 +97,12 @@ export default function Navbar() {
   const [loadingPath, setLoadingPath] = useState<string | null>(null)
   const { currency, setCurrency } = useCurrency()
   const { user, logout, setShowAuthModal } = useAuth()
+  const { theme } = useTheme()
   const pathname = usePathname()
   const router = useRouter()
 
-  const currentCurrency = currencies.find(c => c.code === currency)
-  const CurrentFlag = currentCurrency?.Flag
+  const festive = theme === 'eid'
+  const currentCurrency = currencies.find((item) => item.code === currency)
 
   useEffect(() => {
     setLoadingPath(null)
@@ -131,7 +110,7 @@ export default function Navbar() {
   }, [pathname])
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20)
+    const handleScroll = () => setScrolled(window.scrollY > 16)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -141,6 +120,7 @@ export default function Navbar() {
       setCurrencyOpen(false)
       setUserMenuOpen(false)
     }
+
     if (currencyOpen || userMenuOpen) {
       document.addEventListener('click', handleClickOutside)
       return () => document.removeEventListener('click', handleClickOutside)
@@ -148,165 +128,188 @@ export default function Navbar() {
   }, [currencyOpen, userMenuOpen])
 
   const handleNavClick = (href: string) => {
-    if (pathname !== href) {
-      setLoadingPath(href)
-      window.dispatchEvent(new CustomEvent('navigation-start'))
-      router.push(href)
+    if (pathname === href) {
+      setIsMenuOpen(false)
+      return
     }
+
+    setLoadingPath(href)
+    window.dispatchEvent(new CustomEvent('navigation-start'))
+    router.push(href)
   }
+
+  const shellClass = festive
+    ? `border-[#d4af37]/35 bg-[rgba(6,20,15,0.72)] shadow-[0_24px_70px_rgba(0,0,0,0.34)] ${scrolled ? 'backdrop-blur-2xl' : 'backdrop-blur-xl'}`
+    : `border-cyan-500/15 bg-[rgba(7,24,39,0.72)] shadow-[0_24px_70px_rgba(2,132,199,0.12)] ${scrolled ? 'backdrop-blur-2xl' : 'backdrop-blur-xl'}`
+
+  const navPillClass = festive
+    ? 'border border-[#d4af37]/20 bg-[rgba(255,255,255,0.04)]'
+    : 'border border-cyan-500/10 bg-slate-900/55'
+
+  const activeNavClass = festive
+    ? 'bg-gradient-to-r from-[#0f3d2e] via-[#145842] to-[#d4af37] text-[#fff8ea] shadow-[0_12px_24px_rgba(212,175,55,0.24)]'
+    : 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-[0_12px_24px_rgba(34,211,238,0.2)]'
+
+  const hoverTextClass = festive
+    ? 'text-[#d7ccb7] hover:text-[#f7e7ce]'
+    : 'text-gray-400 hover:text-white'
 
   return (
     <motion.header
-      initial={{ y: -100, opacity: 0 }}
+      initial={{ y: -90, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-[#070b14]/95 backdrop-blur-xl shadow-lg shadow-cyan-500/5 border-b border-cyan-500/10'
-          : 'bg-[#070b14]/80 backdrop-blur-xl border-b border-blue-500/10'
-      }`}
+      transition={{ duration: 0.55 }}
+      className="fixed inset-x-0 top-0 z-50 px-3 md:px-4"
     >
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex items-center justify-between h-18 md:h-20">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <motion.div
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            >
-              <DiamondLogo />
-            </motion.div>
-            <span className="font-orbitron text-lg md:text-xl font-bold tracking-wide">
-              <span className="text-blue-400">DIAMOND</span>
-              <span className="text-white">HOST</span>
-            </span>
-          </Link>
+      <div className={`mx-auto mt-3 max-w-7xl rounded-[30px] border ${shellClass}`}>
+        <div className="flex h-[74px] items-center justify-between px-4 md:px-6">
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3">
+              <DiamondLogo festive={festive} />
+              <div className="leading-none">
+                <p
+                  className={`text-base font-semibold uppercase tracking-[0.28em] ${festive ? 'text-[#f7e7ce]' : 'text-white'}`}
+                  style={{ fontFamily: festive ? 'var(--font-playfair), serif' : "'Russo One', sans-serif" }}
+                >
+                  DiamondHost
+                </p>
+                <p className={`mt-1 text-[10px] uppercase tracking-[0.3em] ${festive ? 'text-[#d4af37]' : 'text-cyan-300/80'}`}>
+                  {festive ? 'Eid Sale' : 'Premium Hosting'}
+                </p>
+              </div>
+            </Link>
+            {festive && (
+              <span className="hidden rounded-full border border-[#d4af37]/30 bg-[rgba(212,175,55,0.08)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-[#f7e7ce] lg:inline-flex">
+                Eid Sale Live
+              </span>
+            )}
+          </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 bg-slate-900/60 backdrop-blur-sm rounded-full px-2 py-1.5 border border-slate-700/50">
+          <nav className={`hidden items-center gap-1 rounded-full px-2 py-1.5 lg:flex ${navPillClass}`}>
             {navItems.map((item) => {
+              const Icon = item.icon
               const isActive = pathname === item.href
               const isLoading = loadingPath === item.href
-              const Icon = item.icon
+
               return (
                 <motion.button
-                  key={item.label}
+                  key={item.href}
                   onClick={() => handleNavClick(item.href)}
-                  className={`relative flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                    isActive ? 'text-white' : 'text-gray-400 hover:text-white'
+                  className={`relative flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                    isActive ? activeNavClass : hoverTextClass
                   }`}
                   whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileTap={{ scale: 0.97 }}
                 >
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeNav"
-                      className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-full"
-                      transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  {isLoading ? (
-                    <Loader2 className="h-4 w-4 relative z-10 animate-spin" />
-                  ) : (
-                    <Icon className="h-4 w-4 relative z-10" />
-                  )}
-                  <span className="relative z-10">{item.label}</span>
+                  {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Icon className="h-4 w-4" />}
+                  <span>{item.label}</span>
                 </motion.button>
               )
             })}
           </nav>
 
-          {/* Right Side Actions */}
-          <div className="hidden md:flex items-center gap-3">
-            {/* Currency Selector - Premium Style */}
+          <div className="hidden items-center gap-3 md:flex">
             <div className="relative">
               <motion.button
-                onClick={(e) => { e.stopPropagation(); setCurrencyOpen(!currencyOpen); setUserMenuOpen(false) }}
-                className="flex items-center gap-3 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-600/50 text-white py-2.5 px-4 rounded-xl transition-all duration-300"
-                whileHover={{ scale: 1.03, borderColor: 'rgba(6, 182, 212, 0.5)' }}
-                whileTap={{ scale: 0.97 }}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  setCurrencyOpen((open) => !open)
+                  setUserMenuOpen(false)
+                }}
+                className={`flex items-center gap-3 rounded-full border px-3 py-2 ${festive ? 'border-[#d4af37]/30 bg-[rgba(255,255,255,0.05)] text-[#f7e7ce]' : 'border-cyan-500/15 bg-slate-900/55 text-white'}`}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                {CurrentFlag && <CurrentFlag />}
-                <span className="font-semibold text-sm">{currency}</span>
-                <svg className={`w-4 h-4 transition-transform duration-200 ${currencyOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                <FlagChip code={currentCurrency?.emoji || 'PK'} />
+                <span className="text-sm font-medium">{currentCurrency?.label || currency}</span>
               </motion.button>
 
               <AnimatePresence>
                 {currencyOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    initial={{ opacity: 0, y: -10, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    className="absolute top-full right-0 mt-2 bg-slate-900/98 backdrop-blur-xl border border-slate-600/50 rounded-xl overflow-hidden shadow-2xl z-50 min-w-[160px]"
-                    onClick={(e) => e.stopPropagation()}
+                    exit={{ opacity: 0, y: -10, scale: 0.96 }}
+                    className={`absolute right-0 top-full z-50 mt-2 w-44 rounded-2xl border p-2 ${festive ? 'border-[#d4af37]/30 bg-[rgba(8,20,14,0.96)]' : 'border-cyan-500/15 bg-slate-900/95'}`}
+                    onClick={(event) => event.stopPropagation()}
                   >
-                    {currencies.map((curr) => {
-                      const FlagIcon = curr.Flag
-                      return (
-                        <motion.button
-                          key={curr.code}
-                          onClick={() => { setCurrency(curr.code); setCurrencyOpen(false) }}
-                          className={`flex items-center gap-3 w-full px-4 py-3 text-sm font-medium transition-all ${
-                            currency === curr.code ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white' : 'text-gray-300 hover:bg-slate-700/80'
-                          }`}
-                          whileHover={{ x: 2 }}
-                        >
-                          <FlagIcon />
-                          <span className="font-medium">{curr.code}</span>
-                        </motion.button>
-                      )
-                    })}
+                    {currencies.map((entry) => (
+                      <button
+                        key={entry.code}
+                        onClick={() => {
+                          setCurrency(entry.code)
+                          setCurrencyOpen(false)
+                        }}
+                        className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-sm transition-all ${
+                          currency === entry.code
+                            ? festive
+                              ? 'bg-gradient-to-r from-[#0f3d2e] to-[#d4af37] text-white'
+                              : 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white'
+                            : festive
+                              ? 'text-[#d7ccb7] hover:bg-white/5 hover:text-[#f7e7ce]'
+                              : 'text-gray-300 hover:bg-slate-800/80 hover:text-white'
+                        }`}
+                      >
+                        <FlagChip code={entry.emoji} />
+                        {entry.label}
+                      </button>
+                    ))}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* User Menu / Login Button */}
             {user ? (
               <div className="relative">
                 <motion.button
-                  onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); setCurrencyOpen(false) }}
-                  className="flex items-center gap-2 bg-gradient-to-r from-cyan-600/20 to-blue-600/20 hover:from-cyan-600/30 hover:to-blue-600/30 border border-cyan-500/30 text-white text-sm py-2 px-3 rounded-xl transition-all duration-300"
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    setUserMenuOpen((open) => !open)
+                    setCurrencyOpen(false)
+                  }}
+                  className={`flex items-center gap-2 rounded-full border px-3 py-2 ${festive ? 'border-[#d4af37]/30 bg-[rgba(255,255,255,0.05)] text-[#f7e7ce]' : 'border-cyan-500/15 bg-slate-900/55 text-white'}`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-xs font-bold shadow-lg shadow-cyan-500/30">
+                  <div className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${festive ? 'bg-gradient-to-br from-[#d4af37] to-[#8f6b18] text-[#06140f]' : 'bg-gradient-to-br from-cyan-400 to-blue-600 text-white'}`}>
                     {user.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className="font-medium max-w-[80px] truncate">{user.name}</span>
+                  <span className="max-w-[90px] truncate text-sm font-medium">{user.name}</span>
                 </motion.button>
 
                 <AnimatePresence>
                   {userMenuOpen && (
                     <motion.div
-                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      initial={{ opacity: 0, y: -10, scale: 0.96 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                      className="absolute top-full right-0 mt-2 w-52 bg-slate-800/95 backdrop-blur-xl border border-slate-600/50 rounded-xl overflow-hidden shadow-xl z-50"
-                      onClick={(e) => e.stopPropagation()}
+                      exit={{ opacity: 0, y: -10, scale: 0.96 }}
+                      className={`absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-2xl border ${festive ? 'border-[#d4af37]/30 bg-[rgba(8,20,14,0.96)]' : 'border-cyan-500/15 bg-slate-900/95'}`}
+                      onClick={(event) => event.stopPropagation()}
                     >
-                      <div className="px-4 py-3 border-b border-slate-700/50 bg-gradient-to-r from-cyan-600/10 to-blue-600/10">
-                        <p className="text-white font-semibold text-sm truncate">{user.name}</p>
-                        <p className="text-gray-400 text-xs truncate">{user.email}</p>
+                      <div className={`border-b px-4 py-3 ${festive ? 'border-[#d4af37]/20 bg-[rgba(212,175,55,0.06)]' : 'border-slate-800/80 bg-slate-800/40'}`}>
+                        <p className={`truncate text-sm font-semibold ${festive ? 'text-[#f7e7ce]' : 'text-white'}`}>{user.name}</p>
+                        <p className={`truncate text-xs ${festive ? 'text-[#d7ccb7]' : 'text-gray-400'}`}>{user.email}</p>
                       </div>
-                      <motion.button
-                        onClick={() => { handleNavClick('/servers'); setUserMenuOpen(false) }}
-                        className="flex items-center gap-3 w-full px-4 py-3 text-sm text-gray-300 hover:bg-slate-700/50 hover:text-white transition-all"
-                        whileHover={{ x: 3 }}
+                      <button
+                        onClick={() => {
+                          handleNavClick('/servers')
+                          setUserMenuOpen(false)
+                        }}
+                        className={`flex w-full items-center gap-3 px-4 py-3 text-sm transition-colors ${festive ? 'text-[#d7ccb7] hover:bg-white/5 hover:text-[#f7e7ce]' : 'text-gray-300 hover:bg-slate-800/70 hover:text-white'}`}
                       >
-                        <Server className="h-4 w-4 text-cyan-400" />
+                        <Server className="h-4 w-4" />
                         My Game Servers
-                      </motion.button>
-                      <motion.button
-                        onClick={() => { logout(); setUserMenuOpen(false) }}
-                        className="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-400 hover:bg-red-500/10 transition-all"
-                        whileHover={{ x: 3 }}
+                      </button>
+                      <button
+                        onClick={() => {
+                          logout()
+                          setUserMenuOpen(false)
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-400 transition-colors hover:bg-red-500/10"
                       >
                         <LogOut className="h-4 w-4" />
                         Logout
-                      </motion.button>
+                      </button>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -314,115 +317,110 @@ export default function Navbar() {
             ) : (
               <motion.button
                 onClick={() => setShowAuthModal(true)}
-                className="flex items-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-sm font-semibold py-2.5 px-5 rounded-xl transition-all duration-300 shadow-lg shadow-cyan-500/20"
-                whileHover={{ scale: 1.03, y: -1 }}
+                className="theme-button-primary"
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <User className="h-4 w-4" />
-                <span>Login</span>
+                Login
               </motion.button>
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <motion.button
-            className="lg:hidden text-gray-300 p-2 rounded-xl hover:bg-slate-800/50 border border-slate-700/50"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            whileTap={{ scale: 0.95 }}
+            onClick={() => setIsMenuOpen((open) => !open)}
+            className={`flex h-11 w-11 items-center justify-center rounded-full border md:hidden ${festive ? 'border-[#d4af37]/30 bg-[rgba(255,255,255,0.05)] text-[#f7e7ce]' : 'border-cyan-500/15 bg-slate-900/55 text-white'}`}
+            whileTap={{ scale: 0.94 }}
           >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </motion.button>
         </div>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.nav
+            <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden py-4 border-t border-slate-700/50 overflow-hidden"
+              className={`border-t px-4 pb-4 md:hidden ${festive ? 'border-[#d4af37]/20' : 'border-cyan-500/10'}`}
             >
-              <div className="flex flex-col gap-1">
-                {navItems.map((item, index) => {
+              <div className="flex flex-col gap-2 pt-4">
+                {navItems.map((item) => {
+                  const Icon = item.icon
                   const isActive = pathname === item.href
                   const isLoading = loadingPath === item.href
-                  const Icon = item.icon
+
                   return (
-                    <motion.button
-                      key={item.label}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
+                    <button
+                      key={item.href}
                       onClick={() => handleNavClick(item.href)}
-                      className={`flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                      className={`flex items-center gap-3 rounded-2xl px-4 py-3 text-left text-sm font-medium ${
                         isActive
-                          ? 'text-white bg-gradient-to-r from-cyan-600/20 to-blue-600/20 border border-cyan-500/30'
-                          : 'text-gray-400 hover:text-white hover:bg-slate-800/50'
+                          ? activeNavClass
+                          : festive
+                            ? 'theme-panel-soft text-[#f7e7ce]'
+                            : 'theme-panel-soft text-white'
                       }`}
                     >
-                      {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Icon className="h-5 w-5" />}
+                      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Icon className="h-4 w-4" />}
                       {item.label}
-                    </motion.button>
+                    </button>
                   )
                 })}
 
-                {/* User Section - Mobile */}
-                <div className="mt-3 pt-3 border-t border-slate-700/50">
-                  {user ? (
-                    <div className="px-4">
-                      <div className="flex items-center gap-3 mb-3 p-3 bg-slate-800/50 rounded-xl">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-white font-bold shadow-lg">
-                          {user.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-white font-medium text-sm truncate">{user.name}</p>
-                          <p className="text-gray-500 text-xs truncate">{user.email}</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => logout()}
-                        className="flex items-center gap-2 text-red-400 text-sm w-full px-3 py-2 hover:bg-red-500/10 rounded-lg transition-all"
-                      >
-                        <LogOut className="h-4 w-4" /> Logout
-                      </button>
-                    </div>
-                  ) : (
-                    <motion.button
-                      onClick={() => setShowAuthModal(true)}
-                      className="flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-semibold text-sm py-3 px-4 rounded-xl mx-4"
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <User className="h-4 w-4" /> Login / Sign Up
-                    </motion.button>
-                  )}
-                </div>
-
-                {/* Currency - Mobile with Flags */}
-                <div className="px-4 py-3 mt-2">
-                  <p className="text-gray-500 text-xs mb-2 font-medium">Currency</p>
+                <div className={`mt-2 rounded-2xl border p-3 ${festive ? 'border-[#d4af37]/20 bg-[rgba(255,255,255,0.04)]' : 'border-cyan-500/10 bg-slate-900/40'}`}>
+                  <p className={`mb-3 text-xs uppercase tracking-[0.26em] ${festive ? 'text-[#d4af37]' : 'text-cyan-300/80'}`}>Currency</p>
                   <div className="flex gap-2">
-                    {currencies.map((curr) => {
-                      const FlagIcon = curr.Flag
-                      return (
-                        <button
-                          key={curr.code}
-                          onClick={() => setCurrency(curr.code)}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
-                            currency === curr.code
-                              ? 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white'
-                              : 'bg-slate-800 text-gray-300 hover:bg-slate-700'
-                          }`}
-                        >
-                          <FlagIcon />
-                          <span>{curr.code}</span>
-                        </button>
-                      )
-                    })}
+                    {currencies.map((entry) => (
+                      <button
+                        key={entry.code}
+                        onClick={() => setCurrency(entry.code)}
+                        className={`flex items-center gap-2 rounded-full px-3 py-2 text-xs ${
+                          currency === entry.code
+                            ? festive
+                              ? 'bg-gradient-to-r from-[#0f3d2e] to-[#d4af37] text-white'
+                              : 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white'
+                            : festive
+                              ? 'bg-white/5 text-[#d7ccb7]'
+                              : 'bg-slate-800 text-gray-300'
+                        }`}
+                      >
+                        <FlagChip code={entry.emoji} />
+                        {entry.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
+
+                {user ? (
+                  <div className={`rounded-2xl border p-4 ${festive ? 'border-[#d4af37]/20 bg-[rgba(255,255,255,0.04)]' : 'border-cyan-500/10 bg-slate-900/40'}`}>
+                    <p className={`text-sm font-semibold ${festive ? 'text-[#f7e7ce]' : 'text-white'}`}>{user.name}</p>
+                    <p className={`mt-1 text-xs ${festive ? 'text-[#d7ccb7]' : 'text-gray-400'}`}>{user.email}</p>
+                    <div className="mt-4 flex gap-2">
+                      <button
+                        onClick={() => handleNavClick('/servers')}
+                        className="theme-button-secondary flex-1 text-sm"
+                      >
+                        <Server className="h-4 w-4" />
+                        Servers
+                      </button>
+                      <button
+                        onClick={() => logout()}
+                        className="theme-button-ghost flex-1 justify-center rounded-full border border-red-500/20 text-sm text-red-400 hover:border-red-500/40"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button onClick={() => setShowAuthModal(true)} className="theme-button-primary w-full">
+                    <User className="h-4 w-4" />
+                    Login / Sign Up
+                  </button>
+                )}
               </div>
-            </motion.nav>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
