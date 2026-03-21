@@ -13,7 +13,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { useTheme } from '@/lib/ThemeContext'
-import { CrescentMoon, FestiveRibbon, Lantern, MosqueSilhouette } from './FestiveDecor'
+import { CrescentMoon, FestiveRibbon, Lantern, MosqueSilhouette, RosetteMedallion } from './FestiveDecor'
 
 const features = [
   {
@@ -74,6 +74,7 @@ export default function Features() {
         {festive ? (
           <>
             <CrescentMoon className="absolute right-[10%] top-10 h-28 w-28 opacity-80 md:h-36 md:w-36" />
+            <RosetteMedallion className="absolute left-[14%] top-14 hidden h-16 w-16 opacity-70 lg:block" delay={0.8} />
             <Lantern className="absolute left-[8%] top-10 hidden opacity-70 md:block" delay={0.4} />
             <Lantern className="absolute right-[8%] top-20 hidden opacity-70 lg:block" delay={1.2} />
             <MosqueSilhouette className="absolute bottom-0 left-0 right-0 h-32 opacity-35" />
@@ -117,7 +118,7 @@ export default function Features() {
           </h2>
 
           <p className="theme-copy mx-auto mt-6 max-w-2xl text-base leading-8 md:text-lg">
-            Every layer of the experience is designed to feel premium, from fast deployment and low latency to elegant festive visuals that turn the whole hosting journey into something special.
+            Get the speed, protection, and quick setup your community needs to stay online and play without interruptions.
           </p>
         </motion.div>
 
@@ -127,30 +128,30 @@ export default function Features() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.55 }}
             viewport={{ once: true }}
-            className="theme-panel-strong relative overflow-hidden rounded-[34px] p-7 md:p-9"
+            className="theme-panel-strong theme-spotlight relative overflow-hidden rounded-[34px] p-7 md:p-9"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(247,231,206,0.12),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(212,175,55,0.12),transparent_32%)]" />
             <div className="relative z-10">
               <span className="theme-badge text-xs uppercase tracking-[0.28em]">
                 {festive ? <MoonStar className="h-4 w-4" /> : <Star className="h-4 w-4" />}
-                {festive ? 'Eid Inspired Experience' : 'Premium Hosting Stack'}
+                {festive ? 'Eid Sale Highlights' : 'Premium Hosting Stack'}
               </span>
 
               <h3 className="theme-heading-tight mt-6 text-3xl md:text-4xl">
-                {festive ? 'Elegant visuals outside, serious performance inside.' : 'Hosting that feels polished at every step.'}
+                {festive ? 'Ready for big launches and busy nights.' : 'Hosting that feels polished at every step.'}
               </h3>
 
               <p className="theme-copy mt-5 text-base leading-8">
-                We kept the website structure and business logic intact, then elevated the presentation with richer surfaces, premium typography, glow accents, and a smooth festive atmosphere across your browsing experience.
+                Whether you are starting a new server or moving an existing community, Diamond Host gives you reliable hardware, low latency, and straightforward setup from day one.
               </p>
 
               <div className="theme-divider my-7" />
 
               <div className="grid gap-3">
                 {[
-                  'Emerald and gold surfaces with subtle glass depth',
-                  'Crescent, lantern, and star-inspired festive accents',
-                  'Responsive layouts that stay clean across mobile and desktop',
+                  'Fast hardware for smooth gameplay and lower lag',
+                  'Stable locations across UAE, India, and Germany',
+                  'Quick activation with support when you need it',
                 ].map((item) => (
                   <div key={item} className="theme-panel-soft flex items-center gap-3 rounded-2xl px-4 py-3">
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(247,231,206,0.12)] text-[var(--theme-highlight)]">
@@ -177,7 +178,7 @@ export default function Features() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: index * 0.08 }}
                 viewport={{ once: true }}
-                className="theme-panel theme-card-hover rounded-[30px] p-6"
+                className="theme-panel theme-card-hover theme-spotlight rounded-[30px] p-6"
               >
                 <div className="mb-5 flex items-start justify-between gap-4">
                   <div
@@ -207,7 +208,7 @@ export default function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: index * 0.08 }}
               viewport={{ once: true }}
-              className="theme-panel rounded-[28px] p-5 text-center md:p-6"
+              className="theme-panel theme-card-hover theme-spotlight rounded-[28px] p-5 text-center md:p-6"
             >
               <p className="theme-heading-tight text-3xl md:text-4xl">{stat.value}</p>
               <p className="theme-copy mt-2 text-xs uppercase tracking-[0.26em] md:text-sm">{stat.label}</p>

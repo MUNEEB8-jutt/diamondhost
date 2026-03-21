@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Quote, Star } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTheme } from '@/lib/ThemeContext'
-import { FestiveRibbon } from './FestiveDecor'
+import { FestiveRibbon, RosetteMedallion } from './FestiveDecor'
 
 const reviews = [
   {
@@ -93,6 +93,7 @@ export default function Reviews() {
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 islamic-pattern opacity-[0.05]" />
         <div className="absolute left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--theme-glow)] blur-[160px]" />
+        {festive && <RosetteMedallion className="absolute right-[10%] top-16 hidden h-16 w-16 opacity-75 lg:block" delay={0.4} />}
       </div>
 
       <div className="container mx-auto relative z-10">
@@ -119,7 +120,7 @@ export default function Reviews() {
           </h2>
 
           <p className="theme-copy mx-auto mt-6 max-w-2xl text-base leading-8 md:text-lg">
-            The festive redesign adds warmth and atmosphere, but the real confidence still comes from people who rely on Diamond Host every day.
+            Real feedback from server owners and communities who trust Diamond Host for daily uptime, smooth performance, and responsive support.
           </p>
         </motion.div>
 
@@ -153,7 +154,7 @@ export default function Reviews() {
                   animate="center"
                   exit="exit"
                   transition={{ duration: 0.42, ease: 'easeInOut' }}
-                  className="theme-panel-strong relative overflow-hidden rounded-[34px] p-8 md:p-10"
+                  className="theme-panel-strong theme-spotlight relative overflow-hidden rounded-[34px] p-8 md:p-10"
                 >
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(247,231,206,0.1),transparent_25%),radial-gradient(circle_at_bottom_left,rgba(212,175,55,0.08),transparent_30%)]" />
                   <Quote className="absolute right-6 top-6 h-14 w-14 text-[var(--theme-highlight)]/20" />

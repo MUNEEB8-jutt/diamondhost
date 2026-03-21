@@ -1,10 +1,19 @@
-'use client'
+import type { Metadata } from 'next'
 
 import Navbar from '../components/Navbar'
 import Features from '../components/Features'
 import PaymentMethods from '../components/PaymentMethods'
 import Footer from '../components/Footer'
 import Background from '../components/Background'
+
+export const metadata: Metadata = {
+  title: 'Hosting Features',
+  description:
+    'See Diamond Host features including premium hardware, low-latency routing, DDoS protection, instant setup, and festive Eid presentation across the public website.',
+  alternates: {
+    canonical: 'https://www.diamondhost.site/features',
+  },
+}
 
 export default function FeaturesPage() {
   return (

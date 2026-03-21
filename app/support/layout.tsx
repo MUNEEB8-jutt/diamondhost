@@ -1,19 +1,19 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
-  title: 'Support Center - DiamondHost 24/7 Customer Support',
-  description: 'Get help from DiamondHost support team. 24/7 customer support via tickets and Discord. Fast response time for all your Minecraft server hosting questions.',
-  keywords: ['diamondhost support', 'minecraft hosting support', 'customer service', '24/7 support', 'help center', 'contact diamondhost'],
-  openGraph: {
-    title: 'Support Center | DiamondHost',
-    description: '24/7 customer support for all your Minecraft hosting needs.',
-    url: 'https://www.diamondhost.site/support',
-  },
+  title: 'Support Center',
+  description:
+    'Contact Diamond Host support, manage hosting tickets, and reach the team through the polished frontend support experience.',
   alternates: {
     canonical: 'https://www.diamondhost.site/support',
   },
 }
 
-export default function SupportLayout({ children }: { children: React.ReactNode }) {
+export default function SupportLayout({
+  children,
+}: {
+  children: ReactNode
+}) {
   return children
 }

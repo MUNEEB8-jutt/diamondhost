@@ -26,6 +26,7 @@ html[data-theme='normal'] {
   --theme-button-start: #2563eb;
   --theme-button-end: #06b6d4;
   --theme-button-shadow: rgba(14, 165, 233, 0.28);
+  --theme-button-sheen: rgba(255, 255, 255, 0.16);
   --theme-badge-bg: rgba(8, 47, 73, 0.46);
   --theme-pattern: rgba(56, 189, 248, 0.07);
   --theme-glow: rgba(34, 211, 238, 0.14);
@@ -52,6 +53,7 @@ html[data-theme='eid'] {
   --theme-button-start: #0f3d2e;
   --theme-button-end: #d4af37;
   --theme-button-shadow: rgba(212, 175, 55, 0.3);
+  --theme-button-sheen: rgba(247, 231, 206, 0.2);
   --theme-badge-bg: rgba(15, 61, 46, 0.52);
   --theme-pattern: rgba(247, 231, 206, 0.08);
   --theme-glow: rgba(247, 231, 206, 0.14);
@@ -135,21 +137,30 @@ html[data-theme='eid'] {
   }
 
   .theme-panel {
-    background: var(--theme-surface);
+    background:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--theme-highlight) 10%, transparent), transparent 34%),
+      linear-gradient(180deg, color-mix(in srgb, white 8%, transparent), transparent 34%),
+      var(--theme-surface);
     backdrop-filter: blur(18px);
     border: 1px solid var(--theme-border);
     box-shadow: var(--theme-shadow);
   }
 
   .theme-panel-strong {
-    background: var(--theme-surface-strong);
+    background:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--theme-highlight) 14%, transparent), transparent 32%),
+      radial-gradient(circle at bottom left, color-mix(in srgb, var(--theme-gold) 10%, transparent), transparent 30%),
+      linear-gradient(180deg, color-mix(in srgb, white 9%, transparent), transparent 36%),
+      var(--theme-surface-strong);
     backdrop-filter: blur(20px);
     border: 1px solid var(--theme-border-strong);
     box-shadow: var(--theme-shadow);
   }
 
   .theme-panel-soft {
-    background: var(--theme-surface-soft);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, white 7%, transparent), transparent 45%),
+      var(--theme-surface-soft);
     backdrop-filter: blur(16px);
     border: 1px solid var(--theme-border);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.16);
@@ -164,9 +175,11 @@ html[data-theme='eid'] {
   }
 
   .theme-card-hover:hover {
-    transform: translateY(-6px);
+    transform: translateY(-8px) scale(1.01);
     border-color: var(--theme-border-strong);
-    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.2);
+    box-shadow:
+      0 28px 80px rgba(0, 0, 0, 0.24),
+      0 0 0 1px color-mix(in srgb, var(--theme-border-strong) 32%, transparent);
   }
 
   .theme-badge {
@@ -176,9 +189,13 @@ html[data-theme='eid'] {
     padding: 0.55rem 1rem;
     border-radius: 999px;
     border: 1px solid var(--theme-border-strong);
-    background: var(--theme-badge-bg);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, white 10%, transparent), transparent 55%),
+      var(--theme-badge-bg);
     color: var(--theme-highlight);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
+    box-shadow:
+      0 16px 40px rgba(0, 0, 0, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   .theme-pill {
@@ -187,7 +204,9 @@ html[data-theme='eid'] {
     gap: 0.45rem;
     padding: 0.35rem 0.8rem;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.04);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+      rgba(255, 255, 255, 0.04);
     border: 1px solid var(--theme-border);
     color: var(--theme-muted);
   }
@@ -241,23 +260,55 @@ html[data-theme='eid'] {
     align-items: center;
     justify-content: center;
     gap: 0.65rem;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     border-radius: 999px;
-    padding: 0.95rem 1.6rem;
-    font-weight: 600;
+    padding: 1rem 1.7rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
     color: #fffdf7;
-    background: linear-gradient(135deg, var(--theme-button-start), var(--theme-button-end));
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 18px 40px var(--theme-button-shadow);
+    background:
+      linear-gradient(180deg, var(--theme-button-sheen), rgba(255, 255, 255, 0.01)) padding-box,
+      linear-gradient(135deg, var(--theme-button-start), var(--theme-button-end)) border-box;
+    border: 1px solid transparent;
+    box-shadow:
+      0 20px 48px var(--theme-button-shadow),
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.14);
     transition:
       transform 0.22s ease,
       box-shadow 0.22s ease,
-      filter 0.22s ease;
+      filter 0.22s ease,
+      letter-spacing 0.22s ease;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+  }
+
+  .theme-button-primary::before {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(120deg, rgba(255, 255, 255, 0.22), transparent 26%, transparent 72%, rgba(255, 255, 255, 0.08)),
+      radial-gradient(circle at top, rgba(255, 255, 255, 0.18), transparent 44%);
+    opacity: 0.8;
+  }
+
+  .theme-button-primary > * {
+    position: relative;
+    z-index: 1;
   }
 
   .theme-button-primary:hover {
-    transform: translateY(-2px) scale(1.01);
-    filter: brightness(1.06);
-    box-shadow: 0 24px 56px var(--theme-button-shadow);
+    transform: translateY(-3px) scale(1.015);
+    filter: brightness(1.08) saturate(1.05);
+    letter-spacing: 0.018em;
+    box-shadow:
+      0 26px 62px var(--theme-button-shadow),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.14);
   }
 
   .theme-button-secondary {
@@ -265,23 +316,40 @@ html[data-theme='eid'] {
     align-items: center;
     justify-content: center;
     gap: 0.65rem;
+    position: relative;
+    overflow: hidden;
     border-radius: 999px;
-    padding: 0.9rem 1.45rem;
+    padding: 0.95rem 1.55rem;
     font-weight: 600;
     color: var(--theme-text);
-    background: rgba(255, 255, 255, 0.05);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+      rgba(255, 255, 255, 0.05);
     border: 1px solid var(--theme-border-strong);
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+    box-shadow:
+      0 18px 40px rgba(0, 0, 0, 0.14),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
     transition:
       transform 0.22s ease,
       box-shadow 0.22s ease,
-      border-color 0.22s ease;
+      border-color 0.22s ease,
+      background 0.22s ease;
   }
 
   .theme-button-secondary:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     border-color: var(--theme-gold);
-    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.16);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03)),
+      rgba(255, 255, 255, 0.07);
+    box-shadow:
+      0 24px 52px rgba(0, 0, 0, 0.18),
+      0 0 0 1px color-mix(in srgb, var(--theme-gold) 26%, transparent);
+  }
+
+  .theme-button-secondary > * {
+    position: relative;
+    z-index: 1;
   }
 
   .theme-button-ghost {
@@ -340,6 +408,60 @@ html[data-theme='eid'] {
     box-shadow:
       0 0 0 1px var(--theme-border),
       0 0 40px color-mix(in srgb, var(--theme-glow) 75%, transparent);
+  }
+
+  .theme-spotlight {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .theme-spotlight::after {
+    content: '';
+    position: absolute;
+    inset: auto -20% -40% auto;
+    height: 12rem;
+    width: 12rem;
+    border-radius: 999px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--theme-highlight) 18%, transparent), transparent 65%);
+    opacity: 0.7;
+    filter: blur(20px);
+    pointer-events: none;
+  }
+
+  .theme-spotlight > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .theme-float-soft {
+    animation: softFloat 6s ease-in-out infinite;
+  }
+
+  .theme-float-delayed {
+    animation: softFloat 7.2s ease-in-out infinite;
+    animation-delay: 0.8s;
+  }
+
+  .theme-shimmer-line {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .theme-shimmer-line::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+    transform: translateX(-130%);
+    animation: shimmerSweep 4.5s linear infinite;
+    pointer-events: none;
+  }
+
+  .theme-shimmer-line > * {
+    position: relative;
+    z-index: 1;
   }
 
   .theme-legal-shell {
@@ -579,6 +701,15 @@ html[data-theme='eid'] {
   }
   100% {
     background-position: 200% 0;
+  }
+}
+
+@keyframes shimmerSweep {
+  0% {
+    transform: translateX(-130%);
+  }
+  100% {
+    transform: translateX(130%);
   }
 }
 

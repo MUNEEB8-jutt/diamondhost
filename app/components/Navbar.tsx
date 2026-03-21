@@ -139,19 +139,19 @@ export default function Navbar() {
   }
 
   const shellClass = festive
-    ? `border-[#d4af37]/35 bg-[rgba(6,20,15,0.72)] shadow-[0_24px_70px_rgba(0,0,0,0.34)] ${scrolled ? 'backdrop-blur-2xl' : 'backdrop-blur-xl'}`
+    ? `border-[#d4af37]/40 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(6,20,15,0.82))] shadow-[0_28px_85px_rgba(0,0,0,0.34)] ${scrolled ? 'backdrop-blur-2xl' : 'backdrop-blur-xl'}`
     : `border-cyan-500/15 bg-[rgba(7,24,39,0.72)] shadow-[0_24px_70px_rgba(2,132,199,0.12)] ${scrolled ? 'backdrop-blur-2xl' : 'backdrop-blur-xl'}`
 
   const navPillClass = festive
-    ? 'border border-[#d4af37]/20 bg-[rgba(255,255,255,0.04)]'
+    ? 'border border-[#d4af37]/22 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]'
     : 'border border-cyan-500/10 bg-slate-900/55'
 
   const activeNavClass = festive
-    ? 'bg-gradient-to-r from-[#0f3d2e] via-[#145842] to-[#d4af37] text-[#fff8ea] shadow-[0_12px_24px_rgba(212,175,55,0.24)]'
+    ? 'bg-gradient-to-r from-[#0f3d2e] via-[#145842] to-[#d4af37] text-[#fff8ea] shadow-[0_14px_28px_rgba(212,175,55,0.26)] ring-1 ring-[#f7e7ce]/18'
     : 'bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-[0_12px_24px_rgba(34,211,238,0.2)]'
 
   const hoverTextClass = festive
-    ? 'text-[#d7ccb7] hover:text-[#f7e7ce]'
+    ? 'text-[#d7ccb7] hover:bg-white/5 hover:text-[#f7e7ce]'
     : 'text-gray-400 hover:text-white'
 
   return (
@@ -161,7 +161,11 @@ export default function Navbar() {
       transition={{ duration: 0.55 }}
       className="fixed inset-x-0 top-0 z-50 px-3 md:px-4"
     >
-      <div className={`mx-auto mt-3 max-w-7xl rounded-[30px] border ${shellClass}`}>
+      <div className={`relative mx-auto mt-3 max-w-7xl overflow-hidden rounded-[30px] border ${shellClass}`}>
+        <div className="pointer-events-none absolute inset-x-0 top-3 mx-auto h-[74px] max-w-7xl overflow-hidden rounded-[30px]">
+          <div className={`absolute inset-x-10 top-0 h-px ${festive ? 'bg-gradient-to-r from-transparent via-[#f7e7ce]/45 to-transparent' : 'bg-gradient-to-r from-transparent via-cyan-300/35 to-transparent'}`} />
+          <div className={`absolute -right-10 -top-10 h-28 w-28 rounded-full ${festive ? 'bg-[#d4af37]/14' : 'bg-cyan-400/10'} blur-3xl`} />
+        </div>
         <div className="flex h-[74px] items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3">
@@ -179,9 +183,11 @@ export default function Navbar() {
               </div>
             </Link>
             {festive && (
-              <span className="hidden rounded-full border border-[#d4af37]/30 bg-[rgba(212,175,55,0.08)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-[#f7e7ce] lg:inline-flex">
-                Eid Sale Live
-              </span>
+              <div className="hidden items-center gap-2 xl:flex">
+                <span className="rounded-full border border-[#d4af37]/30 bg-[rgba(212,175,55,0.08)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-[#f7e7ce]">
+                  Eid Sale Live
+                </span>
+              </div>
             )}
           </div>
 

@@ -10,7 +10,7 @@ import {
   Wallet,
 } from 'lucide-react'
 import { useTheme } from '@/lib/ThemeContext'
-import { FestiveRibbon } from './FestiveDecor'
+import { FestiveRibbon, RosetteMedallion } from './FestiveDecor'
 
 const paymentMethods = [
   {
@@ -60,6 +60,7 @@ export default function PaymentMethods() {
         <div className="absolute inset-0 islamic-pattern opacity-[0.06]" />
         <div className="absolute left-[8%] top-10 h-56 w-56 rounded-full bg-[var(--theme-glow)] blur-[110px]" />
         <div className="absolute bottom-0 right-[8%] h-64 w-64 rounded-full bg-[color:var(--theme-button-shadow)] blur-[120px]" />
+        {festive && <RosetteMedallion className="absolute left-[12%] top-14 hidden h-16 w-16 opacity-75 lg:block" delay={0.3} />}
       </div>
 
       <div className="container mx-auto relative z-10">
@@ -86,7 +87,7 @@ export default function PaymentMethods() {
           </h2>
 
           <p className="theme-copy mx-auto mt-6 max-w-2xl text-base leading-8 md:text-lg">
-            Multiple payment options keep ordering simple for local and international customers, while the festive theme keeps the whole experience polished and premium.
+            Choose the payment method that works best for you and complete your order quickly from Pakistan or abroad.
           </p>
         </motion.div>
 
@@ -99,7 +100,7 @@ export default function PaymentMethods() {
               transition={{ duration: 0.4, delay: index * 0.06 }}
               viewport={{ once: true }}
               whileHover={{ y: -6 }}
-              className="theme-panel theme-card-hover min-w-[220px] rounded-[28px] px-5 py-5"
+              className="theme-panel theme-card-hover theme-spotlight min-w-[220px] rounded-[28px] px-5 py-5"
             >
               <div className="flex items-center gap-4">
                 <div
@@ -131,7 +132,7 @@ export default function PaymentMethods() {
           <div className="theme-panel-soft inline-flex flex-wrap items-center justify-center gap-3 rounded-full px-5 py-3 text-sm">
             <span className="theme-copy">Secure and instant payments</span>
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--theme-highlight)]" />
-            <span className="theme-copy">Smooth checkout for Ramadan and Eid offers</span>
+            <span className="theme-copy">Local and international options available</span>
           </div>
         </motion.div>
       </div>

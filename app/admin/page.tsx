@@ -297,12 +297,12 @@ export default function AdminPage() {
       await saveTheme(mode, adminToken)
       setNotification({
         type: 'success',
-        message: mode === 'eid' ? 'Website switched to Eid GUI.' : 'Website switched to Normal GUI.',
+        message: mode === 'eid' ? 'Theme changed to Eid Sale.' : 'Theme changed to Standard.',
       })
     } catch (err) {
       setNotification({
         type: 'error',
-        message: err instanceof Error ? err.message : 'Failed to update website theme.',
+        message: err instanceof Error ? err.message : 'Could not update the theme.',
       })
     } finally {
       setThemeSaving(false)
@@ -787,13 +787,14 @@ export default function AdminPage() {
         <div className="mb-8 rounded-2xl border border-amber-500/20 bg-slate-900/70 p-5 backdrop-blur-xl">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-white">Website Theme</h2>
-              <p className="text-sm text-gray-400">Switch the public website between the normal GUI and the festive Eid GUI.</p>
+              <h2 className="text-lg font-semibold text-white">Theme Style</h2>
+              <p className="text-sm text-gray-400">Choose how the website should look.</p>
               <p className="text-xs text-gray-500 mt-2">
-                Current: <span className="text-amber-300">{theme === 'eid' ? 'Eid GUI' : 'Normal GUI'}</span>
-                {themeUpdatedAt ? ` - updated ${new Date(themeUpdatedAt).toLocaleString()}` : ''}
+                Current style: <span className="text-amber-300">{theme === 'eid' ? 'Eid Sale' : 'Standard'}</span>
               </p>
-              <p className="text-xs text-gray-500 mt-1">Saved using existing Supabase storage only. No new tables or buckets required.</p>
+              {themeUpdatedAt && (
+                <p className="mt-1 text-xs text-gray-500">Last changed: {new Date(themeUpdatedAt).toLocaleString()}</p>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -806,7 +807,7 @@ export default function AdminPage() {
                     : 'bg-slate-800 text-gray-300 hover:bg-slate-700'
                 } disabled:opacity-60`}
               >
-                {themeSaving ? 'Saving...' : 'Normal GUI'}
+                {themeSaving ? 'Saving...' : 'Standard'}
               </button>
               <button
                 onClick={() => handleThemeSwitch('eid')}
@@ -817,7 +818,7 @@ export default function AdminPage() {
                     : 'bg-slate-800 text-gray-300 hover:bg-slate-700'
                 } disabled:opacity-60`}
               >
-                {themeSaving ? 'Saving...' : 'Eid GUI'}
+                {themeSaving ? 'Saving...' : 'Eid Sale'}
               </button>
             </div>
           </div>

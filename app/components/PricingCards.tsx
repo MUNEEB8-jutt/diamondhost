@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Loader2, Cpu, Zap, Star, ChevronDown, MoonStar, Sparkles } from 'lucide-react'
+import { Check, Loader2, Cpu, Zap, MoonStar, Sparkles } from 'lucide-react'
 import { useEffect, useState, useRef } from 'react'
 import { getPlans, getLocations, getPlansByLocation, getEpycPlansByLocation, HostingPlan, Location, EpycPlan } from '@/lib/supabase'
 import { useCurrency } from '@/lib/CurrencyContext'
@@ -312,23 +312,6 @@ const LocationCarousel = ({
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center py-3" style={{ perspective: '1000px' }}>
-      {/* Become a YouTube Partner Button - Above carousel, centered */}
-      <motion.a
-        href="#creator-program"
-        className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40 hover:border-red-500/60 text-red-400 hover:text-red-300 px-4 py-2 rounded-full text-xs md:text-sm font-medium transition-all duration-300 backdrop-blur-sm shadow-lg shadow-red-500/10 mb-4"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        whileHover={{ scale: 1.05, boxShadow: '0 10px 30px -10px rgba(239, 68, 68, 0.4)' }}
-        whileTap={{ scale: 0.95 }}
-      >
-        {/* YouTube Logo - Red rounded rectangle with white play button */}
-        <svg viewBox="0 0 28 20" width="18" height="14">
-          <rect width="28" height="20" rx="5" fill="#FF0000"/>
-          <polygon points="11,5 11,15 20,10" fill="white"/>
-        </svg>
-        <span>Become a YouTube Partner</span>
-      </motion.a>
-
       {/* Main Container - More compact */}
       <div className="relative flex items-center justify-center gap-4 md:gap-8 w-full max-w-3xl px-4">
         
@@ -479,10 +462,16 @@ export default function PricingCards() {
   const { user, setShowAuthModal } = useAuth()
   const router = useRouter()
   const { theme } = useTheme()
-  const { getPlanDiscountPercentage } = useDiscounts()
+  const { discountConfig, getPlanDiscountPercentage } = useDiscounts()
   const festive = theme === 'eid'
 
   const selectedLocation = locations[selectedLocationIndex]?.code || 'UAE'
+  const hasActiveSaleOffer =
+    (discountConfig.global.enabled && discountConfig.global.percentage > 0) ||
+    Object.values(discountConfig.plans).some(
+      rule => rule.mode === 'custom' && rule.percentage > 0,
+    )
+  const saleExpiryLabel = 'Eid offer valid until 23 March'
   const formatPlanPrice = (price: number) => `${symbol}${convertPrice(price / 278)}`
   const getPlanPricing = (plan: { id: string; price: number }) => {
     const discountPercentage = getPlanDiscountPercentage(plan.id)
@@ -661,6 +650,13 @@ export default function PricingCards() {
           <p className="theme-copy mx-auto mt-6 max-w-2xl text-base leading-8 md:text-lg">
             Browse locations, switch processor types, and order the server that matches your performance goals. The experience is now wrapped in a richer festive presentation without changing the purchase flow.
           </p>
+
+          {(festive || hasActiveSaleOffer) && (
+            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-[var(--theme-border-strong)] bg-[var(--theme-surface-strong)] px-4 py-2 text-sm font-semibold text-[var(--theme-highlight)] shadow-[0_18px_45px_-22px_var(--theme-button-shadow)]">
+              <MoonStar className="h-4 w-4" />
+              <span>{saleExpiryLabel}</span>
+            </div>
+          )}
         </motion.div>
 
         {/* 3D VR Style Location Carousel */}
@@ -854,7 +850,7 @@ export default function PricingCards() {
                   </div>
                   
                   <motion.div 
-                    className={`theme-panel-strong relative rounded-[28px] p-6 border transition-all duration-200 flex flex-col overflow-hidden z-10 ${
+                    className={`theme-panel-strong theme-spotlight relative rounded-[28px] p-6 border transition-all duration-200 flex flex-col overflow-hidden z-10 ${
                       plan.popular ? (festive ? 'border-[#d4af37]/50' : 'border-cyan-500/50') : ''
                     } ${
                       selectedLocation === 'UAE' || currentLoc.code === 'UAE' 
@@ -1036,7 +1032,7 @@ export default function PricingCards() {
                   </div>
                   
                   <motion.div
-                    className={`theme-panel-strong relative rounded-[28px] p-6 border ${plan.popular ? (festive ? 'border-[#d4af37]/50' : 'border-red-500/50') : festive ? 'border-[#d4af37]/20' : 'border-red-900/30'} transition-all duration-200 flex flex-col overflow-hidden z-10`}
+                    className={`theme-panel-strong theme-spotlight relative rounded-[28px] p-6 border ${plan.popular ? (festive ? 'border-[#d4af37]/50' : 'border-red-500/50') : festive ? 'border-[#d4af37]/20' : 'border-red-900/30'} transition-all duration-200 flex flex-col overflow-hidden z-10`}
                     whileHover={{ 
                       y: -8, 
                       scale: 1.02,
@@ -1149,260 +1145,7 @@ export default function PricingCards() {
           </motion.a>
         </motion.div>
 
-        {/* Become a Partner Section */}
-        <PartnerSection festive={festive} />
       </div>
     </section>
   )
-}
-
-// Partner Section Component - Premium YouTube Creator Program
-function PartnerSection({ festive }: { festive: boolean }) {
-  const [isExpanded, setIsExpanded] = useState(false)
-
-  const partnerTiers = [
-    {
-      subscribers: '1,000+',
-      reward: '8GB RAM',
-      color: 'from-red-500 to-rose-600',
-      bgGlow: 'red',
-      description: 'Rising Creator'
-    },
-    {
-      subscribers: '5,000+',
-      reward: '16GB RAM',
-      color: 'from-red-600 to-red-500',
-      bgGlow: 'red',
-      description: 'Established Creator'
-    },
-    {
-      subscribers: '10,000+',
-      reward: '32GB RAM',
-      color: 'from-red-700 to-red-600',
-      bgGlow: 'red',
-      description: 'Elite Creator'
-    }
-  ]
-
-  const requirements = [
-    'Quality gaming content focused on Minecraft',
-    'Consistent upload schedule (minimum 1 video in 2 weeks)',
-    'Active and engaged community',
-    'Professional presentation and commentary',
-    'Must mention Diamond Host in videos',
-    'Server link in video description',
-    'Minimum 1,000 subscribers on YouTube',
-    'No controversial or inappropriate content',
-    'Must stream/record on Diamond Host servers',
-    'Partnership review every 3 months'
-  ]
-
-  // YouTube Play Button SVG
-  const YouTubeIcon = ({ size = 24 }: { size?: number }) => (
-    <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor">
-      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-    </svg>
-  )
-
-  return (
-    <motion.div 
-      id="creator-program"
-      initial={{ opacity: 0, y: 40 }} 
-      whileInView={{ opacity: 1, y: 0 }} 
-      transition={{ duration: 0.6 }} 
-      viewport={{ once: true }}
-      className="mt-24 relative scroll-mt-24"
-    >
-      {/* Background Glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full blur-[120px] ${
-          festive ? 'bg-[rgba(212,175,55,0.12)]' : 'bg-red-500/10'
-        }`} />
-      </div>
-
-      {/* Header */}
-      <div className="text-center mb-12 relative z-10">
-        {festive ? (
-          <FestiveRibbon className="mb-6" label="Creator Program Under Lantern Lights" />
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 rounded-full px-5 py-2 text-red-400 text-sm mb-6"
-          >
-            <YouTubeIcon size={18} />
-            <span className="font-medium">Content Creator Program</span>
-          </motion.div>
-        )}
-        <h2 className="theme-heading text-4xl md:text-5xl mb-4">
-          Become a <span className="text-red-500">YouTube</span> Partner
-        </h2>
-        <p className="theme-copy max-w-2xl mx-auto text-lg">
-          Get <span className="text-red-400 font-semibold">FREE</span> premium servers based on your subscriber count!
-        </p>
-      </div>
-
-      {/* Partner Tiers - Premium Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-12 relative z-10 px-4">
-        {partnerTiers.map((tier, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: idx * 0.15 }}
-            viewport={{ once: true }}
-            className="group relative"
-          >
-            {/* Glow Effect */}
-            <div className={`absolute -inset-1 rounded-2xl blur-lg opacity-0 group-hover:opacity-40 transition-all duration-500 ${
-              festive ? 'bg-gradient-to-r from-[#0f3d2e] to-[#d4af37]' : 'bg-gradient-to-r from-red-600 to-red-500'
-            }`} />
-            
-            <motion.div 
-              className={`theme-panel relative rounded-2xl p-8 border transition-all duration-300 overflow-hidden ${
-                festive ? 'border-[#d4af37]/20 hover:border-[#d4af37]/45' : 'border-red-500/20 hover:border-red-500/50'
-              }`}
-              whileHover={{ y: -8, scale: 1.02 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            >
-              {/* YouTube Icon Background */}
-              <div className="absolute top-4 right-4 text-red-500/10">
-                <YouTubeIcon size={80} />
-              </div>
-              
-              {/* Tier Badge */}
-              <div className="relative z-10">
-                <div className={`inline-flex items-center gap-2 bg-gradient-to-r ${tier.color} text-white text-xs font-bold px-3 py-1.5 rounded-full mb-6`}>
-                  <YouTubeIcon size={14} />
-                  <span>{tier.description}</span>
-                </div>
-                
-                {/* Subscribers */}
-                <div className="mb-6">
-                  <p className="text-gray-500 text-sm uppercase tracking-wider mb-1">Subscribers</p>
-                  <p className="text-4xl font-bold text-white">{tier.subscribers}</p>
-                </div>
-                
-                {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent mb-6" />
-                
-                {/* Reward */}
-                <div className="text-center">
-                  <p className="text-gray-500 text-sm uppercase tracking-wider mb-2">FREE Server</p>
-                  <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3">
-                    <Cpu className="h-5 w-5 text-red-400" />
-                    <span className="text-2xl font-bold text-red-400">{tier.reward}</span>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Requirements Expandable Section */}
-      <motion.div 
-        className="max-w-4xl mx-auto px-4 relative z-10"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-      >
-        <motion.button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={`w-full rounded-2xl p-6 border transition-all duration-300 flex items-center justify-between ${
-            festive ? 'theme-panel-strong border-[#d4af37]/20 hover:border-[#d4af37]/45' : 'bg-gradient-to-r from-slate-900 to-slate-950 backdrop-blur-xl border border-red-500/20 hover:border-red-500/40'
-          }`}
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.99 }}
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center shadow-lg shadow-red-500/30">
-              <Star className="h-6 w-6 text-white" />
-            </div>
-            <div className="text-left">
-              <p className="text-white font-bold text-lg">Partnership Requirements</p>
-              <p className="text-gray-500 text-sm">Click to view eligibility criteria</p>
-            </div>
-          </div>
-          <motion.div
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            transition={{ duration: 0.3 }}
-            className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center"
-          >
-            <ChevronDown className="h-5 w-5 text-red-400" />
-          </motion.div>
-        </motion.button>
-
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden"
-            >
-              <div className={`rounded-b-2xl p-8 border border-t-0 -mt-2 ${
-                festive ? 'theme-panel border-[#d4af37]/20' : 'bg-slate-900/80 backdrop-blur-xl border-red-500/20'
-              }`}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {requirements.map((req, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: idx * 0.05 }}
-                      className="flex items-start gap-3 p-3 rounded-lg hover:bg-red-500/5 transition-colors"
-                    >
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="h-3.5 w-3.5 text-white" />
-                      </div>
-                      <span className="text-gray-300">{req}</span>
-                    </motion.div>
-                  ))}
-                </div>
-                
-                <div className="mt-8 p-5 bg-red-500/10 border border-red-500/20 rounded-xl">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
-                      <YouTubeIcon size={16} />
-                    </div>
-                    <p className="text-red-300 text-sm leading-relaxed">
-                      <strong>Important:</strong> All partnerships are reviewed every 3 months. Servers are provided free of charge as long as requirements are met. Diamond Host reserves the right to modify or terminate partnerships.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      {/* Apply Button */}
-      <motion.div 
-        className="text-center mt-12 relative z-10"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        viewport={{ once: true }}
-      >
-        <motion.a
-          href="https://discord.gg/tKDRWYNcuE"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={festive
-            ? 'theme-button-primary inline-flex items-center gap-3 !rounded-xl px-12 text-lg'
-            : 'inline-flex items-center gap-3 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-500 hover:to-red-400 text-white font-bold py-4 px-12 rounded-xl transition-all duration-300 shadow-lg shadow-red-500/30 text-lg'}
-          whileHover={{ scale: 1.05, boxShadow: festive ? '0 25px 50px -12px rgba(212, 175, 55, 0.45)' : '0 25px 50px -12px rgba(239, 68, 68, 0.5)' }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <YouTubeIcon size={24} />
-          <span>Apply for Creator Program</span>
-        </motion.a>
-        <p className="text-gray-500 text-sm mt-4">Opens Discord → Create a ticket to apply</p>
-      </motion.div>
-    </motion.div>
-  )
-
 }

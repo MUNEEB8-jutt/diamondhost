@@ -130,6 +130,43 @@ export function StarField({
   )
 }
 
+export function RosetteMedallion({
+  className = '',
+  delay = 0,
+}: {
+  className?: string
+  delay?: number
+}) {
+  return (
+    <motion.div
+      className={`relative ${className}`}
+      animate={{ rotate: [0, 6, 0, -6, 0], y: [0, -6, 0] }}
+      transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut', delay }}
+    >
+      <div className="absolute inset-0 rounded-full bg-[#d4af37]/18 blur-2xl" />
+      <svg viewBox="0 0 120 120" className="relative h-full w-full" fill="none">
+        <circle cx="60" cy="60" r="57" stroke="#D4AF37" strokeOpacity="0.36" strokeWidth="2" />
+        <circle cx="60" cy="60" r="43" stroke="#F7E7CE" strokeOpacity="0.45" strokeWidth="1.5" />
+        <path
+          d="M60 16 68 34 88 32 76 48 88 64 68 62 60 80 52 62 32 64 44 48 32 32 52 34 60 16Z"
+          fill="rgba(247,231,206,0.12)"
+          stroke="#F7E7CE"
+          strokeWidth="2.2"
+        />
+        <path
+          d="M60 32 64 42 76 40 68 50 76 60 64 58 60 68 56 58 44 60 52 50 44 40 56 42 60 32Z"
+          fill="#D4AF37"
+          fillOpacity="0.86"
+          stroke="#F7E7CE"
+          strokeOpacity="0.7"
+          strokeWidth="1.2"
+        />
+        <circle cx="60" cy="60" r="6" fill="#F7E7CE" />
+      </svg>
+    </motion.div>
+  )
+}
+
 export function MosqueSilhouette({ className = '' }: { className?: string }) {
   return (
     <div className={`relative ${className}`}>

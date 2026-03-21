@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { ExternalLink, Heart, Mail, MessageCircle, MoonStar, Sparkles } from 'lucide-react'
 import { useTheme } from '@/lib/ThemeContext'
+import { RosetteMedallion } from './FestiveDecor'
 
 function DiamondLogo({ festive }: { festive: boolean }) {
   const accentStart = festive ? '#0f3d2e' : '#00d4ff'
@@ -34,21 +35,22 @@ export default function Footer() {
         <div className="absolute inset-0 islamic-pattern opacity-[0.06]" />
         <div className="absolute left-[-8%] top-0 h-64 w-64 rounded-full bg-[var(--theme-glow)] blur-[120px]" />
         <div className="absolute bottom-0 right-[-8%] h-72 w-72 rounded-full bg-[color:var(--theme-button-shadow)] blur-[140px]" />
+        {festive && <RosetteMedallion className="absolute right-[10%] top-10 hidden h-16 w-16 opacity-75 lg:block" delay={0.5} />}
       </div>
 
       <div className="container mx-auto relative px-4 py-16">
-        <div className="theme-panel-strong mb-10 flex flex-col gap-4 rounded-[30px] px-6 py-5 md:flex-row md:items-center md:justify-between">
+        <div className="theme-panel-strong theme-spotlight mb-10 flex flex-col gap-4 rounded-[30px] px-6 py-5 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="theme-heading-tight text-2xl md:text-3xl">
-              {festive ? 'Diamond Host festive sale, styled with intention.' : 'Premium hosting with a polished experience.'}
+              {festive ? 'Diamond Host Eid sale is live now.' : 'Reliable hosting for growing communities.'}
             </p>
             <p className="theme-copy mt-2 text-sm md:text-base">
-              The festive mode adds glow, geometry, and premium depth while your hosting logic stays exactly the same.
+              Choose a plan, get set up quickly, and keep your players online with dependable performance and support.
             </p>
           </div>
           <span className="theme-badge text-sm">
             {festive ? <MoonStar className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
-            {festive ? 'Eid Sale Theme Live' : 'Diamond Host Live'}
+            {festive ? 'Eid Sale Live' : 'Diamond Host Live'}
           </span>
         </div>
 
@@ -66,7 +68,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="theme-copy max-w-sm text-sm leading-7">
-              High-performance hosting for Minecraft communities, now presented with a richer, more festive premium identity across the full website.
+              High-performance Minecraft hosting with fast setup, reliable uptime, and support for every stage of your community.
             </p>
 
             <div className="mt-6 flex items-center gap-3">
